@@ -599,6 +599,31 @@ body.mode-solution .qbtn.current::before {
 .topper-table td { padding: 10px; border-bottom: 1px solid #eee; color: #333; }
 .section-title { font-size: 16px; font-weight: 700; margin: 0 0 14px; color: #222; padding-bottom: 8px; border-bottom: 1px solid #eee; }
 
+  /* Language Dropdown Styling */
+#langSelect {
+  background-color: #fff;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Ensure header items don't overlap on small screens */
+@media (max-width: 600px) {
+  .header-inner {
+    padding: 0 8px;
+  }
+  #langSelect {
+    font-size: 11px;
+    padding: 2px;
+  }
+  .timer-text {
+    font-size: 14px;
+    padding: 2px 6px;
+  }
+}
 /* =========================================
    10. UTILITIES & MODALS
    ========================================= */
@@ -663,7 +688,6 @@ mjx-container { font-family: inherit !important; font-size: 1em; overflow-x: aut
         <div class="detail-value">60 Minutes</div>
       </div>
     </div>
-
     <div class="welcome-instructions">
       <h3>General Instructions / सामान्य निर्देश</h3>
       <ul>
@@ -674,13 +698,29 @@ mjx-container { font-family: inherit !important; font-size: 1em; overflow-x: aut
       </ul>
     </div>
 
-    <div class="welcome-actions">
-      <button id="welcomeStartBtn" class="start-btn" type="button">▶ Start Test</button>
-      <a class="channel-link" href="https://t.me/SSC_COMPILATIONS_2025" target="_blank">Join Telegram Channel</a>
+    <div class="welcome-actions" style="flex-direction: column; align-items: center; gap: 20px;">
+      
+      <div style="width: 100%; max-width: 300px;">
+        <label for="welcomeLangSelect" style="display:block; font-size:13px; font-weight:700; margin-bottom:5px; color:var(--accent);">SELECT LANGUAGE / भाषा चुनें:</label>
+        <select id="welcomeLangSelect" class="btn-ghost" style="width: 100%; padding: 12px; border-radius: 8px; font-size: 15px; cursor: pointer; border: 2px solid var(--accent);">
+          <option value="">-- Choose Language --</option>
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="bilingual">Bilingual (English + Hindi)</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center;">
+        <button id="welcomeStartBtn" class="start-btn" type="button">▶ Start Test</button>
+        <a class="channel-link" href="https://t.me/SSC_COMPILATIONS_2025" target="_blank">Join Telegram Channel</a>
+      </div>
+      
     </div>
 
   </div>
 </div>
+
+   
 
 <div id="ssc-watermark" class="ssc-watermark">
   <div class="ssc-wm" style="top:10%; left:5%;">@SSC_COMPILATIONS_2025</div>
@@ -709,24 +749,22 @@ mjx-container { font-family: inherit !important; font-size: 1em; overflow-x: aut
   const db = firebase.database();
 </script>
 
-
 <header id="mainHeader" style="display:none;">
   <div class="header-inner">
-
     <div style="display:flex; align-items:center; gap:10px;">
       <button id="backToAnalysisBtn" class="btn-ghost" style="display:none;">⬅ Analysis</button>
-      <h1 id="headerTitle">SSC CGL TIER 2 SECTION 1 MOCK</h1>
+      <h1 id="headerTitle">SSC CGL TIER 2 MOCK</h1>
     </div>
 
     <div style="display:flex; align-items:center; gap:10px;">
-
-      <div id="topActions" class="top-actions">
-        </div>
-
+      <select id="langSelect" class="btn-ghost" style="padding: 4px; font-size: 13px;">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="bilingual">EN+HI</option>
+      </select>
+      <div id="topActions" class="top-actions"></div>
       <div class="timer-text" id="timer">00:00</div>
-
       <button id="submitBtn" class="btn">Submit</button>
-
       <button id="paletteBtn" class="btn-ghost">View</button>
     </div>
   </div>
@@ -816,7 +854,7 @@ const TOTAL_TIME_SECONDS = seconds;
 let timerInterval = null;
 let isQuiz = true;   // true = Taking Quiz, false = Viewing Solution
 let LAST_RESULT_HTML = "";
-
+let currentLang = "en";
 // 🗄 DATA ARRAYS
 
 const QUESTIONS = [
@@ -906,6 +944,7 @@ function saveQuizState(){
     current,
     answers,
     marked,
+    currentLang,
     seconds
   };
   localStorage.setItem(QUIZ_STATE_KEY, JSON.stringify(state));
@@ -947,40 +986,56 @@ function startTimer() {
 // ===============================
 // 📝 RENDER QUESTION ENGINE
 // ===============================
-function renderQuestion(i){
+function renderQuestion(i) {
   current = i;
   const q = QUESTIONS[i];
 
   // 1. Update Header Info
-  el("qindex").textContent = i+1;
+  el("qindex").textContent = i + 1;
   el("qtotal").textContent = QUESTIONS.length;
+
+  // --- LANGUAGE HELPER FUNCTION ---
+  // Processes the JSON object based on currentLang (en, hi, or bilingual)
+  const getLangText = (obj) => {
+    if (!obj) return "";
+    if (typeof obj === "string") return obj; // Fallback for old format strings
+
+    if (currentLang === "bilingual") {
+      const enText = obj.en || "";
+      const hiText = obj.hi || "";
+      return enText + (enText && hiText ? "<hr style='border:none; border-top:1px dashed #ccc; margin:10px 0;'>" : "") + hiText;
+    }
+    // Return selected language or fallback to English if the choice is empty
+    return obj[currentLang] || obj["en"] || "";
+  };
 
   // 2. Render Question Text & Math
   const qTextEl = el("qtext");
-  qTextEl.innerHTML = q.question || "";
-  // 🖼️ QUESTION IMAGE RENDER
-const imgBox = document.getElementById("questionImage");
-imgBox.innerHTML = "";
-
-if (q.question_image && q.question_image.trim() !== "") {
-  const img = document.createElement("img");
-  img.src = q.question_image;
-  img.alt = "Question Image";
-  img.style.maxWidth = "100%";
-  img.style.height = "auto";
-  img.style.display = "block";
-  img.style.margin = "10px auto";
-  img.style.border = "1px solid #ddd";
-  img.style.borderRadius = "6px";
-  img.loading = "lazy";
-
-  img.onerror = () => {
-    imgBox.innerHTML = "<div style='color:red;font-size:13px'>⚠ Image failed to load</div>";
-  };
-
-  imgBox.appendChild(img);
-}
+  qTextEl.innerHTML = getLangText(q.question);
   normalizeMathForQuiz(qTextEl);
+
+  // 🖼️ QUESTION IMAGE RENDER (Updated to 40% size)
+  const imgBox = document.getElementById("questionImage");
+  imgBox.innerHTML = "";
+
+  if (q.question_image && q.question_image.trim() !== "") {
+    const img = document.createElement("img");
+    img.src = q.question_image;
+    img.alt = "Question Image";
+    img.style.width = "40%"; // Force 40% size as requested
+    img.style.height = "auto";
+    img.style.display = "block";
+    img.style.margin = "10px auto";
+    img.style.border = "1px solid #ddd";
+    img.style.borderRadius = "6px";
+    img.loading = "lazy";
+
+    img.onerror = () => {
+      imgBox.innerHTML = "<div style='color:red;font-size:13px'>⚠ Image failed to load</div>";
+    };
+
+    imgBox.appendChild(img);
+  }
 
   // 3. Update Marks
   el("marking").innerHTML = `Marking: <span style="color:var(--success)">+${Number(q.correct_score ?? 1)}</span> / <span style="color:var(--danger)">-${Number(q.negative_score ?? 0)}</span>`;
@@ -989,10 +1044,10 @@ if (q.question_image && q.question_image.trim() !== "") {
   const optsContainer = el("options");
   optsContainer.innerHTML = "";
 
-  const optionKeys = ["option_1","option_2","option_3","option_4","option_5"];
+  const optionKeys = ["option_1", "option_2", "option_3", "option_4", "option_5"];
 
   optionKeys.forEach((key, idx) => {
-    if(!q[key]) return; // Skip empty options
+    if (!q[key]) return; // Skip empty options
 
     const optionIndex = idx + 1; // 1-based index (1,2,3,4)
     const isSelected = answers[q.id ?? i] === String(optionIndex);
@@ -1002,53 +1057,39 @@ if (q.question_image && q.question_image.trim() !== "") {
     div.className = "opt";
 
     // --- LOGIC: QUIZ vs SOLUTION MODE ---
-    if(isQuiz) {
-      // 🔵 QUIZ MODE: Simple Selection
-      if(isSelected) div.classList.add("selected");
-
-      // Click Handler
+    if (isQuiz) {
+      if (isSelected) div.classList.add("selected");
       div.onclick = () => selectOption(q, optionIndex, div);
-
     } else {
-      // 🟢 SOLUTION MODE: Show Right/Wrong
-      div.style.cursor = "default"; // Disable pointer
-
-      if(isCorrectAns) {
-        div.classList.add("correct"); // Green Border/BG
+      div.style.cursor = "default";
+      if (isCorrectAns) {
+        div.classList.add("correct");
         div.style.backgroundColor = "#e6f7ee";
         div.style.borderColor = "#2e7d32";
       }
-
-      if(isSelected && !isCorrectAns) {
-        div.classList.add("wrong"); // Red Border/BG
+      if (isSelected && !isCorrectAns) {
+        div.classList.add("wrong");
         div.style.backgroundColor = "#fdeaea";
         div.style.borderColor = "#c82d3f";
-      }
-
-      if(isSelected && isCorrectAns) {
-         // User chose correct: already handled by isCorrectAns check,
-         // but ensures selected style doesn't override correct style
       }
     }
 
     div.innerHTML = `
       <div class="custom-radio"></div>
-      <div class="opt-text" style="flex:1">${q[key]}</div>
+      <div class="opt-text" style="flex:1">${getLangText(q[key])}</div>
     `;
 
     optsContainer.appendChild(div);
     normalizeMathForQuiz(div.querySelector(".opt-text"));
   });
 
-
-    // 5. Render Explanation (Only in Solution Mode)
+  // 5. Render Explanation (Only in Solution Mode)
   const expBox = el("explanation");
-  if(!isQuiz) {
+  if (!isQuiz) {
     const qid = q.id ?? i;
     const userAns = answers[qid];
     const isCorrect = userAns && String(userAns) === String(q.answer);
 
-    // Status Logic
     let statusText = "";
     if (!userAns) {
       statusText = `<span style="color:#9e9e9e">Skipped (0)</span>`;
@@ -1060,19 +1101,27 @@ if (q.question_image && q.question_image.trim() !== "") {
 
     expBox.style.display = "block";
     expBox.innerHTML = `<div style="margin-bottom:8px; font-weight:700;">Status: ${statusText}</div>` +
-                       (q.solution_text ? `<hr style="border:0; border-top:1px solid #ddd; margin:8px 0;"><strong>💡 Explanation:</strong><br>${q.solution_text}` : "");
+      (q.solution_text ? `<hr style="border:0; border-top:1px solid #ddd; margin:8px 0;"><strong>💡 Explanation:</strong><br>${getLangText(q.solution_text)}` : "");
     normalizeMathForQuiz(expBox);
   } else {
     expBox.style.display = "none";
   }
 
-
   // 6. Update MathJax
   renderMath();
 
   // 7. Update Palette & Buttons (Dependent functions)
-  if(typeof highlightPalette === "function") highlightPalette();
+  if (typeof highlightPalette === "function") highlightPalette();
   updateNavButtons();
+
+  // Handle language dropdown synchronization inside the header
+  const langSelect = document.getElementById("langSelect");
+  if (langSelect) {
+    langSelect.onchange = (e) => {
+      currentLang = e.target.value;
+      renderQuestion(current);
+    };
+  }
 }
 
 // ===============================
@@ -2065,15 +2114,26 @@ function init(){
   attachListeners();
   renderMath();
 }
+  
+document.getElementById("welcomeStartBtn").addEventListener("click", function() {
+  const selected = document.getElementById("welcomeLangSelect").value;
+  
+  if (!selected) {
+    alert("Please select a language! / कृपया भाषा चुनें!");
+    return; // STOP: Button won't work without selection
+  }
 
-// 🚦 START BUTTON LISTENER
-document.getElementById("welcomeStartBtn").addEventListener("click", function(){
+  // Set persistence
+  currentLang = selected;
+  document.getElementById("langSelect").value = selected; // Sync header dropdown
+
+  // Proceed to quiz
   document.getElementById("welcomeScreen").style.display = "none";
   document.getElementById("mainHeader").style.display = "block";
+ 
   document.body.classList.add("mode-quiz");
  document.body.classList.remove("mode-solution");
 
-  // Responsive Display Logic for Quiz Area
   const quizArea = document.getElementById("quizMainArea");
   if(window.innerWidth >= 992) {
       quizArea.style.display = "grid";
@@ -2081,9 +2141,8 @@ document.getElementById("welcomeStartBtn").addEventListener("click", function(){
       quizArea.style.display = "block";
       document.getElementById("floatBar").style.display = "flex";
   }
-
-
   startTimer();
+  renderQuestion(current);
 });
 
 // 🔄 RESUME SCRIPT (Runs on Reload)
