@@ -3698,7 +3698,8 @@ function renderQuestion(i) {
   const langSelect = document.getElementById("langSelect");
   if (langSelect) {
     langSelect.onchange = (e) => {
-      currentLang = e.target.value;
+      currentLang = e.target.value
+        saveQuizState();
       renderQuestion(current);
     };
   }
@@ -4667,16 +4668,24 @@ function init(){
       nameInput.value = ""; // ✅ Clear it so validation triggers
     }
   }
-
-  const stateSaved = localStorage.getItem(QUIZ_STATE_KEY);
-  if (stateSaved) {
-    const state = JSON.parse(stateSaved);
-    current = state.current ?? 0;
-    answers = state.answers ?? {};
-    marked = state.marked ?? {};
-    seconds = state.seconds ?? seconds;
+  // --- UPDATE STEP 2 INSIDE init() ---
+const stateSaved = localStorage.getItem(QUIZ_STATE_KEY);
+if (stateSaved) {
+  const state = JSON.parse(stateSaved);
+  current = state.current ?? 0;
+  answers = state.answers ?? {};
+  marked = state.marked ?? {};
+  seconds = state.seconds ?? seconds;
+  
+  // RESTORE LANGUAGE PERSISTENCE HERE
+  if (state.currentLang) {
+    currentLang = state.currentLang;
+    const headerLangSelect = el("langSelect");
+    if (headerLangSelect) headerLangSelect.value = currentLang;
   }
+}
 
+ 
   // 3. SETUP UI
   if (window.innerWidth >= 992) {
     // Move buttons to header for desktop
