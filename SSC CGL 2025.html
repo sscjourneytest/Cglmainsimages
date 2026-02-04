@@ -137,33 +137,31 @@ h1 {
 }
 .btn-ghost:hover { background: #f0f6ff; }
 
+
 /* =========================================
-   4. WELCOME SCREEN (Solid Background)
+   4. WELCOME SCREEN (Continuous Page Layout)
    ========================================= */
 .welcome-screen {
   position: fixed;
   inset: 0;
-  background: #f2f2f2; /* Solid Light Grey */
-  z-index: 2000;       /* Above everything */
-  overflow-y: auto;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
+  background: #ffffff; /* Solid White */
+  z-index: 2000;
+  overflow-y: auto;    /* Allows the whole page to scroll */
+  display: block;      /* Changed from flex to block for continuous flow */
+  padding: 0;
 }
 
 .welcome-container {
   background: #fff;
   width: 100%;
-  max-width: 800px;
-  border-radius: 8px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin-top: 20px;
+  max-width: 1000px;   /* Professional width */
+  margin: 0 auto;      /* Centers the container */
+  padding: 40px 20px;
+  box-shadow: none;    /* Flat look for continuous page */
 }
 
 .welcome-header { text-align: center; margin-bottom: 24px; }
-.welcome-header h1 { font-size: 24px; color: #d32f2f; margin-bottom: 8px; }
+.welcome-header h1 { font-size: 28px; color: #d32f2f; margin-bottom: 8px; }
 .welcome-header p { color: #555; font-weight: 500; }
 
 .test-details {
@@ -182,35 +180,43 @@ h1 {
 .detail-label { font-size: 12px; color: #666; margin-bottom: 4px; }
 .detail-value { font-size: 16px; font-weight: 700; color: #000; }
 
+/* Dedicated Scrolling for Instructions */
 .welcome-instructions {
-  background: #fff;
+  background: #f9f9f9;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 25px;
   margin-bottom: 30px;
+  max-height: 450px;   /* Separate scrolling height */
+  overflow-y: auto;    /* Vertical scroll only for this box */
 }
-.welcome-instructions h3 { margin-top: 0; font-size: 16px; }
-.welcome-instructions li { margin-bottom: 12px; font-size: 14px; line-height: 1.5; font-weight: 500; }
+.welcome-instructions h3 { margin-top: 15px; font-size: 18px; color: #0b5ed7; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+.welcome-instructions li { margin-bottom: 12px; font-size: 14px; line-height: 1.6; font-weight: 500; }
+
+/* Legend Symbol Styles */
+.symbol-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 15px 0; }
+.symbol-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.leg-box { 
+  width: 42px; height: 35px; display: flex; align-items: center; justify-content: center; 
+  font-weight: 700; color: #fff; border-radius: 2px; position: relative; 
+}
+.leg-current { background: #dc3545; clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%); }
+.leg-answered { background: #198754; }
+.leg-notvisited { background: #bdbdbd; color: #000; border: 1px solid #ababab; }
+.leg-marked { background: #0b5ed7; }
+.leg-marked-ans { background: #0b5ed7; }
+.leg-marked-ans::after { content: "★"; position: absolute; bottom: -2px; right: 1px; color: #ffeb3b; font-size: 14px; }
 
 .welcome-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
 .start-btn {
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 12px 40px;
-  border-radius: 25px;
-  font-size: 16px;
+  padding: 15px 60px;
+  border-radius: 8px;
+  font-size: 18px;
   font-weight: 700;
   cursor: pointer;
-}
-.channel-link {
-  display: inline-block;
-  padding: 12px 30px;
-  border: 2px solid var(--accent);
-  border-radius: 25px;
-  color: var(--accent);
-  font-weight: 700;
-  text-decoration: none;
 }
 
 /* =========================================
@@ -683,48 +689,67 @@ mjx-container { font-family: inherit !important; font-size: 1em; overflow-x: aut
 
 </head>
 <body>
-
 <div class="welcome-screen" id="welcomeScreen">
   <div class="welcome-container">
+    
+    <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+      <button class="btn-ghost" onclick="window.location.href='./'" style="border-radius: 20px; padding: 8px 20px;">
+        ⬅ GO TO ALL TESTS
+      </button>
+    </div>
 
     <div class="welcome-header">
-      <h1>SSC COMPILATIONS TEST</h1> <p>Quiz ID: SSC CGL 2025</p>
+      <h1 id="disp_quizTitle">SSC COMPILATIONS TEST</h1> 
+      <p>Quiz ID: <span id="disp_quizId">SSC CGL 2025</span></p>
     </div>
 
     <div class="test-details">
       <div class="detail-item">
         <div class="detail-label">Total Questions</div>
-        <div class="detail-value">15</div>
+        <div class="detail-value" id="disp_totalQ">15</div>
       </div>
-
       <div class="detail-item">
         <div class="detail-label">Correct Marks</div>
-        <div class="detail-value">+3</div>
+        <div class="detail-value" id="disp_correct">+3</div>
       </div>
-
       <div class="detail-item">
         <div class="detail-label">Negative Marks</div>
-        <div class="detail-value">-1</div>
+        <div class="detail-value" id="disp_negative">-1</div>
       </div>
-
       <div class="detail-item">
         <div class="detail-label">Total Time</div>
-        <div class="detail-value">10 Minutes</div>
+        <div class="detail-value"><span id="disp_time">10</span> Minutes</div>
       </div>
     </div>
     
     <div class="welcome-instructions">
-      <h3>General Instructions / सामान्य निर्देश</h3>
+      <h3>1. Quiz Mode Symbols (During Test)</h3>
+      <div class="symbol-list">
+        <div class="symbol-item"><div class="leg-box leg-answered">1</div> Answered</div>
+        <div class="symbol-item"><div class="leg-box leg-marked-ans">2</div> Answered & Marked for Review</div>
+        <div class="symbol-item"><div class="leg-box leg-marked">3</div> Marked for Review (Unanswered)</div>
+        <div class="symbol-item"><div class="leg-box leg-current">4</div> Current Question</div>
+        <div class="symbol-item"><div class="leg-box leg-notvisited">5</div> Not Visited</div>
+      </div>
+
+      <h3>2. Solution Mode Symbols (Analysis)</h3>
+      <div class="symbol-list">
+        <div class="symbol-item"><div class="leg-box" style="background: #198754;">✔</div> Correct Answer</div>
+        <div class="symbol-item"><div class="leg-box" style="background: #dc3545;">✖</div> Wrong Answer</div>
+        <div class="symbol-item"><div class="leg-box" style="background: #bdbdbd; color:#000;">0</div> Skipped</div>
+      </div>
+
+      <h3>3. General Instructions / सामान्य निर्देश</h3>
       <ul>
-        <li><b>Do not reload the page.</b><br><span>कृपया पेज को रीलोड न करें।</span></li>
-        <li><b>Do not close the browser.</b><br><span>ब्राउज़र बंद न करें।</span></li>
+        <li><b>Name Entry:</b> You <u>MUST</u> enter your full name in the box provided inside the quiz to submit.</li>
+        <li><b>Do not reload the page.</b><br><span>कृपया पेज को रीलोड न करें। इससे आपकी प्रगति खो सकती है।</span></li>
+        <li><b>Do not close the browser.</b><br><span>परीक्षा के दौरान ब्राउज़र बंद न करें।</span></li>
         <li><b>Stable internet is required.</b><br><span>स्थिर इंटरनेट सुनिश्चित करें।</span></li>
-        <li><b>Submit before time ends.</b><br><span>समय समाप्त होने से पहले जमा करें।</span></li>
+        <li><b>Submit before time ends.</b><br><span>समय समाप्त होने से पहले जमा करें। समय समाप्त होने पर यह स्वतः जमा हो जाएगा।</span></li>
       </ul>
     </div>
 
     <div class="welcome-actions" style="flex-direction: column; align-items: center; gap: 20px;">
-      
       <div style="width: 100%; max-width: 300px;">
         <label for="welcomeLangSelect" style="display:block; font-size:13px; font-weight:700; margin-bottom:5px; color:var(--accent);">SELECT LANGUAGE / भाषा चुनें:</label>
         <select id="welcomeLangSelect" class="btn-ghost" style="width: 100%; padding: 12px; border-radius: 8px; font-size: 15px; cursor: pointer; border: 2px solid var(--accent);">
@@ -739,12 +764,10 @@ mjx-container { font-family: inherit !important; font-size: 1em; overflow-x: aut
         <button id="welcomeStartBtn" class="start-btn" type="button">▶ Start Test</button>
         <a class="channel-link" href="https://t.me/SSC_COMPILATIONS_2025" target="_blank">📢 Join Telegram Channel</a>
       </div>
-      
     </div>
 
   </div>
 </div>
-
 
 
 <div id="ssc-watermark" class="ssc-watermark">
