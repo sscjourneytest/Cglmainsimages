@@ -170,7 +170,21 @@ h1 {
   padding: 25px;
   margin-bottom: 20px;
 }
-
+/* RESTORED: Boxed Test Details Styling */
+.test-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 24px;
+}
+.detail-item {
+  background: #f8fbff;
+  border: 1px solid #e1ecff;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
 /* Legend Symbol Styles */
 .symbol-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 15px 0; }
 .symbol-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
