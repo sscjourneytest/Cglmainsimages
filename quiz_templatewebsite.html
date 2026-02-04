@@ -1912,9 +1912,20 @@ function attachListeners(){
   el("cancelSubmit").onclick = () => el("submitModal").style.display = "none";
   el("confirmSubmit").addEventListener("click", ()=> { el("submitModal").style.display = "none"; submitQuiz(); });
 }
-
 // Build Palette Buttons
-function buildPalette(){
+function buildPalette() {
+  const pal = el("palette");
+  
+  // Re-structure palette to include a container for the grid and a fixed submit button
+  pal.innerHTML = `
+    <div id="palette-legend"></div>
+    <div id="palette-summary" style="margin-bottom:10px; font-weight:700; font-size:13px; text-align:center;"></div>
+    <div id="palette-grid" class="palette-grid" style="overflow-y:auto; flex-grow:1;"></div>
+    <div class="palette-submit-container" id="palSubmitArea" style="padding:10px 0; border-top:1px solid #ccc; background:#dae5f0; text-align:center;">
+      <button id="palSubmitBtn" class="btn" style="width:95%; background:#1a73e8; color:white; font-weight:700; padding:12px; border-radius:4px; border:none; cursor:pointer;">Submit Test</button>
+    </div>
+  `;
+
   const grid = el("palette-grid");
   grid.innerHTML = "";
   QUESTIONS.forEach((q, i) => {
@@ -1923,70 +1934,82 @@ function buildPalette(){
     btn.textContent = i + 1;
     btn.onclick = () => {
       renderQuestion(i);
-      if(window.innerWidth < 992) el("palette").style.display = "none";
+      if (window.innerWidth < 992) el("palette").style.display = "none";
     };
     grid.appendChild(btn);
-    updatePaletteLegend();
   });
+
+  // Attach submit event to the new button
+  el("palSubmitBtn").onclick = () => {
+    if (isQuiz) {
+        el('submitBtn').click(); // Triggers your existing submit logic/modal
+    } else {
+        restoreLatestResult(); // If in solution mode, goes back to analysis
+    }
+  };
+
+  updatePaletteLegend();
 }
 
 // Update Palette Colors
-function highlightPalette(){
+function highlightPalette() {
   const btns = document.querySelectorAll(".qbtn");
-  let att = 0;
+  if (btns.length === 0) return;
 
   btns.forEach((btn, i) => {
     const qid = QUESTIONS[i].id ?? i;
     btn.className = "qbtn"; // Reset
 
-    if(current === i) btn.classList.add("current");
+    if (current === i) btn.classList.add("current");
 
-    if(isQuiz) {
-      // 🔵 QUIZ MODE COLORS
-      if(marked[qid]) {
+    if (isQuiz) {
+      if (marked[qid]) {
         btn.classList.add(answers[qid] ? "marked-answered" : "marked");
-      } else if(answers[qid]) {
+      } else if (answers[qid]) {
         btn.classList.add("answered");
       } else {
         btn.classList.add("notvisited");
       }
     } else {
-      // 🟢 SOLUTION MODE COLORS (New Requirement)
-      // Correct = Green, Wrong = Red, Skipped = Grey
-      // Star if marked
       const myAns = answers[qid];
       const correctAns = String(QUESTIONS[i].answer);
-
-      if(!myAns) {
+      if (!myAns) {
         btn.classList.add("sol-skip");
-      } else if(String(myAns) === correctAns) {
+      } else if (String(myAns) === correctAns) {
         btn.classList.add("sol-right");
       } else {
         btn.classList.add("sol-wrong");
       }
-
-      if(marked[qid]) btn.classList.add("has-star");
+      if (marked[qid]) btn.classList.add("has-star");
     }
-
-    if(answers[qid]) att++;
   });
 
-  // Update Mark Button Text/Color based on current state
-  const curQid = QUESTIONS[current].id ?? current;
-  const mkBtn = el("markBtn");
-  if(mkBtn) {
-      if(marked[curQid]) {
-          mkBtn.textContent = "Unmark Review";
-          mkBtn.classList.add("active-mark"); // Greenish
-      } else {
-          mkBtn.textContent = "Mark for Review";
-          mkBtn.classList.remove("active-mark");
-      }
+  // Handle the Submit Button Visibility inside palette
+  const palSubmitArea = el("palSubmitArea");
+  const palSubmitBtn = el("palSubmitBtn");
+  if (palSubmitArea) {
+    if (isQuiz) {
+        palSubmitBtn.textContent = "Submit Test";
+        palSubmitArea.style.display = "block";
+    } else {
+        // In Solution mode, we can change it to "Back to Analysis" or hide it
+        palSubmitBtn.textContent = "Back to Analysis";
+        palSubmitArea.style.display = "block"; 
+    }
   }
 
-  // Update Palette Summary Text
+  const curQid = QUESTIONS[current].id ?? current;
+  const mkBtn = el("markBtn");
+  if (mkBtn) {
+    if (marked[curQid]) {
+      mkBtn.textContent = "Unmark Review";
+      mkBtn.classList.add("active-mark");
+    } else {
+      mkBtn.textContent = "Mark for Review";
+      mkBtn.classList.remove("active-mark");
+    }
+  }
   updatePaletteLegend();
-
 }
 
 // update function
@@ -1996,53 +2019,35 @@ function updatePaletteLegend() {
   if (!legend || !summary) return;
 
   if (isQuiz) {
-    // ======================
-    // QUIZ MODE
-    // ======================
     legend.innerHTML = `
-      <div><span class="lg-box notvisited"></span> Not Answered</div>
-      <div><span class="lg-box answered"></span> Answered</div>
-      <div><span class="lg-box marked"></span> Marked for Review</div>
-      <div><span class="lg-box marked-answered">★</span> Answered & Marked</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:12px; margin-bottom:10px;">
+        <div><span class="lg-box notvisited" style="background:#bdbdbd"></span> Not Visited</div>
+        <div><span class="lg-box answered" style="background:var(--success)"></span> Answered</div>
+        <div><span class="lg-box marked" style="background:var(--accent)"></span> Marked</div>
+        <div><span class="lg-box marked-answered" style="background:var(--accent)">★</span> Ans & Marked</div>
+      </div>
     `;
 
-    let answered = 0;
-    let notAnswered = 0;
-    let markedOnly = 0;
-    let markedAnswered = 0;
-
+    let answered = 0, notAnswered = 0, markedOnly = 0, markedAnswered = 0;
     QUESTIONS.forEach((q, i) => {
       const qid = q.id ?? i;
       const hasAnswer = !!answers[qid];
       const isMarked = !!marked[qid];
-
-      if (hasAnswer && isMarked) {
-        markedAnswered++;
-      } else if (hasAnswer) {
-        answered++;
-      } else if (isMarked) {
-        markedOnly++;
-      } else {
-        notAnswered++;
-      }
+      if (hasAnswer && isMarked) markedAnswered++;
+      else if (hasAnswer) answered++;
+      else if (isMarked) markedOnly++;
+      else notAnswered++;
     });
-
-    summary.textContent =
-      `Answered: ${answered} | Not Answered: ${notAnswered} | ` +
-      `Ans & Marked: ${markedAnswered} | Marked: ${markedOnly}`;
-
+    summary.textContent = `Answered: ${answered} | Not Answered: ${notAnswered} | Ans & Marked: ${markedAnswered} | Marked: ${markedOnly}`;
   } else {
-    // ======================
-    // SOLUTION MODE
-    // ======================
     legend.innerHTML = `
-      <div><span class="lg-box" style="background:var(--success)"></span> Correct</div>
-      <div><span class="lg-box" style="background:var(--danger)"></span> Wrong</div>
-      <div><span class="lg-box" style="background:#9e9e9e"></span> Skipped</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; font-size:12px; margin-bottom:10px;">
+        <div><span class="lg-box" style="background:var(--success)"></span> Correct</div>
+        <div><span class="lg-box" style="background:var(--danger)"></span> Wrong</div>
+        <div><span class="lg-box" style="background:#9e9e9e"></span> Skipped</div>
+      </div>
     `;
-
     let correct = 0, wrong = 0, skipped = 0;
-
     QUESTIONS.forEach((q, i) => {
       const qid = q.id ?? i;
       const myAns = answers[qid];
@@ -2050,11 +2055,10 @@ function updatePaletteLegend() {
       else if (String(myAns) === String(q.answer)) correct++;
       else wrong++;
     });
-
-    summary.textContent =
-      `Correct: ${correct} | Wrong: ${wrong} | Skipped: ${skipped}`;
+    summary.textContent = `Correct: ${correct} | Wrong: ${wrong} | Skipped: ${skipped}`;
   }
 }
+
 // ===============================
 // 🚀 INITIALIZATION
 // ===============================
