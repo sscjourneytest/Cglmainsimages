@@ -218,7 +218,7 @@ h1 {
    ========================================= */
 /* The main card holding the question */
 .card {
-  background: #fff;
+  background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 20px;
@@ -302,7 +302,8 @@ h1 {
    6. VIEW PALETTE (Right Side)
    ========================================= */
 #palette {
-  background: #fff;
+  background: #dae5f0 !important;
+  
   border-radius: 8px;
   display: none; /* Hidden on mobile by default */
   flex-direction: column;
@@ -337,30 +338,29 @@ h1 {
   overscroll-behavior: contain;
 }
 
-.qbtn {
-  width: 38px;
-  height: 38px;
-  border: 1px solid #ddd;
-  background: #d6d6d6; /* dense grey */
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+
+ .qbtn {
+  /* Shape and Size */
+  width: 42px; 
+  height: 35px;
+  border-radius: 2px; /* Very slight rounding as seen in SS */
+  
+  /* Color and Background (The Gradient) */
+  background: linear-gradient(to bottom, #ffffff 0%, #f2f2f2 100%); 
+  border: 1px solid #ababab; /* The grey border from your image */
+  
+  /* Text Style */
+  color: #000000;
+  font-weight: 700;
+  
+  /* The "Lifted" Effect */
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,0.1);
+} 
 .qbtn:hover { background: #e0e0e0; }
 /* Pentagon shape (both modes) */
 .qbtn.current {
-  clip-path: polygon(
-    50% 0%,
-    100% 38%,
-    82% 100%,
-    18% 100%,
-    0% 38%
-  );
+  clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%);
+   
   border: none;
   position: relative;
 }
@@ -469,6 +469,18 @@ body.mode-solution .qbtn.current::before {
     gap: 24px;
     align-items: start;
   }
+  #submitBtn {
+  width: 100%;
+  background: #1a73e8; /* Blue from your screenshot */
+  color: white;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 4px;
+  border: none;
+  margin-top: 20px;
+  cursor: pointer;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
 
   /* 2. Palette Sticky & Visible */
   #palette {
