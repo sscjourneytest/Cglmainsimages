@@ -1,0 +1,2204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SSC CGL 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4B6V3MV51Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4B6V3MV51Q');
+</script>
+
+<style>
+/* =========================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================= */
+:root {
+  --accent: #0b5ed7;       /* Testbook Blue */
+  --accent-dark: #094bc0;
+  --success: #198754;      /* Green */
+  --danger: #dc3545;       /* Red */
+  --warning: #ffc107;      /* Yellow/Orange */
+  --muted: #6c757d;
+  --bg-color: #ffffff;     /* Solid White Background */
+  --light-gray: #f5f7fa;
+  --border-color: #e0e0e0;
+  --max-width: 1280px;     /* Wider for Desktop */
+  --header-height: 60px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-color);
+  color: #212121;
+  padding-bottom: 60px; /* Space for mobile bottom bar */
+  -webkit-user-select: none; /* Security */
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in inputs */
+input, textarea { user-select: text !important; }
+
+/* =========================================
+   2. LAYOUT CONTAINERS
+   ========================================= */
+.container {
+  max-width: var(--max-width);
+  margin: auto;
+  padding: 12px 16px;
+}
+
+/* Wrapper for Quiz vs Palette Layout */
+.quiz-main-area {
+  display: block; /* Default mobile: Stacked */
+  position: relative;
+}
+
+/* =========================================
+   3. HEADER (Timer & Top Actions)
+   ========================================= */
+header {
+  background: #fff;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--header-height);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 16px;
+  max-width: var(--max-width);
+  margin: auto;
+}
+
+h1 {
+  margin: 0;
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Timer Text */
+.timer-text {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 18px;
+  color: #333;
+  background: #f0f2f5;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+/* Desktop Actions Container (Hidden on Mobile) */
+.top-actions {
+  display: none;
+  gap: 8px;
+}
+
+/* Common Button Styles */
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn:hover { background: var(--accent-dark); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 7px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-ghost:hover { background: #f0f6ff; }
+
+/* =========================================
+   4. WELCOME SCREEN (Solid Background)
+   ========================================= */
+.welcome-screen {
+  position: fixed;
+  inset: 0;
+  background: #f2f2f2; /* Solid Light Grey */
+  z-index: 2000;       /* Above everything */
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.welcome-container {
+  background: #fff;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+.welcome-header { text-align: center; margin-bottom: 24px; }
+.welcome-header h1 { font-size: 24px; color: #d32f2f; margin-bottom: 8px; }
+.welcome-header p { color: #555; font-weight: 500; }
+
+.test-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 24px;
+}
+.detail-item {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+.detail-label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.detail-value { font-size: 16px; font-weight: 700; color: #000; }
+
+.welcome-instructions {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+.welcome-instructions h3 { margin-top: 0; font-size: 16px; }
+.welcome-instructions li { margin-bottom: 12px; font-size: 14px; line-height: 1.5; font-weight: 500; }
+
+.welcome-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+.start-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.channel-link {
+  display: inline-block;
+  padding: 12px 30px;
+  border: 2px solid var(--accent);
+  border-radius: 25px;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* =========================================
+   5. QUIZ CARD & QUESTIONS
+   ========================================= */
+/* The main card holding the question */
+.card {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  /* No shadow for flat Testbook look */
+}
+
+.qbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.qmeta { font-size: 14px; font-weight: 600; color: #555; }
+.marking { font-size: 13px; font-weight: 600; }
+
+.qtext {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #222;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+/* Options */
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+}
+.opt:hover { background: #f8f9fa; border-color: #bbb; }
+
+.opt.selected {
+  border-color: var(--accent);
+  background: #eef5ff;
+}
+
+/* Radio Circle styling */
+.custom-radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #757575;
+  border-radius: 50%;
+  margin-top: 3px;
+  flex-shrink: 0;
+  position: relative;
+}
+.opt.selected .custom-radio {
+  border-color: var(--accent);
+}
+.opt.selected .custom-radio::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* Solution Explanation Box */
+.explanation {
+  background: #f0f7ff;
+  border-left: 4px solid var(--accent);
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 4px;
+  display: none; /* Hidden by default */
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   6. VIEW PALETTE (Right Side)
+   ========================================= */
+#palette {
+  background: #fff;
+  border-radius: 8px;
+  display: none; /* Hidden on mobile by default */
+  flex-direction: column;
+  padding: 15px;
+  z-index: 1000;
+}
+
+/* Palette Header/Legend */
+#palette-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.lg-box { width: 12px; height: 12px; border-radius: 2px; display: inline-block; vertical-align: middle; margin-right: 4px; }
+
+/* Palette Button Grid */
+.palette-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+}
+/* Palette grid scroll only */
+#palette-grid {
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+  padding-right: 4px;
+  overscroll-behavior: contain;
+}
+
+.qbtn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #ddd;
+  background: #d6d6d6; /* dense grey */
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.qbtn:hover { background: #e0e0e0; }
+/* Pentagon shape (both modes) */
+.qbtn.current {
+  clip-path: polygon(
+    50% 0%,
+    100% 38%,
+    82% 100%,
+    18% 100%,
+    0% 38%
+  );
+  border: none;
+  position: relative;
+}
+
+/* 🔴 Red outline ONLY in QUIZ MODE */
+body.mode-quiz .qbtn.current::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  background: #dc3545;
+  clip-path: inherit;
+  z-index: -1;
+}
+
+/* ❌ NO outline in solution mode */
+body.mode-solution .qbtn.current::before {
+  content: none;
+}
+
+
+/* --- QUIZ MODE COLORS --- */
+.qbtn.answered { background: var(--success); color: #fff; border-color: var(--success); }
+.qbtn.marked { background: var(--accent); color: #fff; border-color: var(--accent); }
+.qbtn.notvisited {
+  background: #bdbdbd;  /* darker dense grey */
+  color: #000;
+}
+.qbtn.marked-answered {
+  background: var(--accent);
+  color: #fff;
+}
+.qbtn.marked-answered::after {
+  content: "★";
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  font-size: 10px;
+  color: #ffeb3b; /* Yellow Star */
+  line-height: 1;
+}
+.lg-box.notvisited { background: #e0e0e0; }
+.lg-box.answered { background: var(--success); }
+.lg-box.marked { background: var(--accent); }
+.lg-box.marked-answered { background: var(--accent); } /* Legend hack */
+
+/* --- SOLUTION MODE COLORS (New Requirement) --- */
+.qbtn.sol-right { background: var(--success); color: #fff; border-color: var(--success); }
+.qbtn.sol-wrong { background: var(--danger); color: #fff; border-color: var(--danger); }
+.qbtn.sol-skip  { background: #9e9e9e; color: #fff; border-color: #9e9e9e; }
+
+/* Star Indicators for Solution Mode */
+.qbtn.sol-right.has-star::after,
+.qbtn.sol-wrong.has-star::after {
+  content: "★";
+  position: absolute;
+  bottom: 0px;
+  font-size: 12px;
+  color: #ffeb3b;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* =========================================
+   7. BOTTOM NAVIGATION BAR (Mobile)
+   ========================================= */
+.fbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  z-index: 900;
+}
+
+.fbar button {
+  flex: 1;
+  padding: 10px 4px;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+/* Specific Button Colors */
+#prevBtn { background: #fff; color: #333; border: 1px solid #ccc; }
+#clearBtn { background: #fff; color: #333; border: 1px solid #ccc; }
+#markBtn { background: var(--accent); color: #fff; }
+#nextBtn { background: var(--accent); color: #fff; }
+
+/* Active Mark Button (Green) */
+#markBtn.active-mark { background: var(--success) !important; }
+
+
+/* =========================================
+   8. MEDIA QUERIES (The "Testbook" Logic)
+   ========================================= */
+/* DESKTOP LAYOUT */
+@media (min-width: 992px) {
+
+  /* 1. Grid Layout */
+  .quiz-main-area {
+    display: grid;
+    grid-template-columns: 1fr 320px; /* Question | Palette */
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* 2. Palette Sticky & Visible */
+  #palette {
+    display: flex !important; /* Always show */
+    position: sticky;
+    top: 80px; /* Below header */
+    height: calc(100vh - 100px);
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    overscroll-behavior: contain;
+    z-index: 10; /* Lower z-index so header buttons stay on top */
+  }
+
+  /* 3. Hide Mobile Bottom Bar */
+  .fbar { display: none !important; }
+
+  /* 4. Show Desktop Top Buttons */
+  .top-actions { display: flex !important; }
+
+  /* Bigger action buttons on DESKTOP */
+.top-actions .btn,
+.top-actions .btn-ghost {
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 6px;
+    line-height: 1.2;
+
+}
+
+  /* 5. Hide Mobile "View" Toggle in Header */
+  #paletteBtn { display: none !important; }
+}
+
+/* MOBILE LAYOUT */
+@media (max-width: 991px) {
+  /* Palette is a popup overlay */
+  #palette {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    bottom: 0; /* Full height */
+    width: 280px;
+    border-left: 1px solid #ccc;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+@media (max-width: 991px) {
+
+  /* ==================================================
+     MOBILE HEADER FIX — QUIZ MODE ONLY
+     ================================================== */
+
+  body.mode-quiz .header-inner {
+    flex-wrap: wrap;
+  }
+
+  /* Quiz title on its own line */
+  body.mode-quiz .header-inner > div:first-child {
+    width: 100%;
+    justify-content: flex-start;
+    
+  }
+
+  body.mode-quiz #headerTitle {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+  }
+
+  /* Buttons row (View / Timer / Submit) */
+  body.mode-quiz .header-inner > div:last-child {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;   /* push group to right */
+    gap: 8px;                    /* SAME spacing as now */
+    padding-left: 30%;           /*  starts from middle */
+  }
+
+}
+
+/* =========================================
+   9. ANALYSIS DASHBOARD (From gem test.html)
+   ========================================= */
+.analysis-container { max-width: 900px; margin: auto; display: flex; flex-direction: column; gap: 14px; padding: 10px 0; }
+.card-dashboard { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 4px 14px rgba(0,0,0,.08); border: 1px solid #edf2f7; }
+
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px; color: #444; }
+.info-grid div b { color: #111; }
+
+.score-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; text-align: center; }
+.score-item { background: #f8fbff; border-radius: 10px; padding: 14px; border: 1px solid #e1ecff; }
+.score-item h4 { margin: 0; font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
+.score-item p { margin: 6px 0 0; font-size: 20px; font-weight: 800; color: #222; }
+
+.attempt-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; text-align: center; }
+.attempt-box { padding: 12px; border-radius: 10px; font-weight: 700; font-size: 13px; border: 1px solid transparent; }
+.attempt-box span { display: block; font-size: 20px; margin-top: 4px; font-weight: 800; }
+
+.at-correct { background: #e6f7ee; color: var(--success); border-color: #c3e6cb; }
+.at-wrong { background: #fdeaea; color: var(--danger); border-color: #f5c6cb; }
+.at-unattempted { background: #fff8e1; color: #b77c00; border-color: #ffeeba; }
+.at-total { background: #e7f0ff; color: var(--accent); border-color: #b6d4fe; }
+
+.action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px; }
+.btn-dash { padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.2s; text-align: center; border: 2px solid transparent; }
+.btn-solid { background: var(--accent); color: #fff; }
+.btn-solid:hover { background: var(--accent-dark); }
+.btn-outline { background: #fff; color: var(--accent); border-color: var(--accent); }
+.btn-outline:hover { background: #f0f6ff; }
+
+/* Comparison Bars */
+.bar-section { margin-top: 10px; }
+.bar-row { margin-bottom: 16px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #555; }
+.bar-track { height: 10px; background: #e9ecef; border-radius: 99px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 99px; transition: width 1s ease-out; }
+.fill-you { background: var(--accent); }
+.fill-topper { background: var(--success); }
+.bar-values { display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px; color: #777; font-weight: 600; }
+
+/* Topper Table */
+.topper-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
+.topper-table th { background: #f1f5f9; color: #444; font-weight: 700; padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+.topper-table td { padding: 10px; border-bottom: 1px solid #eee; color: #333; }
+.section-title { font-size: 16px; font-weight: 700; margin: 0 0 14px; color: #222; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+
+  /* Language Dropdown Styling */
+#langSelect {
+  background-color: #fff;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Ensure header items don't overlap on small screens */
+@media (max-width: 600px) {
+  .header-inner {
+    padding: 0 8px;
+  }
+  #langSelect {
+    font-size: 11px;
+    padding: 2px;
+  }
+  .timer-text {
+    font-size: 14px;
+    padding: 2px 6px;
+  }
+}
+/* =========================================
+   10. UTILITIES & MODALS
+   ========================================= */
+.hidden { display: none !important; }
+
+/* Modal */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 3000; }
+.modal-content { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%; text-align: center; }
+.modal h3 { margin-top: 0; color: var(--accent); }
+.modal .actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+
+/* Watermark */
+.ssc-watermark { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.ssc-wm { position: absolute; font-size: 26px; font-weight: 700; color: rgba(0,0,0,0.045); transform: rotate(-30deg); white-space: nowrap; }
+
+/* MathJax */
+mjx-container { font-family: inherit !important; font-size: 1em; overflow-x: auto; }
+</style>
+
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    options: {
+      skipHtmlTags: ['script', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+</head>
+<body>
+
+<div class="welcome-screen" id="welcomeScreen">
+  <div class="welcome-container">
+
+    <div class="welcome-header">
+      <h1>SSC COMPILATIONS TEST</h1> <p>Quiz ID: SSC CGL 2025</p>
+    </div>
+
+    <div class="test-details">
+      <div class="detail-item">
+        <div class="detail-label">Total Questions</div>
+        <div class="detail-value">15</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Correct Marks</div>
+        <div class="detail-value">+3</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Negative Marks</div>
+        <div class="detail-value">-1</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Total Time</div>
+        <div class="detail-value">10 Minutes</div>
+      </div>
+    </div>
+    
+    <div class="welcome-instructions">
+      <h3>General Instructions / सामान्य निर्देश</h3>
+      <ul>
+        <li><b>Do not reload the page.</b><br><span>कृपया पेज को रीलोड न करें।</span></li>
+        <li><b>Do not close the browser.</b><br><span>ब्राउज़र बंद न करें।</span></li>
+        <li><b>Stable internet is required.</b><br><span>स्थिर इंटरनेट सुनिश्चित करें।</span></li>
+        <li><b>Submit before time ends.</b><br><span>समय समाप्त होने से पहले जमा करें।</span></li>
+      </ul>
+    </div>
+
+    <div class="welcome-actions" style="flex-direction: column; align-items: center; gap: 20px;">
+      
+      <div style="width: 100%; max-width: 300px;">
+        <label for="welcomeLangSelect" style="display:block; font-size:13px; font-weight:700; margin-bottom:5px; color:var(--accent);">SELECT LANGUAGE / भाषा चुनें:</label>
+        <select id="welcomeLangSelect" class="btn-ghost" style="width: 100%; padding: 12px; border-radius: 8px; font-size: 15px; cursor: pointer; border: 2px solid var(--accent);">
+          <option value="">-- Choose Language --</option>
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="bilingual">Bilingual (English + Hindi)</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center;">
+        <button id="welcomeStartBtn" class="start-btn" type="button">▶ Start Test</button>
+        <a class="channel-link" href="https://t.me/SSC_COMPILATIONS_2025" target="_blank">📢 Join Telegram Channel</a>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
+
+
+
+<div id="ssc-watermark" class="ssc-watermark">
+  <div class="ssc-wm" style="top:10%; left:5%;">@SSC_COMPILATIONS_2025</div>
+  <div class="ssc-wm" style="top:30%; left:60%;">@SSC_COMPILATIONS_2025</div>
+  <div class="ssc-wm" style="top:55%; left:25%;">@SSC_COMPILATIONS_2025</div>
+  <div class="ssc-wm" style="top:75%; left:65%;">@SSC_COMPILATIONS_2025</div>
+  <div class="ssc-wm" style="top:90%; left:10%;">@SSC_COMPILATIONS_2025</div>
+</div>
+
+
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA27fx3B80S6RicFp-DM0wcZmLSxUsfnAU",
+    authDomain: "ssc-journey-rank-percentile-2.firebaseapp.com",
+    databaseURL: "https://ssc-journey-rank-percentile-2-default-rtdb.firebaseio.com",
+    projectId: "ssc-journey-rank-percentile-2",
+    storageBucket: "ssc-journey-rank-percentile-2.firebasestorage.app",
+    messagingSenderId: "801617177136",
+    appId: "1:801617177136:web:b8fb85cabbe677280cdbf5"
+    };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
+
+<header id="mainHeader" style="display:none;">
+  <div class="header-inner">
+
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button id="backToAnalysisBtn" class="btn-ghost" style="display:none;">⬅ Analysis</button>
+      <h1 id="headerTitle">SSC CGL 2025</h1>
+    </div>
+    
+
+    <div style="display:flex; align-items:center; gap:10px;">
+      <select id="langSelect" class="btn-ghost" style="padding: 4px; font-size: 13px;">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="bilingual">EN+HI</option>
+      </select>
+      <div id="topActions" class="top-actions"></div>
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+    
+<div id="nameContainer" style="max-width: 1280px; margin: 10px auto; padding: 0 16px;">
+  <input type="text" id="studentName" placeholder="Enter Your Name (Required)"
+    style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;"
+    oninput="localStorage.setItem('ssc_quiz_name', this.value)">
+</div>
+<div class="container">
+
+  <div class="quiz-main-area" id="quizMainArea" style="display:none;">
+
+    <div id="quizCard" class="card">
+      <div class="qbar">
+        <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">15</span></div>
+        <div class="marking" id="marking"></div>
+      </div>
+
+      <div class="qtext" id="qtext"></div>
+      <div id="questionImage" style="margin:12px 0;"></div>
+      <div class="options" id="options"></div>
+
+      <div id="explanation" class="explanation"></div>
+    </div>
+
+    <div id="palette" aria-hidden="true">
+
+      <div id="palette-legend">
+        <div><span class="lg-box notvisited"></span> Not Visited</div>
+        <div><span class="lg-box answered"></span> Answered</div>
+        <div><span class="lg-box marked"></span> Marked</div>
+        <div><span class="lg-box marked-answered">★</span> Ans & Marked</div>
+      </div>
+
+      <div id="palette-summary" style="margin-bottom:10px; font-weight:700; font-size:13px; text-align:center;"></div>
+
+      <div id="palette-grid" class="palette-grid"></div>
+
+    </div>
+
+  </div> <div id="results" class="results" style="display:none"></div>
+  <div id="previousAttempts" class="results" style="display:none"></div>
+  <div id="attemptReplay" class="results" style="display:none"></div>
+
+</div>
+
+<div class="fbar" id="floatBar" style="display:none;">
+  <button id="prevBtn">← Prev</button>
+  <button id="clearBtn">Clear</button>
+  <button id="markBtn">Mark for Review</button>
+  <button id="nextBtn">Next →</button>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg">Are you sure you want to submit?</p>
+    <div class="actions">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 🔐 SAFE Device ID
+let DEVICE_ID = localStorage.getItem("ssc_quiz_device_id");
+if (!DEVICE_ID) {
+  DEVICE_ID = "dev-" + Date.now() + "-" + Math.random().toString(36).substring(2, 12);
+  localStorage.setItem("ssc_quiz_device_id", DEVICE_ID);
+}
+
+// 🔧 CONFIGURATION FROM BOT PLACEHOLDERS
+const QUIZ_TITLE = "SSC CGL 2025";
+const QUIZ_ID = "SSC CGL 2025";
+const QUIZ_STATE_KEY = "ssc_quiz_state_" + QUIZ_ID;
+const QUIZ_RESULT_KEY = "ssc_quiz_result_" + QUIZ_ID;
+
+// ⏱ VARIABLES
+let current = 0;
+let answers = {};    // { qId: "1", ... }
+let marked = {};     // { qId: true }
+let seconds = 600;
+const TOTAL_TIME_SECONDS = seconds;
+let timerInterval = null;
+let isQuiz = true;   // true = Taking Quiz, false = Viewing Solution
+let LAST_RESULT_HTML = "";
+let currentLang = "en";
+
+// 🗄 DATA ARRAYS
+
+const QUESTIONS = [
+{"answer": "2", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50001", "negative_score": "1", "option_1": {"en": "Regulating foreign trade and setting import-export duties", "hi": "विदेशी व्यापार को नियंत्रित करना और आयात-निर्यात शुल्क निर्धारित करना"}, "option_2": {"en": "Promoting and sustaining fair competition in Indian markets", "hi": "भारतीय बाजारों में प्रतिस्पर्धा को बढ़ावा देना और उसे बनाए रखना"}, "option_3": {"en": "Drafting national education policies and curricula", "hi": "राष्ट्रीय शिक्षा नीतियों और पाठ्यक्रमों का मसौदा तैयार करना"}, "option_4": {"en": "Supervising the functioning of public sector banks", "hi": "लोक क्षेत्र के बैंकों के कार्यों की निगरानी करना"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>In 2022, Sangeeta Verma was appointed as the Chairperson of the Competition Commission of India (CCI). Which of the following is correct regarding her role and responsibilities?", "hi": "2022 में, संगीत वर्मा को भारतीय प्रतिस्पर्धा आयोग (CCI) की अध्यक्ष नियुक्त किया गया। उनके भूमिका और जिम्मेदारियों के बारे में निम्नलिखित में से कौन सा सही है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "3", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50002", "negative_score": "1", "option_1": {"en": "Total income, military strength, literacy rate", "hi": "कुल आय, सैन्य शक्ति, साक्षरता दर"}, "option_2": {"en": "GDP, per capita income, export performance", "hi": "सकल घरेलू उत्पाद, प्रति व्यक्ति आय, निर्यात प्रदर्शन"}, "option_3": {"en": "Life expectancy, education level, per capita income", "hi": "जीवन प्रत्याशा, शिक्षा स्तर, प्रति व्यक्ति आय"}, "option_4": {"en": "Employment rate, industrial growth, natural resources", "hi": "रोज़गार दर, औद्योगिक विकास, प्राकृतिक संसाधन"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Which of the following combinations of indicators is used by the UNDP to compare countries in its Human Development Report?", "hi": "यूएनडीपी द्वारा अपनी मानव विकास रिपोर्ट में देशों की तुलना करने के लिए निम्नलिखित में से किस संकेतक संयोजन का उपयोग किया जाता है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "1", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50003", "negative_score": "1", "option_1": {"en": "Thar Desert", "hi": "थार मरुस्थल"}, "option_2": {"en": "Rann of Kutch", "hi": "कच्छ का रण"}, "option_3": {"en": "Ladakh Desert", "hi": "लद्दाख मरुस्थल"}, "option_4": {"en": "Deccan Plateau", "hi": "दक्कन पठार"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>What is the largest desert in India?", "hi": "भारत का सबसे बड़ा मरुस्थल कौन-सा है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "2", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50004", "negative_score": "1", "option_1": {"en": "High quality of life", "hi": "जीवन की उच्च गुणवत्ता"}, "option_2": {"en": "Low life expectancy", "hi": "कम जीवन प्रत्याशा"}, "option_3": {"en": "High literacy rate", "hi": "उच्च साक्षरता दर"}, "option_4": {"en": "High income", "hi": "उच्च आय"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>What does a low Human Development Index (HDI) score indicate?", "hi": "निम्न मानव विकास सूचकांक (HDI) स्कोर क्या दर्शाता है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "3", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50005", "negative_score": "1", "option_1": {"en": "Direct election", "hi": "प्रत्यक्ष चुनाव"}, "option_2": {"en": "Nomination", "hi": "नामांकन"}, "option_3": {"en": "Electoral College", "hi": "निर्वाचक मंडल"}, "option_4": {"en": "Lottery system", "hi": "लॉटरी प्रणाली"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>The President of India is elected by which method?", "hi": "भारत के राष्ट्रपति का चुनाव किस पद्धति से होता है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "3", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50006", "negative_score": "1", "option_1": {"en": "Head", "hi": "सिर"}, "option_2": {"en": "Foot", "hi": "पैर"}, "option_3": {"en": "Hand", "hi": "हाथ"}, "option_4": {"en": "Knee", "hi": "घुटना"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Which body part is a soccer player NOT allowed to use to touch the ball (except for the goalkeeper)?", "hi": "फुटबॉल में खिलाड़ी शरीर के किस अंग का उपयोग गेंद को छूने के लिए नहीं कर सकता (गोलकीपर को छोड़कर)?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "2", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50007", "negative_score": "1", "option_1": {"en": "Beti Bachao Beti Padhao", "hi": "बेटी बचाओ बेटी पढ़ाओ"}, "option_2": {"en": "National Rural Livelihood Mission (NRLM)", "hi": "राष्ट्रीय ग्रामीण आजीविका मिशन"}, "option_3": {"en": "Pradhan Mantri Kaushal Vikas Yojana", "hi": "प्रधानमंत्री कौशल विकास योजना"}, "option_4": {"en": "Digital India", "hi": "डिजिटल इंडिया"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Which government initiative focuses on promoting self-reliance and entrepreneurship among women through Self-Help Groups (SHGs)?", "hi": "स्वयं सहायता समूहों (SHGs) के माध्यम से महिलाओं में आत्मनिर्भरता और उद्यमिता को बढ़ावा देने वाली सरकारी पहल कौन-सी है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "1", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50008", "negative_score": "1", "option_1": {"en": "Ayushman Bharat – Pradhan Mantri Jan Arogya Yojana", "hi": "आयुष्मान भारत – प्रधानमंत्री जन आरोग्य योजना"}, "option_2": {"en": "Rashtriya Swasthya Bima Yojana", "hi": "राष्ट्रीय स्वास्थ्य बीमा योजना"}, "option_3": {"en": "Pradhan Mantri Suraksha Bima Yojana", "hi": "प्रधानमंत्री सुरक्षा बीमा योजना"}, "option_4": {"en": "National Health Mission", "hi": "राष्ट्रीय स्वास्थ्य मिशन"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Which scheme was launched to provide health insurance coverage of up to ₹5 lakh per family per year for economically weaker sections?", "hi": "आर्थिक रूप से कमजोर वर्गों को प्रति वर्ष प्रति परिवार ₹5 लाख तक का स्वास्थ्य बीमा कवरेज प्रदान करने के लिए कौन-सी योजना शुरू की गई?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "3", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50009", "negative_score": "1", "option_1": {"en": "Through cash payments", "hi": "नकद भुगतान"}, "option_2": {"en": "Through cheques", "hi": "चेक के माध्यम से"}, "option_3": {"en": "Direct Benefit Transfer (DBT) to bank accounts", "hi": "बैंक खातों में प्रत्यक्ष लाभ अंतरण (DBT)"}, "option_4": {"en": "Through post office savings", "hi": "डाकघर बचत के माध्यम से"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>How is the financial assistance under the PM-KISAN Scheme transferred to farmers?", "hi": "पीएम-किसान योजना के तहत वित्तीय सहायता किसानों को कैसे प्रदान की जाती है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "3", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50010", "negative_score": "1", "option_1": {"en": "Chief Justice of India", "hi": "भारत के मुख्य न्यायाधीश"}, "option_2": {"en": "Prime Minister of India", "hi": "भारत के प्रधानमंत्री"}, "option_3": {"en": "Speaker of the Lok Sabha", "hi": "लोकसभा अध्यक्ष"}, "option_4": {"en": "President of India", "hi": "भारत के राष्ट्रपति"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Who presides over the Lok Sabha sessions?", "hi": "लोकसभा सत्रों की अध्यक्षता कौन करता है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "2", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50011", "negative_score": "1", "option_1": {"en": "Medha Patkar", "hi": "मेधा पाटकर"}, "option_2": {"en": "Baba Amte", "hi": "बाबा आमटे"}, "option_3": {"en": "Anna Hazare", "hi": "अन्ना हज़ारे"}, "option_4": {"en": "Aruna Roy", "hi": "अरुणा रॉय"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Who returned the Padma Vibhushan Award protesting against the treatment of tribals during the Sardar Sarovar Dam construction?", "hi": "सरदार सरोवर बांध निर्माण के दौरान आदिवासियों के प्रति व्यवहार के विरोध में किसने पद्म विभूषण पुरस्कार लौटाया?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "1", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50012", "negative_score": "1", "option_1": {"en": "Vikram Sarabhai", "hi": "विक्रम साराभाई"}, "option_2": {"en": "Homi Bhabha", "hi": "होमी भाभा"}, "option_3": {"en": "Satyendra Nath Bose", "hi": "सत्येंद्र नाथ बोस"}, "option_4": {"en": "Srinivasa Ramanujan", "hi": "श्रीनिवास रामानुजन"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Who was the first Indian scientist to launch India’s space program?", "hi": "भारत के अंतरिक्ष कार्यक्रम की नींव रखने वाले पहले वैज्ञानिक कौन थे?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "2", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50013", "negative_score": "1", "option_1": {"en": "A set of criminal laws", "hi": "आपराधिक कानूनों का समूह"}, "option_2": {"en": "A common set of personal laws for all citizens", "hi": "सभी नागरिकों के लिए समान व्यक्तिगत कानून"}, "option_3": {"en": "A law for environmental protection", "hi": "पर्यावरण संरक्षण कानून"}, "option_4": {"en": "A code for taxation policies", "hi": "कर नीति संहिता"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>What is the Uniform Civil Code (UCC)?", "hi": "समान नागरिक संहिता (UCC) क्या है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "2", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50014", "negative_score": "1", "option_1": {"en": "Budget surplus", "hi": "बजट अधिशेष"}, "option_2": {"en": "Fiscal deficit", "hi": "राजकोषीय घाटा"}, "option_3": {"en": "Trade deficit", "hi": "व्यापार घाटा"}, "option_4": {"en": "Current account deficit", "hi": "चालू खाता घाटा"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>What occurs when the government spends more than it earns in revenue?", "hi": "जब सरकार का व्यय उसकी आय से अधिक हो जाता है तो इसे क्या कहते हैं?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"},
+{"answer": "1", "correct_score": "3", "deleted": "0", "difficulty_level": "0", "id": "50015", "negative_score": "1", "option_1": {"en": "Arthashastra", "hi": "अर्थशास्त्र"}, "option_2": {"en": "Manusmriti", "hi": "मनुस्मृति"}, "option_3": {"en": "Mahabharata", "hi": "महाभारत"}, "option_4": {"en": "Rigveda", "hi": "ऋग्वेद"}, "option_5": "", "option_image_1": "", "option_image_2": "", "option_image_3": "", "option_image_4": "", "option_image_5": "", "question": {"en": "<br>Name the ancient text written by Chanakya, considered a treatise on statecraft and economics.", "hi": "चाणक्य द्वारा रचित वह प्राचीन ग्रंथ कौन-सा है जिसे राज्य-नीति और अर्थशास्त्र का महत्वपूर्ण ग्रंथ माना जाता है?<br><br>"}, "question_image": "", "quiz_id": "SSC CGL 2025", "solution_heading": "", "solution_image": "", "solution_text": {"en": "", "hi": ""}, "solution_video": "", "sortingparam": "0.00"}
+];
+
+// ===============================
+// 🛠️ HELPER FUNCTIONS
+// ===============================
+
+// Short helper for getting elements
+const el = id => document.getElementById(id);
+
+// Format seconds into MM:SS
+function fmt(s){
+  s = Math.max(0, s);
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+}
+
+// Save current progress to LocalStorage
+function saveQuizState(){
+  // Don't save state if we are just viewing solutions
+  if(!isQuiz) return;
+
+  const state = {
+    current,
+    answers,
+    marked,
+    currentLang,
+    seconds
+  };
+  localStorage.setItem(QUIZ_STATE_KEY, JSON.stringify(state));
+}
+
+// ===============================
+// ⏱️ TIMER LOGIC
+// ===============================
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+
+  // Always show valid time
+  seconds = Math.max(0, seconds);
+  el("timer").textContent = fmt(seconds);
+
+  timerInterval = setInterval(() => {
+
+    // ⛔ STOP exactly at zero
+    if (seconds <= 0) {
+      seconds = 0;
+      el("timer").textContent = "00:00";
+      clearInterval(timerInterval);
+
+      // 🔥 AUTO SUBMIT
+      autoSubmitQuiz();
+      return;
+    }
+
+    // Normal countdown
+    seconds--;
+    el("timer").textContent = fmt(seconds);
+
+    // Save state safely
+    if (seconds % 5 === 0) saveQuizState();
+
+  }, 1000);
+}
+
+// ===============================
+// 📝 RENDER QUESTION ENGINE
+// ===============================
+function renderQuestion(i) {
+  current = i;
+  const q = QUESTIONS[i];
+
+  // 1. Update Header Info
+  el("qindex").textContent = i + 1;
+  el("qtotal").textContent = QUESTIONS.length;
+
+  // --- LANGUAGE HELPER FUNCTION ---
+  // Processes the JSON object based on currentLang (en, hi, or bilingual)
+  const getLangText = (obj) => {
+    if (!obj) return "";
+    if (typeof obj === "string") return obj; // Fallback for old format strings
+
+    if (currentLang === "bilingual") {
+      const enText = obj.en || "";
+      const hiText = obj.hi || "";
+      return enText + (enText && hiText ? "<hr style='border:none; border-top:1px dashed #ccc; margin:10px 0;'>" : "") + hiText;
+    }
+    // Return selected language or fallback to English if the choice is empty
+    return obj[currentLang] || obj["en"] || "";
+  };
+
+  // 2. Render Question Text & Math
+  const qTextEl = el("qtext");
+  qTextEl.innerHTML = getLangText(q.question);
+  normalizeMathForQuiz(qTextEl);
+
+  // 🖼️ QUESTION IMAGE RENDER (Updated to 40% size)
+  const imgBox = document.getElementById("questionImage");
+  imgBox.innerHTML = "";
+
+  if (q.question_image && q.question_image.trim() !== "") {
+    const img = document.createElement("img");
+    img.src = q.question_image;
+    img.alt = "Question Image";
+    img.style.width = "40%"; // Force 40% size as requested
+    img.style.height = "auto";
+    img.style.display = "block";
+    img.style.margin = "10px auto";
+    img.style.border = "1px solid #ddd";
+    img.style.borderRadius = "6px";
+    img.loading = "lazy";
+
+    img.onerror = () => {
+      imgBox.innerHTML = "<div style='color:red;font-size:13px'>⚠ Image failed to load</div>";
+    };
+
+    imgBox.appendChild(img);
+  }
+
+  // 3. Update Marks
+  el("marking").innerHTML = `Marking: <span style="color:var(--success)">+${Number(q.correct_score ?? 1)}</span> / <span style="color:var(--danger)">-${Number(q.negative_score ?? 0)}</span>`;
+
+  // 4. Render Options (Updated to include Option Images)
+  const optsContainer = el("options");
+  optsContainer.innerHTML = "";
+
+  const optionKeys = ["option_1", "option_2", "option_3", "option_4", "option_5"];
+
+  optionKeys.forEach((key, idx) => {
+    if (!q[key]) return; // Skip empty options
+
+    const optionIndex = idx + 1; // 1-based index (1,2,3,4)
+    const isSelected = answers[q.id ?? i] === String(optionIndex);
+    const isCorrectAns = String(q.answer) === String(optionIndex);
+
+    const div = document.createElement("div");
+    div.className = "opt";
+
+    // --- LOGIC: QUIZ vs SOLUTION MODE ---
+    if (isQuiz) {
+      if (isSelected) div.classList.add("selected");
+      div.onclick = () => selectOption(q, optionIndex, div);
+    } else {
+      div.style.cursor = "default";
+      if (isCorrectAns) {
+        div.classList.add("correct");
+        div.style.backgroundColor = "#e6f7ee";
+        div.style.borderColor = "#2e7d32";
+      }
+      if (isSelected && !isCorrectAns) {
+        div.classList.add("wrong");
+        div.style.backgroundColor = "#fdeaea";
+        div.style.borderColor = "#c82d3f";
+      }
+    }
+
+    // 🖼️ OPTION IMAGE RENDER (40% size)
+    const optImgKey = `option_image_${optionIndex}`;
+    let optImgHtml = "";
+    if (q[optImgKey] && q[optImgKey].trim() !== "") {
+      optImgHtml = `<div style="margin-top:8px;"><img src="${q[optImgKey]}" style="width:40%; height:auto; border-radius:4px; border:1px solid #eee;"></div>`;
+    }
+
+    div.innerHTML = `
+      <div class="custom-radio"></div>
+      <div style="flex:1">
+        <div class="opt-text">${getLangText(q[key])}</div>
+        ${optImgHtml}
+      </div>
+    `;
+
+    optsContainer.appendChild(div);
+    normalizeMathForQuiz(div.querySelector(".opt-text"));
+  });
+
+  // 5. Render Explanation (Only in Solution Mode - Updated for Solution Images)
+  const expBox = el("explanation");
+  if (!isQuiz) {
+    const qid = q.id ?? i;
+    const userAns = answers[qid];
+    const isCorrect = userAns && String(userAns) === String(q.answer);
+
+    let statusText = "";
+    if (!userAns) {
+      statusText = `<span style="color:#9e9e9e">Skipped (0)</span>`;
+    } else if (isCorrect) {
+      statusText = `<span style="color:var(--success)">Correct (+${q.correct_score ?? 3})</span>`;
+    } else {
+      statusText = `<span style="color:var(--danger)">Wrong (-${q.negative_score ?? 1})</span>`;
+    }
+
+    // 🖼️ SOLUTION IMAGE RENDER (40% size)
+    let solImgHtml = "";
+    if (q.solution_image && q.solution_image.trim() !== "") {
+      solImgHtml = `<div style="margin-top:15px; text-align:center;"><img src="${q.solution_image}" style="width:40%; height:auto; border-radius:6px; border:1px solid #ddd;"></div>`;
+    }
+
+    expBox.style.display = "block";
+    expBox.innerHTML = `<div style="margin-bottom:8px; font-weight:700;">Status: ${statusText}</div>` +
+      (q.solution_text ? `<hr style="border:0; border-top:1px solid #ddd; margin:8px 0;"><strong>💡 Explanation:</strong><br>${getLangText(q.solution_text)}` : "") +
+      solImgHtml;
+    normalizeMathForQuiz(expBox);
+  } else {
+    expBox.style.display = "none";
+  }
+
+  // 6. Update MathJax
+  renderMath();
+
+  // 7. Update Palette & Buttons (Dependent functions)
+  if (typeof highlightPalette === "function") highlightPalette();
+  updateNavButtons();
+
+  // Handle language dropdown synchronization inside the header
+  const langSelect = document.getElementById("langSelect");
+  if (langSelect) {
+    langSelect.onchange = (e) => {
+      currentLang = e.target.value;
+      saveQuizState();
+      renderQuestion(current);
+    };
+  }
+}
+
+
+// ===============================
+// 🖱️ OPTION SELECTION
+// ===============================
+function selectOption(q, val, divEl){
+  // Prevent changing answers in Solution Mode
+  if(!isQuiz) return;
+
+  const qid = q.id ?? current;
+
+  // Toggle Logic: If clicking same option, unselect it?
+  // Testbook usually allows changing, not unselecting easily,
+  // but let's stick to: Click new -> Select new.
+
+  answers[qid] = String(val);
+  saveQuizState();
+
+  // Re-render to update visuals
+  renderQuestion(current);
+}
+
+// ===============================
+// 🔄 MATHJAX UTILS
+// ===============================
+function renderMath(){
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise();
+  }
+}
+
+function normalizeMathForQuiz(container) {
+  if (!container) return;
+  // Convert $$...$$ block math to \(...\) inline math for better mobile flow
+  container.innerHTML = container.innerHTML
+    .replace(/(\S)\s*\$\$(.+?)\$\*\s*(\S)/g, '$1 \\($2\\) $3')
+    .replace(/\$\$(.+?)\$\$/g, '\\($1\\)');
+}
+
+// Update Prev/Next Button States
+function updateNavButtons() {
+  const prev = el("prevBtn");
+  const next = el("nextBtn");
+
+  if(prev) prev.disabled = current === 0;
+  if(next) next.disabled = current === QUESTIONS.length - 1;
+}
+
+// ===============================
+// 🚀 SUBMIT & ANALYSIS ENGINE
+// ===============================
+function submitQuiz(isAuto = false) {
+  const nameInput = document.getElementById("studentName");
+  const studentNameValue = nameInput ? nameInput.value.trim() : "";
+
+  // This check now correctly targets the single input field
+  if (!studentNameValue || studentNameValue.toLowerCase() === "student" || studentNameValue === "") {
+    alert("Please enter your full name to submit quiz");
+    el("nameContainer").style.display = "block";
+    nameInput?.focus();
+    return;
+  }
+
+  // 2. 🛑 Stop Timer & Hide Quiz UI
+  if (timerInterval) clearInterval(timerInterval);
+  const timeTakenSeconds = TOTAL_TIME_SECONDS - seconds;
+
+  document.getElementById("mainHeader").style.display = "none";
+  document.getElementById("nameContainer").style.display = "none";
+  document.getElementById("floatBar").style.display = "none";
+  const quizArea = document.getElementById("quizMainArea");
+  if(quizArea) quizArea.style.display = "none";
+    // Show temporary loading message in the results container
+  const resBox = document.getElementById("results");
+  resBox.style.display = "block";
+  resBox.innerHTML = `<div class="card-dashboard" style="text-align:center; padding:50px;">
+                        <h2 style="color:var(--accent);">Generating analysis...</h2>
+                        <p>Please wait while we calculate your rank and toppers list.</p>
+                      </div>`;
+
+
+  // 3. 🧮 Calculate Scores
+  let correct = 0, wrong = 0, totalMarks = 0, maxTotalMarks = 0;
+
+  QUESTIONS.forEach((q, i) => {
+    maxTotalMarks += Number(q.correct_score ?? 1);
+    const qid = q.id ?? i;
+    const ans = answers[qid];
+    const isCorrect = ans && String(ans) === String(q.answer);
+
+    if (isCorrect) {
+      correct++;
+      totalMarks += Number(q.correct_score ?? 1);
+    } else if (ans) {
+      wrong++;
+      totalMarks -= Number(q.negative_score ?? 0);
+    }
+  });
+
+  const attempted = Object.keys(answers).length;
+  const unattempted = QUESTIONS.length - attempted;
+  const accuracy = attempted ? ((correct / attempted) * 100).toFixed(2) : "0.00";
+  const timeFormatted = fmt(timeTakenSeconds);
+
+  // 4. 📦 Prepare Data Payload
+  const firebasePayload = {
+    name: studentNameValue,
+    score: totalMarks,
+    total: maxTotalMarks,
+    correct,
+    wrong,
+    timeTaken: timeTakenSeconds,
+    quizId: QUIZ_ID,
+    deviceId: DEVICE_ID,
+    submittedAt: Date.now()
+  };
+
+  // 5. ☁️ Firebase Operations (Save & Fetch)
+  // First, save result (Admin data if 1st attempt, History always)
+  saveResultFirebase(firebasePayload).finally(() => {
+    saveAttemptHistory(firebasePayload);
+
+    // Fetch Rank & Toppers in parallel
+    Promise.all([
+      getRankAndPercentile(QUIZ_ID, totalMarks, timeTakenSeconds, firebasePayload.submittedAt),
+      getToppersList(QUIZ_ID)
+    ]).then(([rankData, toppersList]) => {
+
+      // Calculate Topper Stats for comparison
+      const topperStats = getTopperStatsForComparison(toppersList, QUESTIONS.length);
+
+      // 6. 🎨 Generate Analysis Dashboard HTML
+      // (Exact structure requested: Info, Actions, Scores, Attempts, Comparison, Toppers)
+      let dashboardHTML = `
+      <div class="analysis-container">
+
+        <div class="card-dashboard">
+          <div class="info-grid">
+            <div><b>Name:</b> ${firebasePayload.name}</div>
+            <div><b>Quiz ID:</b> ${QUIZ_ID}</div>
+            <div><b>Quiz Name:</b> ${QUIZ_TITLE}</div>
+          </div>
+        </div>
+
+        <div class="card-dashboard">
+           <div class="action-grid">
+              <button class="btn-dash btn-solid" onclick="reattemptQuiz()">🔄 Reattempt</button>
+              <button class="btn-dash btn-outline" onclick="enterSolutionMode()">📊 Detailed Solution</button>
+           </div>
+           <div class="action-grid">
+              <button class="btn-dash btn-outline" onclick="restoreLatestResult()">⬅ Back to Latest Result</button>
+              <button class="btn-dash btn-outline" onclick="loadPreviousAttempts('${QUIZ_ID}', '${DEVICE_ID}')">📁 Previous Results</button>
+           </div>
+        </div>
+
+        <div class="card-dashboard score-summary">
+          <div class="score-item">
+            <h4>🏆 Rank</h4>
+            <p>${rankData.rank} / ${rankData.total}</p>
+          </div>
+          <div class="score-item">
+            <h4>📊 Percentile</h4>
+            <p>${rankData.percentile}%</p>
+          </div>
+          <div class="score-item">
+            <h4>🧮 Score</h4>
+            <p>${totalMarks}</p>
+          </div>
+          <div class="score-item">
+            <h4>⏱ Time</h4>
+            <p>${timeFormatted}</p>
+          </div>
+        </div>
+
+        <div class="card-dashboard attempt-summary">
+           <div class="attempt-box at-correct">✅ Correct<span>${correct}</span></div>
+           <div class="attempt-box at-wrong">❌ Wrong<span>${wrong}</span></div>
+           <div class="attempt-box at-unattempted">🟡 Left<span>${unattempted}</span></div>
+           <div class="attempt-box at-total">✍️ Attempted<span>${attempted} / ${QUESTIONS.length}</span></div>
+        </div>
+
+        <div style="text-align:center">
+           <button class="btn-dash btn-solid" style="width:100%; max-width:400px;" onclick="refreshLatestRankOnDemand(this)">🔄 GET LIVE UPDATED RANK</button>
+        </div>
+
+        <div class="card-dashboard">
+          <h3 class="section-title">📊 You vs Topper</h3>
+          ${renderComparisonBar("Score", totalMarks, maxTotalMarks, topperStats.score, maxTotalMarks)}
+          ${renderComparisonBar("Accuracy", accuracy, 100, topperStats.accuracy, 100, "%")}
+          ${renderComparisonBar("Correct", correct, QUESTIONS.length, topperStats.correct, QUESTIONS.length)}
+          ${renderComparisonBar("Wrong", wrong, QUESTIONS.length, topperStats.wrong, QUESTIONS.length, "", true)}
+          ${renderComparisonBar(
+            "Time Taken",
+            timeTakenSeconds,
+            TOTAL_TIME_SECONDS,
+            topperStats.time,
+            TOTAL_TIME_SECONDS
+          )}
+
+
+        </div>
+
+        <div class="card-dashboard">
+          <h3 class="section-title">🏆 Top 10 Toppers (First Attempt)</h3>
+          <div style="overflow-x:auto">
+            <table class="topper-table">
+              <tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr>
+              ${toppersList.map((t, idx) => `
+                <tr>
+                  <td>${idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '#' + (idx + 1)))}</td>
+                  <td>${t.name}</td>
+                  <td><b>${t.score}</b></td>
+                  <td>${fmt(t.timeTaken)}</td>
+                </tr>
+              `).join('')}
+            </table>
+          </div>
+        </div>
+
+      </div>`;
+
+      // 7. 🚀 Inject & Show
+      const resBox = document.getElementById("results");
+      resBox.innerHTML = dashboardHTML;
+      resBox.style.display = "block";
+      // 🔧 Fix Time Taken display text to mm:ss (bars still use seconds)
+resBox.querySelectorAll(".bar-section").forEach(sec => {
+  const label = sec.querySelector(".bar-label span")?.textContent;
+  if (label === "Time Taken") {
+    const values = sec.querySelectorAll("span[style*='text-align:right']");
+    if (values.length === 2) {
+      values[0].textContent = fmt(timeTakenSeconds);   // YOU
+      values[1].textContent = fmt(topperStats.time);   // TOPPER
+    }
+  }
+});
+
+      // Save state for reload
+      LAST_RESULT_HTML = dashboardHTML;
+      localStorage.setItem(QUIZ_RESULT_KEY, JSON.stringify({
+        submitted: true,
+        resultHTML: dashboardHTML,
+        answers,
+        marked,
+        current: 0
+      }));
+
+
+      // Render Math in Dashboard
+      normalizeMathForQuiz(resBox);
+      renderMath();
+    });
+  });
+}
+function autoSubmitQuiz() {
+  // Prevent double submit
+  if (!isQuiz) return;
+
+  clearInterval(timerInterval);
+
+  // 🔐 ENSURE NAME EXISTS
+  let name = document.getElementById("studentName")?.value?.trim();
+
+  if (!name) {
+    name = "Anonymous";
+    localStorage.setItem("ssc_quiz_name", name);
+
+    const nameInput = document.getElementById("studentName");
+    if (nameInput) nameInput.value = name;
+  }
+
+  isQuiz = false;
+
+  // Inform user (optional)
+  alert("Time is up! Your test has been submitted automatically.");
+
+  // Submit quiz silently
+  submitQuiz(true); // true = auto submit
+}
+// ===============================
+// 📊 FIREBASE & DATA FUNCTIONS
+// ===============================
+
+// 1. Save Result (Admin - First Attempt Only)
+function saveResultFirebase(payload) {
+  const ref = db.ref("quiz_results/" + payload.quizId + "/" + payload.deviceId);
+  return ref.once("value").then(snap => {
+    if (snap.exists()) return false; // Don't overwrite first attempt
+    return ref.set(payload);
+  });
+}
+
+// 2. Save History (All Attempts)
+function saveAttemptHistory(payload) {
+  const ref = db.ref("attempt_history/" + payload.quizId + "/" + payload.deviceId + "/" + payload.submittedAt);
+  return ref.set(payload);
+}
+
+// 3. Calculate Rank & Percentile
+function getRankAndPercentile(quizId, myScore, myTime, mySubmittedAt) {
+  return db.ref("attempt_history/" + quizId).once("value").then(snapshot => {
+    const data = snapshot.val() || {};
+    let attempts = [];
+
+    // Flatten all attempts
+    Object.values(data).forEach(deviceData => {
+      Object.values(deviceData).forEach(att => attempts.push(att));
+    });
+
+    // Sort: Score DESC, Time ASC
+    attempts.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.timeTaken - b.timeTaken;
+    });
+
+    const total = attempts.length;
+    let rank = total + 1; // Default if not found
+
+    // Find my rank
+    for (let i = 0; i < attempts.length; i++) {
+      if (attempts[i].score === myScore &&
+          attempts[i].timeTaken === myTime &&
+          attempts[i].submittedAt === mySubmittedAt) {
+        rank = i + 1;
+        break;
+      }
+    }
+
+    // Calculate Percentile
+    const below = attempts.filter(a =>
+      a.score < myScore || (a.score === myScore && a.timeTaken > myTime)
+    ).length;
+
+    const percentile = total ? ((below / total) * 100).toFixed(2) : "0.00";
+
+    return { rank, percentile, total };
+  });
+}
+
+// 4. Fetch Top 10 List
+function getToppersList(quizId) {
+  return db.ref("quiz_results/" + quizId).once("value").then(snapshot => {
+    const data = snapshot.val();
+    if (!data) return [];
+
+    let all = Object.values(data);
+    // Sort: Score High->Low, Time Low->High
+    all.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.timeTaken - b.timeTaken;
+    });
+
+    return all.slice(0, 10);
+  });
+}
+
+// 5. Get Topper Stats for Bar Chart
+function getTopperStatsForComparison(toppersList, totalQ) {
+  if (!toppersList || toppersList.length === 0) {
+    return { score: 0, accuracy: 0, correct: 0, wrong: 0, time: 0 };
+  }
+  const t = toppersList[0]; // Rank 1
+  const att = t.correct + t.wrong;
+  const acc = att > 0 ? ((t.correct / att) * 100).toFixed(1) : 0;
+
+  return { score: t.score, accuracy: acc, correct: t.correct, wrong: t.wrong, time: t.timeTaken };
+}
+
+// 6. Render Comparison Bar HTML
+function renderComparisonBar(label, userVal, maxVal, topperVal, maxTopperVal, unit = "", isReverse = false) {
+  const userPct = (userVal > 0) ? Math.min(100, (userVal / maxVal) * 100) : 0;
+  const topperPct = Math.min(100, (topperVal / maxTopperVal) * 100) || 0;
+
+  return `
+  <div class="bar-section">
+    <div class="bar-label"><span>${label}</span></div>
+
+    <div style="display:grid; grid-template-columns: 60px 1fr 80px; gap:10px; align-items:center; margin-bottom:6px;">
+       <span style="font-size:12px; font-weight:700; color:var(--accent);">YOU</span>
+       <div class="bar-track"><div class="bar-fill fill-you" style="width:${userPct}%"></div></div>
+       <span style="font-size:12px; font-weight:700; text-align:right;">${userVal}${unit}</span>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 60px 1fr 80px; gap:10px; align-items:center;">
+       <span style="font-size:12px; font-weight:700; color:var(--success);">TOPPER</span>
+       <div class="bar-track"><div class="bar-fill fill-topper" style="width:${topperPct}%"></div></div>
+       <span style="font-size:12px; font-weight:700; text-align:right;">${topperVal}${unit}</span>
+    </div>
+  </div>`;
+}
+
+// ===============================
+// 🎮 DASHBOARD INTERACTIONS
+// ===============================
+
+// Enter "Detailed Solution" Mode (Testbook Style)
+function enterSolutionMode() {
+  // 1. Switch Flags
+  isQuiz = false;
+  document.body.classList.add("mode-solution");
+  document.body.classList.remove("mode-quiz");
+      // 7. 🔥 REBUILD AND RE-RENDER (The Fix)
+  buildPalette();      // Re-creates the 1, 2, 3... buttons
+  updatePaletteLegend();
+  highlightPalette();  // Apply Red/Green colors to the new buttons
+  renderQuestion(0);   // Show first question
+
+  // 2. Hide Dashboard & Other Result Views
+  document.getElementById("results").style.display = "none";
+  document.getElementById("previousAttempts").style.display = "none";
+  document.getElementById("attemptReplay").style.display = "none";
+
+  // 3. Prepare the Quiz Container
+  const quizArea = document.getElementById("quizMainArea");
+  const header = document.getElementById("mainHeader");
+  const palette = document.getElementById("palette"); // Targeted palette
+
+  header.style.display = "block";
+  palette.style.display = "flex"; // Ensure palette container is visible
+
+  // 4. Header UI Adjustments
+  document.getElementById("backToAnalysisBtn").style.display = "inline-block";
+  document.getElementById("timer").style.display = "none";
+  document.getElementById("submitBtn").style.display = "none";
+  document.getElementById("headerTitle").textContent = "Solution Mode";
+
+  // 5. Layout Restoration (Critical for the "nothing showing" issue)
+  if (window.innerWidth >= 992) {
+      quizArea.style.display = "grid";
+      // Re-organize desktop buttons
+      const topActions = document.getElementById("topActions");
+      topActions.appendChild(document.getElementById("prevBtn"));
+      topActions.appendChild(document.getElementById("clearBtn"));
+      topActions.appendChild(document.getElementById("markBtn"));
+      topActions.appendChild(document.getElementById("nextBtn"));
+      document.getElementById("floatBar").style.display = "none";
+  } else {
+      quizArea.style.display = "block";
+      document.getElementById("floatBar").style.display = "flex";
+      palette.style.display = "none"; // Hide mobile palette until "View" clicked
+  }
+
+  // 6. Fix Button Visibility
+  document.getElementById("clearBtn").style.display = "none";
+  document.getElementById("markBtn").style.display = "none";
+  attachListeners();   // Re-links the clicks
+
+  // 8. Refresh Math Rendering
+  if (window.MathJax) {
+    MathJax.typesetPromise();
+  }
+}
+
+
+// Reattempt (Clear and Reload)
+function reattemptQuiz() {
+  if(confirm("Are you sure you want to reattempt? Your current progress in this session will be reset.")) {
+    localStorage.removeItem(QUIZ_RESULT_KEY);
+    localStorage.removeItem(QUIZ_STATE_KEY);
+    localStorage.removeItem('ssc_quiz_name'); // ✅ Add this to clear the name for the new attempt
+    window.location.reload();
+  }
+}
+
+// Restore Dashboard (From History/Solution Mode)
+function restoreLatestResult() {
+  if(LAST_RESULT_HTML) {
+    document.getElementById("results").innerHTML = LAST_RESULT_HTML;
+    document.getElementById("results").style.display = "block";
+
+    // Hide other views
+    document.getElementById("quizMainArea").style.display = "none";
+    document.getElementById("previousAttempts").style.display = "none";
+    document.getElementById("mainHeader").style.display = "none";
+    document.getElementById("floatBar").style.display = "none";
+  }
+}
+// Refresh Rank Button Logic (STRICT submitQuiz aligned + Time Taken)
+function refreshLatestRankOnDemand(btn) {
+  btn.disabled = true;
+  btn.textContent = "Updating...";
+
+  let latestAttempt = null;
+
+  // 1️⃣ Fetch latest attempt for this device
+  db.ref("attempt_history/" + QUIZ_ID + "/" + DEVICE_ID)
+    .limitToLast(1)
+    .once("value")
+
+    .then(snapshot => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      latestAttempt = Object.values(data)[0];
+
+      return getRankAndPercentile(
+        QUIZ_ID,
+        latestAttempt.score,
+        latestAttempt.timeTaken,
+        latestAttempt.submittedAt
+      );
+    })
+
+    .then(rankData => {
+      if (!rankData || !latestAttempt) return;
+
+      const att = latestAttempt;
+
+      // === SAME calculations as submitQuiz ===
+      const attempted = att.correct + att.wrong;
+      const accuracy = attempted
+        ? ((att.correct / attempted) * 100).toFixed(2)
+        : "0.00";
+
+      // 2️⃣ Update Rank & Percentile
+      document.querySelector(".score-summary .score-item:nth-child(1) p")
+        .textContent = `${rankData.rank} / ${rankData.total}`;
+
+      document.querySelector(".score-summary .score-item:nth-child(2) p")
+        .textContent = `${rankData.percentile}%`;
+
+      // 3️⃣ Update comparison bars & topper table
+      return getToppersList(QUIZ_ID).then(toppersList => {
+
+        const topperStats = getTopperStatsForComparison(
+          toppersList,
+          QUESTIONS.length
+        );
+
+        // 🔄 Comparison card (EXACT submitQuiz structure)
+        const comparisonCard = Array.from(
+          document.querySelectorAll(".card-dashboard")
+        ).find(card =>
+          card.querySelector(".section-title")?.textContent === "📊 You vs Topper"
+        );
+
+        if (comparisonCard) {
+          comparisonCard.innerHTML = `
+            <h3 class="section-title">📊 You vs Topper</h3>
+            ${renderComparisonBar("Score", att.score, att.total, topperStats.score, att.total)}
+            ${renderComparisonBar("Accuracy", accuracy, 100, topperStats.accuracy, 100, "%")}
+            ${renderComparisonBar("Correct", att.correct, QUESTIONS.length, topperStats.correct, QUESTIONS.length)}
+            ${renderComparisonBar("Wrong", att.wrong, QUESTIONS.length, topperStats.wrong, QUESTIONS.length, "", true)}
+            ${renderComparisonBar(
+              "Time Taken",
+              timeTakenSeconds,
+              TOTAL_TIME_SECONDS,
+              topperStats.time,
+              TOTAL_TIME_SECONDS
+            )}
+          `;
+        }
+        // 🔧 Fix Time Taken display text to mm:ss (bars still use seconds)
+resBox.querySelectorAll(".bar-section").forEach(sec => {
+  const label = sec.querySelector(".bar-label span")?.textContent;
+  if (label === "Time Taken") {
+    const values = sec.querySelectorAll("span[style*='text-align:right']");
+    if (values.length === 2) {
+      values[0].textContent = fmt(timeTakenSeconds);   // YOU
+      values[1].textContent = fmt(topperStats.time);   // TOPPER
+    }
+  }
+});
+
+
+        // 🔄 Topper table (medals preserved)
+        const topperCard = Array.from(
+          document.querySelectorAll(".card-dashboard")
+        ).find(card =>
+          card.querySelector(".section-title")?.textContent === "🏆 Top 10 Toppers (First Attempt)"
+        );
+
+        if (topperCard) {
+          topperCard.innerHTML = `
+            <h3 class="section-title">🏆 Top 10 Toppers (First Attempt)</h3>
+            <div style="overflow-x:auto">
+              <table class="topper-table">
+                <tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr>
+                ${toppersList.map((t, idx) => `
+                  <tr>
+                    <td>${idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '#' + (idx + 1)))}</td>
+                    <td>${t.name}</td>
+                    <td><b>${t.score}</b></td>
+                    <td>${fmt(t.timeTaken)}</td>
+                  </tr>
+                `).join("")}
+              </table>
+            </div>
+          `;
+        }
+
+        // 4️⃣ Persist updated dashboard for reload
+        const resBox = document.getElementById("results");
+        LAST_RESULT_HTML = resBox.innerHTML;
+        localStorage.setItem(QUIZ_RESULT_KEY, JSON.stringify({
+          submitted: true,
+          resultHTML: LAST_RESULT_HTML,
+          answers,
+          marked,
+          current: 0
+        }));
+      });
+    })
+
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = "🔄 GET LIVE UPDATED RANK";
+    });
+}
+
+// ===============================
+// 📜 HISTORY & ATTEMPT REVIEW
+// ===============================
+
+// Load list of past attempts
+function loadPreviousAttempts(quizId, deviceId) {
+  const box = document.getElementById("previousAttempts");
+  box.innerHTML = '<div style="text-align:center; padding:20px;">Loading history...</div>';
+  box.style.display = "block";
+
+  // Hide other views
+  document.getElementById("results").style.display = "none";
+  document.getElementById("attemptReplay").style.display = "none";
+
+  db.ref("attempt_history/" + quizId + "/" + deviceId)
+    .once("value")
+    .then(snapshot => {
+      const data = snapshot.val();
+      if (!data) {
+        box.innerHTML = '<div class="card"><p style="text-align:center">No previous attempts found.</p><button class="btn-dash btn-outline" style="width:100%" onclick="restoreLatestResult()">⬅ Back</button></div>';
+        return;
+      }
+
+      // Sort by date (Newest first)
+      const attempts = Object.values(data).sort((a, b) => b.submittedAt - a.submittedAt);
+
+      let html = `<div class="card-dashboard">
+        <h3 class="section-title">📂 Attempt History</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">`;
+
+      attempts.forEach((a, i) => {
+        const date = new Date(a.submittedAt).toLocaleDateString();
+        html += `
+          <div style="background:#f8f9fa; padding:12px; border:1px solid #eee; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; color:#333;">Attempt ${attempts.length - i}</div>
+              <div style="font-size:12px; color:#666;">${date} • Score: ${a.score}</div>
+            </div>
+            <button class="btn-ghost" onclick='showAttempt(${JSON.stringify(a)})'>View Analysis</button>
+          </div>
+        `;
+      });
+
+      html += `</div><div style="margin-top:15px"><button class="btn-dash btn-outline" style="width:100%" onclick="restoreLatestResult()">⬅ Back to Latest Result</button></div></div>`;
+
+      box.innerHTML = html;
+    });
+}
+
+// Render Analysis Dashboard for a Past Attempt
+function showAttempt(attempt) {
+  const box = document.getElementById("attemptReplay");
+  box.innerHTML = '<div style="text-align:center; padding:20px;">Loading analysis...</div>';
+  box.style.display = "block";
+  document.getElementById("previousAttempts").style.display = "none";
+
+  // Fetch Rank for this old attempt
+  getRankAndPercentile(QUIZ_ID, attempt.score, attempt.timeTaken, attempt.submittedAt)
+    .then(rankData => {
+
+      // Calculate Stats
+      const totalQ = QUESTIONS.length;
+      // Note: We don't have full topper list for past dates easily, so we skip Topper Comparison bars for history
+      // or use current topper data as reference (using current toppers for simplicity)
+
+      let dashboardHTML = `
+      <div class="analysis-container">
+        <div class="card-dashboard">
+          <div class="info-grid">
+            <div><b>Attempt Date:</b> ${new Date(attempt.submittedAt).toLocaleString()}</div>
+            <div><b>Quiz ID:</b> ${QUIZ_ID}</div>
+          </div>
+        </div>
+
+        <div class="card-dashboard">
+           <div class="action-grid">
+              <button class="btn-dash btn-outline" onclick="loadPreviousAttempts('${QUIZ_ID}', '${DEVICE_ID}')">⬅ Back to History</button>
+              <button class="btn-dash btn-outline" onclick="restoreLatestResult()">🏠 Latest Result</button>
+           </div>
+        </div>
+
+        <div class="card-dashboard score-summary">
+          <div class="score-item"><h4>🏆 Rank</h4><p>${rankData.rank} / ${rankData.total}</p></div>
+          <div class="score-item"><h4>📊 Percentile</h4><p>${rankData.percentile}%</p></div>
+          <div class="score-item"><h4>🧮 Score</h4><p>${attempt.score}</p></div>
+          <div class="score-item"><h4>⏱ Time</h4><p>${fmt(attempt.timeTaken)}</p></div>
+        </div>
+
+        <div class="card-dashboard attempt-summary">
+           <div class="attempt-box at-correct">✅ Correct<span>${attempt.correct}</span></div>
+           <div class="attempt-box at-wrong">❌ Wrong<span>${attempt.wrong}</span></div>
+           <div class="attempt-box at-unattempted">🟡 Left<span>${totalQ - (attempt.correct + attempt.wrong)}</span></div>
+        </div>
+      </div>`;
+
+      box.innerHTML = dashboardHTML;
+    });
+}
+
+// ===============================
+// 🎮 UI INTERACTIONS & LISTENERS
+// ===============================
+
+function attachListeners(){
+
+
+  // ✅ ADD THIS BLOCK (Fixes Back to Analysis Button)
+  const backAnaBtn = document.getElementById("backToAnalysisBtn");
+  if(backAnaBtn) {
+    backAnaBtn.addEventListener("click", () => {
+       restoreLatestResult();
+    });
+  }
+
+
+
+  // Navigation
+  el("nextBtn").onclick = () => { if(current < QUESTIONS.length-1) renderQuestion(current+1); };
+  el("prevBtn").onclick = () => { if(current > 0) renderQuestion(current-1); };
+  el("clearBtn").onclick = () => {
+    if(!isQuiz) return;
+    delete answers[QUESTIONS[current].id ?? current];
+    renderQuestion(current);
+  };
+
+  // Mark for Review
+  el("markBtn").onclick = () => {
+    const qid = QUESTIONS[current].id ?? current;
+    if(marked[qid]) delete marked[qid];
+    else marked[qid] = true;
+    highlightPalette(); // Update color
+    renderQuestion(current); // Update button state if needed
+  };
+
+  // Palette Toggle (Mobile)
+  el("paletteBtn").onclick = (e) => {
+    e.stopPropagation();
+    const pal = el("palette");
+    if(pal.style.display === "flex" || pal.style.display === "block") {
+        // Hide
+        if(window.innerWidth < 992) pal.style.display = "none";
+    } else {
+        // Show
+        pal.style.display = "flex";
+        highlightPalette();
+        updatePaletteLegend();
+    }
+  };
+
+  // Close Palette when clicking outside (Mobile)
+  document.addEventListener("click", (e) => {
+    if(window.innerWidth >= 992) return; // Ignore on Desktop
+    const pal = el("palette");
+    const btn = el("paletteBtn");
+    if(pal.style.display === "flex" && !pal.contains(e.target) && e.target !== btn) {
+      pal.style.display = "none";
+    }
+  });
+
+  // Submit Modal
+  el("submitBtn").onclick = () => {
+    const attempted = Object.keys(answers).length;
+    el("submitMsg").textContent = `You have attempted ${attempted} of ${QUESTIONS.length} questions.\nAre you sure you want to submit?`;
+    el("submitModal").style.display = "flex";
+  };
+  el("cancelSubmit").onclick = () => el("submitModal").style.display = "none";
+  el("confirmSubmit").addEventListener("click", ()=> { el("submitModal").style.display = "none"; submitQuiz(); });
+}
+
+// Build Palette Buttons
+function buildPalette(){
+  const grid = el("palette-grid");
+  grid.innerHTML = "";
+  QUESTIONS.forEach((q, i) => {
+    const btn = document.createElement("button");
+    btn.className = "qbtn notvisited";
+    btn.textContent = i + 1;
+    btn.onclick = () => {
+      renderQuestion(i);
+      if(window.innerWidth < 992) el("palette").style.display = "none";
+    };
+    grid.appendChild(btn);
+    updatePaletteLegend();
+  });
+}
+
+// Update Palette Colors
+function highlightPalette(){
+  const btns = document.querySelectorAll(".qbtn");
+  let att = 0;
+
+  btns.forEach((btn, i) => {
+    const qid = QUESTIONS[i].id ?? i;
+    btn.className = "qbtn"; // Reset
+
+    if(current === i) btn.classList.add("current");
+
+    if(isQuiz) {
+      // 🔵 QUIZ MODE COLORS
+      if(marked[qid]) {
+        btn.classList.add(answers[qid] ? "marked-answered" : "marked");
+      } else if(answers[qid]) {
+        btn.classList.add("answered");
+      } else {
+        btn.classList.add("notvisited");
+      }
+    } else {
+      // 🟢 SOLUTION MODE COLORS (New Requirement)
+      // Correct = Green, Wrong = Red, Skipped = Grey
+      // Star if marked
+      const myAns = answers[qid];
+      const correctAns = String(QUESTIONS[i].answer);
+
+      if(!myAns) {
+        btn.classList.add("sol-skip");
+      } else if(String(myAns) === correctAns) {
+        btn.classList.add("sol-right");
+      } else {
+        btn.classList.add("sol-wrong");
+      }
+
+      if(marked[qid]) btn.classList.add("has-star");
+    }
+
+    if(answers[qid]) att++;
+  });
+
+  // Update Mark Button Text/Color based on current state
+  const curQid = QUESTIONS[current].id ?? current;
+  const mkBtn = el("markBtn");
+  if(mkBtn) {
+      if(marked[curQid]) {
+          mkBtn.textContent = "Unmark Review";
+          mkBtn.classList.add("active-mark"); // Greenish
+      } else {
+          mkBtn.textContent = "Mark for Review";
+          mkBtn.classList.remove("active-mark");
+      }
+  }
+
+  // Update Palette Summary Text
+  updatePaletteLegend();
+
+}
+
+// update function
+function updatePaletteLegend() {
+  const legend = document.getElementById("palette-legend");
+  const summary = document.getElementById("palette-summary");
+  if (!legend || !summary) return;
+
+  if (isQuiz) {
+    // ======================
+    // QUIZ MODE
+    // ======================
+    legend.innerHTML = `
+      <div><span class="lg-box notvisited"></span> Not Answered</div>
+      <div><span class="lg-box answered"></span> Answered</div>
+      <div><span class="lg-box marked"></span> Marked for Review</div>
+      <div><span class="lg-box marked-answered">★</span> Answered & Marked</div>
+    `;
+
+    let answered = 0;
+    let notAnswered = 0;
+    let markedOnly = 0;
+    let markedAnswered = 0;
+
+    QUESTIONS.forEach((q, i) => {
+      const qid = q.id ?? i;
+      const hasAnswer = !!answers[qid];
+      const isMarked = !!marked[qid];
+
+      if (hasAnswer && isMarked) {
+        markedAnswered++;
+      } else if (hasAnswer) {
+        answered++;
+      } else if (isMarked) {
+        markedOnly++;
+      } else {
+        notAnswered++;
+      }
+    });
+
+    summary.textContent =
+      `Answered: ${answered} | Not Answered: ${notAnswered} | ` +
+      `Ans & Marked: ${markedAnswered} | Marked: ${markedOnly}`;
+
+  } else {
+    // ======================
+    // SOLUTION MODE
+    // ======================
+    legend.innerHTML = `
+      <div><span class="lg-box" style="background:var(--success)"></span> Correct</div>
+      <div><span class="lg-box" style="background:var(--danger)"></span> Wrong</div>
+      <div><span class="lg-box" style="background:#9e9e9e"></span> Skipped</div>
+    `;
+
+    let correct = 0, wrong = 0, skipped = 0;
+
+    QUESTIONS.forEach((q, i) => {
+      const qid = q.id ?? i;
+      const myAns = answers[qid];
+      if (!myAns) skipped++;
+      else if (String(myAns) === String(q.answer)) correct++;
+      else wrong++;
+    });
+
+    summary.textContent =
+      `Correct: ${correct} | Wrong: ${wrong} | Skipped: ${skipped}`;
+  }
+}
+// ===============================
+// 🚀 INITIALIZATION
+// ===============================
+
+function init(){
+  // 1. CHECK IF ALREADY SUBMITTED (Static Result Page)
+  const resultSaved = localStorage.getItem(QUIZ_RESULT_KEY);
+  if (resultSaved) {
+    const data = JSON.parse(resultSaved);
+    if (data.submitted && data.resultHTML) {
+      isQuiz = false; // <--- ✅ ADD THIS LINE HERE
+      updatePaletteLegend();
+      // Hide Welcome & Quiz
+      answers = data.answers || {};
+      marked  = data.marked  || {};
+      current = data.current || 0;
+      el("welcomeScreen").style.display = "none";
+      el("mainHeader").style.display = "none";
+      el("quizMainArea").style.display = "none";
+      el("floatBar").style.display = "none";
+      if(el("studentName")) el("studentName").style.display = "none";
+
+      // Show Result
+      const res = document.getElementById("results");
+      res.innerHTML = data.resultHTML;
+      res.style.display = "block";
+      LAST_RESULT_HTML = data.resultHTML;
+      renderMath();
+      return; // Stop here
+    }
+  }
+
+  // 2. RESTORE PROGRESS (Resume Quiz)
+  const savedName = localStorage.getItem("ssc_quiz_name");
+  const nameInput = document.getElementById("studentName");
+
+  if (nameInput) {
+    // Only restore if it's a real name and NOT the default "Student"
+    if (savedName && savedName !== "Student") {
+      nameInput.value = savedName;
+    } else {
+      nameInput.value = ""; // ✅ Clear it so validation triggers
+    }
+  }
+  
+  // --- UPDATE STEP 2 INSIDE init() ---
+const stateSaved = localStorage.getItem(QUIZ_STATE_KEY);
+if (stateSaved) {
+  const state = JSON.parse(stateSaved);
+  current = state.current ?? 0;
+  answers = state.answers ?? {};
+  marked = state.marked ?? {};
+  seconds = state.seconds ?? seconds;
+  
+  // RESTORE LANGUAGE PERSISTENCE HERE
+  if (state.currentLang) {
+    currentLang = state.currentLang;
+    const headerLangSelect = el("langSelect");
+    if (headerLangSelect) headerLangSelect.value = currentLang;
+  }
+}
+
+
+  
+
+  // 3. SETUP UI
+  if (window.innerWidth >= 992) {
+    // Move buttons to header for desktop
+    const topActions = document.getElementById("topActions");
+    topActions.appendChild(el("prevBtn"));
+    topActions.appendChild(el("clearBtn"));
+    topActions.appendChild(el("markBtn"));
+    topActions.appendChild(el("nextBtn"));
+  }
+
+  renderQuestion(current);
+  buildPalette();
+  updatePaletteLegend();
+  highlightPalette();
+  attachListeners();
+  renderMath();
+}
+
+// 🚦 START BUTTON LISTENER
+document.getElementById("welcomeStartBtn").addEventListener("click", function() {
+  const selected = document.getElementById("welcomeLangSelect").value;
+  
+  if (!selected) {
+    alert("Please select a language! / कृपया भाषा चुनें!");
+    return; // STOP: Button won't work without selection
+  }
+
+  // Set persistence
+  currentLang = selected;
+  document.getElementById("langSelect").value = selected; // Sync header dropdown
+
+  // Proceed to quiz
+  document.getElementById("welcomeScreen").style.display = "none";
+  document.getElementById("mainHeader").style.display = "block";
+ 
+  document.body.classList.add("mode-quiz");
+ document.body.classList.remove("mode-solution");
+
+  const quizArea = document.getElementById("quizMainArea");
+  if(window.innerWidth >= 992) {
+      quizArea.style.display = "grid";
+  } else {
+      quizArea.style.display = "block";
+      document.getElementById("floatBar").style.display = "flex";
+  }
+  startTimer();
+  renderQuestion(current);
+});
+
+
+
+// 🔄 RESUME SCRIPT (Runs on Reload)
+document.addEventListener("DOMContentLoaded", function () {
+  const savedState = localStorage.getItem(QUIZ_STATE_KEY);
+  const alreadySubmitted = localStorage.getItem(QUIZ_RESULT_KEY);
+
+if (alreadySubmitted) {
+  isQuiz = false; // ✅ ADD THIS: Force the global flag to false
+  buildPalette(); // ✅ ADD THIS: Rebuild the number grid
+  updatePaletteLegend();
+  highlightPalette(); // ✅ ADD THIS: Apply the green/red colors to the grid
+}
+
+
+  // Resume only if we have state AND not submitted yet
+  if (savedState && !alreadySubmitted) {
+    document.getElementById("welcomeScreen").style.display = "none";
+    document.getElementById("mainHeader").style.display = "block";
+    document.body.classList.add("mode-quiz");
+    document.body.classList.remove("mode-solution");
+
+    const quizArea = document.getElementById("quizMainArea");
+    if(window.innerWidth >= 992) {
+        quizArea.style.display = "grid";
+    } else {
+        quizArea.style.display = "block";
+        document.getElementById("floatBar").style.display = "flex";
+    }
+
+    startTimer();
+  }
+
+  // Run Main Init
+  init();
+});
+
+// 🛡️ PROTECTION SCRIPT
+(function () {
+  // Disable right click
+  document.addEventListener("contextmenu", e => e.preventDefault());
+
+  // Disable shortcuts (C, V, X, U, F12)
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "F12" ||
+       (e.ctrlKey && ["u","s","p","c","v","x"].includes(e.key.toLowerCase()))) {
+      e.preventDefault();
+    }
+  });
+
+  // Watermark Integrity Check
+  setInterval(() => {
+    const wm = document.getElementById("ssc-watermark");
+    if(!wm || wm.style.display === "none" || wm.style.opacity === "0") {
+       document.body.innerHTML = "Security Violation: Watermark Tampered";
+    }
+  }, 3000);
+})();
+
+</script>
+</body>
+</html>
+
+
