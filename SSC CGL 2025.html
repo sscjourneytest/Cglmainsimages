@@ -2193,10 +2193,14 @@ if (stateSaved) {
 // 🚦 START BUTTON LISTENER
 document.getElementById("welcomeStartBtn").addEventListener("click", function() {
   const selected = document.getElementById("welcomeLangSelect").value;
-  
+  const isChecked = document.getElementById("instrConfirm").checked;
   if (!selected) {
     alert("Please select a language! / कृपया भाषा चुनें!");
     return; // STOP: Button won't work without selection
+  }
+  if (!isChecked) {
+    alert("Please confirm that you have read the instructions.");
+    return;
   }
 
   // Set persistence
