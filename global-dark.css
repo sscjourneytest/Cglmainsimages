@@ -1,0 +1,54 @@
+/* global-dark.css */
+
+/* Dark Mode Variables Override */
+body.dark-mode {
+    --bg-light: #020617 !important;
+    --white: #0f172a !important; /* This replaces the solid white cards */
+    --text-dark: #f1f5f9 !important;
+    --text-grey: #94a3b8 !important;
+    --border: #334155 !important;
+    --bg-color: #020617 !important; /* For test template */
+    background-color: #020617 !important;
+}
+
+/* Force Visibility for Result Dashboard */
+body.dark-mode .card-dashboard, 
+body.dark-mode .score-item, 
+body.dark-mode .attempt-box,
+body.dark-mode .welcome-instructions,
+body.dark-mode .card,
+body.dark-mode header {
+    background-color: var(--white) !important;
+    color: var(--text-dark) !important;
+    border-color: var(--border) !important;
+}
+
+/* Fix Hard-coded Table Colors */
+body.dark-mode table, 
+body.dark-mode th, 
+body.dark-mode td {
+    background-color: var(--white) !important;
+    color: var(--text-dark) !important;
+    border-color: var(--border) !important;
+}
+
+/* Intelligent Inversion for Quizzes */
+body.dark-mode .qtext, 
+body.dark-mode .opt-text, 
+body.dark-mode .explanation {
+    color: var(--text-dark) !important;
+}
+
+/* Fix visibility of Blue Buttons in Dark Mode */
+body.dark-mode .btn, 
+body.dark-mode .start-btn,
+body.dark-mode .fbar button {
+    background: #2563eb !important; /* Slightly brighter blue for dark background */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Watermark visibility adjustment */
+body.dark-mode .ssc-wm {
+    color: rgba(255, 255, 255, 0.05) !important;
+}
+

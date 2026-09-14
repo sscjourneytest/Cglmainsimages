@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f3f5fb">
+
+<!-- ═══ TAB NAME ════════════════════════════════════════════════
+     Edit the <title> below for the browser-tab text.
+     The tab ICON is your existing /logo.png (site root) — already wired.
+     ═══════════════════════════════════════════════════════════════ -->
+<title>SSC Subject Wise Mocks — Mock Matrix Hub</title>
+<!-- FAVICON / TAB LOGO — your existing /logo.png at the site root. -->
+<link rel="icon" href="/logo.png">
+<link rel="stylesheet" href="/css/design.css?v=260908f">
+</head>
+<body>
+<script>
+/* Early theme apply — before first paint (shares the `mmh_theme` key with the live home page) */
+(function(){ try{
+    var t = localStorage.getItem('mmh_theme');
+    if (t !== 'light' && t !== 'dark'){
+        t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    if (t === 'dark') document.body.classList.add('dark-mode');
+}catch(e){}})();
+</script>
+
+<div class="exam-page-container">
+
+    <!-- ══ Screen 1 · Select Year ═════════════════════════════════════════ -->
+    <section class="screen active" id="screenYear">
+        <header class="screen-header">
+            <div class="appbar">
+                <!-- Back to the page the user came from (browser back) -->
+                <button type="button" class="icon-btn nav-back" id="backFromYear" style="display:none" aria-label="Back to previous page">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true"><img class="brand-logo-img" src="/logo.png" alt=""></div>
+                    <div class="brand-text">
+                        <div class="brand-title">Mock Matrix Hub</div>
+                        <div class="brand-sub">SSC Subject Wise Mocks</div>
+                    </div>
+                </div>
+                <div class="appbar-actions">
+                    <button type="button" class="icon-btn theme-btn" id="themeToggleYear" aria-label="Toggle theme"></button>
+                </div>
+            </div>
+        </header>
+        <div class="screen-scroll">
+            <div class="screen-inner">
+                <div class="screen-intro">
+                    <div class="si-title">Select Year</div>
+                    <div class="si-sub">Pick an exam year to begin</div>
+                </div>
+                <div id="yearCards" class="nav-list">
+                    <div class="nav-card skeleton-nav-card"><div class="nc-ico skeleton-line"></div><div class="nc-body"><div class="skeleton-line skeleton-nc-title"></div><div class="skeleton-line skeleton-nc-meta"></div></div></div>
+                    <div class="nav-card skeleton-nav-card"><div class="nc-ico skeleton-line"></div><div class="nc-body"><div class="skeleton-line skeleton-nc-title"></div><div class="skeleton-line skeleton-nc-meta"></div></div></div>
+                    <div class="nav-card skeleton-nav-card"><div class="nc-ico skeleton-line"></div><div class="nc-body"><div class="skeleton-line skeleton-nc-title"></div><div class="skeleton-line skeleton-nc-meta"></div></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ Screen 2 · Select Subject ══════════════════════════════════════ -->
+    <section class="screen" id="screenSubjects">
+        <header class="screen-header">
+            <div class="appbar">
+                <button type="button" class="icon-btn nav-back" id="backFromSubjects" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="screen-title-wrap">
+                    <div class="screen-title" id="subjectsTitle">Subjects</div>
+                    <div class="screen-subtitle" id="subjectsSub"></div>
+                </div>
+                <div class="appbar-actions">
+                    <button type="button" class="icon-btn theme-btn" id="themeToggleSubjects" aria-label="Toggle theme"></button>
+                </div>
+            </div>
+        </header>
+        <div class="screen-scroll">
+            <div class="screen-inner">
+                <div id="subjectCards" class="nav-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ Screen 3 · Mocks (the engine screen) ═══════════════════════════
+         Header is identical in shape to the Year / Subjects screens;
+         search + chips live in the scrolling content, not the header.    -->
+    <section class="screen" id="screenMocks">
+        <header class="screen-header sticky-header-section">
+            <div class="appbar">
+                <button type="button" class="icon-btn nav-back" id="backFromMocks" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="screen-title-wrap">
+                    <div class="screen-title" id="mockTitle">Mocks</div>
+                    <div class="screen-subtitle">Mock Matrix Hub</div>
+                </div>
+                <div class="appbar-actions">
+                    <span id="syncAnchor"></span><!-- engine injects Refetch Attempts here -->
+                    <button type="button" class="icon-btn theme-btn" id="themeToggle" aria-label="Toggle theme"></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="scrollable-grid-area">
+            <div class="grid-inner">
+                <div class="mocks-tools">
+                    <div class="search-box">
+                        <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
+                        <input type="text" id="mockSearch" placeholder="Search subject, topic or subtopic…"
+                               autocomplete="off" autocapitalize="off" spellcheck="false">
+                        <button type="button" class="search-clear" id="searchClear" aria-label="Clear search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="filter-block hidden" id="topic-wrap">
+                        <div class="filter-scroll-wrapper"><div id="topic-scroll" class="chips"></div></div>
+                    </div>
+                    <!-- Subtopic row is auto-injected by the engine after #topic-wrap -->
+                </div>
+
+                <div id="grid-sync" class="hidden"></div>
+                <div id="quizGrid"></div>
+            </div>
+        </main>
+
+        <!-- Engine targets kept off-screen: year & subject chips now live on
+             their own screens; the engine still needs these elements to exist -->
+        <div class="engine-hidden" aria-hidden="true">
+            <div class="filter-block" id="year-block">
+                <div class="filter-scroll-wrapper" id="year-scroll"></div>
+            </div>
+            <div class="filter-scroll-wrapper">
+                <div id="subject-scroll" class="chips"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<button type="button" id="backTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg>
+</button>
+
+<div id="toastRoot" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth.js?v=260908f"></script>
+<script src="/js/ssc-sub-engine.js?v=260908f"></script>
+<script src="/js/app-shell.js?v=260908f"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    applyTheme(currentTheme());
+    initExamEngine().then(function(){
+        /* multi-screen navigation (Year → Subjects → Mocks),
+           also applies any ?filter=… deep link from the URL */
+        initHubNav();
+    });
+});
+</script>
+
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>

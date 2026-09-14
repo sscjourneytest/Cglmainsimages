@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Saved Questions - Mock Matrix Hub</title>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script src="/firebase-config.js?v=260908f"></script>
+<script>
+/* firebase-config live refresh: online → merge the latest exam projects from
+   the server into the bundled config; offline → the bundled config stays. */
+(function () {
+    var bundled = null;
+    try { bundled = window.FIREBASE_PROJECTS; } catch (e) {}
+    try {
+        fetch('https://mockmatrixhub.in/firebase-config.js?v=' + Date.now())
+            .then(function (r) { return r.ok ? r.text() : null; })
+            .then(function (text) {
+                if (!text) return;
+                var live = new Function(text + '; return (typeof FIREBASE_PROJECTS !== "undefined" ? FIREBASE_PROJECTS : null);')();
+                if (live && typeof live === 'object' && bundled) {
+                    window.FIREBASE_PROJECTS = Object.assign({}, bundled, live);
+                }
+            })
+            .catch(function () { /* offline / blocked — keep bundled config */ });
+    } catch (e) {}
+})();
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/auth.js?v=260908f"></script>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true
+    },
+    chtml: {
+      mtextInheritFont: true,
+      displayAlign: 'left',
+      linebreaks: {
+        allow: true,
+        width: 'container',
+        overflow: 'linebreak'
+      }
+    },
+    options: {
+      skipHtmlTags: ['script', 'style', 'textarea', 'pre']
+    }
+  };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+  <link rel="stylesheet" href="/css/saved.css?v=260908f">
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-top">
+      <div class="header-title-group">
+        <button class="icon-circle-btn" onclick="goBack()" aria-label="Back"><i class="fas fa-arrow-left"></i></button>
+        <div class="header-title">SAVED QUESTIONS</div>
+      </div>
+      <div class="header-actions">
+        <button class="pdf-btn" id="pdfBtn" onclick="openPdfModal()" aria-label="Save as PDF">
+          <i class="fas fa-file-pdf"></i><span class="pdf-btn-text">PDF</span>
+        </button>
+        <select id="globalLangSelect" class="lang-select" onchange="changeGlobalLang(this.value)">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="bilingual">Bilingual</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mode-switch">
+      <button id="listModeBtn" class="mode-btn active" onclick="switchMode('list')">LIST VIEW</button>
+      <button id="focusModeBtn" class="mode-btn" onclick="switchMode('focus')">FOCUS MODE</button>
+    </div>
+
+    <div class="subject-filter-row" id="subjectFilterRow"></div>
+  </div>
+
+  <div class="container">
+    <div id="loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 0;">
+      <div class="spinner"></div>
+      <p style="margin-top: 15px; color: #666; font-weight: 600;">Loading your library...</p>
+    </div>
+
+    <div id="listView"></div>
+
+    <div id="focusView" style="display:none;">
+      <div id="focusContent"></div>
+    </div>
+
+    <div id="emptyState" style="display:none; text-align:center; padding:80px 20px;">
+      <i class="fas fa-bookmark mb-3" style="font-size:48px; opacity:0.2;"></i>
+      <h3>Your library is empty</h3>
+    </div>
+  </div>
+
+  <!-- Question Palette — right-slide overlay on mobile, persistent sidebar on desktop -->
+  <div class="palette-backdrop" id="paletteBackdrop" onclick="closePaletteSheet()"></div>
+  <div class="palette-wrap" id="paletteWrap">
+    <button class="icon-circle-btn palette-close-btn" onclick="closePaletteSheet()" aria-label="Close"><i class="fas fa-times"></i></button>
+    <div class="palette-grid" id="paletteGrid"></div>
+  </div>
+  <button class="palette-fab" id="paletteFab" onclick="togglePaletteSheet()" aria-label="Question palette">
+    <i class="fas fa-th"></i>
+  </button>
+
+  <!-- Thin bottom bar: small Previous / Reattempt toggle / Next — replaces bottom-nav -->
+  <div class="focus-nav" id="focusNav" style="display:none;">
+    <button class="focus-nav-btn" onclick="navFocus(-1)">PREV</button>
+    <div class="focus-reattempt">
+      <span class="focus-reattempt-label">Reattempt</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="reattemptToggle" onchange="onReattemptToggle(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <button class="focus-nav-btn" onclick="navFocus(1)">NEXT</button>
+  </div>
+
+  <!-- Save as PDF modal -->
+  <div class="pdf-modal-backdrop" id="pdfModalBackdrop" onclick="closePdfModal()"></div>
+  <div class="pdf-modal" id="pdfModal">
+    <div class="pdf-modal-head">
+      <h3>Save as PDF</h3>
+      <button class="icon-circle-btn" onclick="closePdfModal()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="pdf-modal-body">
+      <div class="pdf-section-label">Select Subjects</div>
+      <div class="pdf-subject-list" id="pdfSubjectList"></div>
+
+      <div class="pdf-section-label">Include</div>
+      <div class="pdf-radio-row">
+        <label class="pdf-radio"><input type="radio" name="pdfSolMode" value="with" checked> With Solutions</label>
+        <label class="pdf-radio"><input type="radio" name="pdfSolMode" value="without"> Only Answers</label>
+      </div>
+    </div>
+    <div class="pdf-modal-foot">
+      <button class="pdf-generate-btn" id="pdfGenerateBtn" onclick="generatePdf()"><i class="fas fa-file-pdf"></i> Generate PDF</button>
+    </div>
+  </div>
+
+  <script src="/js/saved.js?v=260908f"></script>
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>
+
+

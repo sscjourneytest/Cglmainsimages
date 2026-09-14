@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f3f5fb">
+
+<!-- ═══ TAB NAME ════════════════════════════════════════════════
+     Edit the <title> below for the browser-tab text.
+     The tab ICON is your existing /logo.png (site root) — already wired.
+     ═══════════════════════════════════════════════════════════════ -->
+<title>Live Mock Tests — Mock Matrix Hub</title>
+<!-- FAVICON / TAB LOGO — your existing /logo.png at the site root. -->
+<link rel="icon" href="/logo.png">
+<link rel="stylesheet" href="/css/live-mock-style.css?v=260908f">
+</head>
+<body>
+<script>
+/* Early theme apply — before first paint (shares the `mmh_theme` key with the live home page) */
+(function(){ try{
+    var t = localStorage.getItem('mmh_theme');
+    if (t !== 'light' && t !== 'dark'){
+        t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    if (t === 'dark') document.body.classList.add('dark-mode');
+}catch(e){}})();
+</script>
+
+<div class="exam-page-container">
+
+    <!-- ══ Flat app header: app bar + the ONLY three filters ══════════════
+         Upcoming Live · Current Live · Attempted — segmented control.
+         No Previous/All tab, no category/sectional rows, single page.   -->
+    <div class="sticky-header-section">
+        <div class="appbar">
+            <!-- Back to the page the user came from (strips last URL segment) -->
+            <button type="button" class="icon-btn" id="backBtn" aria-label="Back to previous page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true"><img class="brand-logo-img" src="/logo.png" alt=""></div>
+                <div class="brand-text">
+                    <div class="brand-title">Mock Matrix Hub</div>
+                    <div class="brand-sub"><span class="brand-live-dot"></span>Live Mock Tests</div>
+                </div>
+            </div>
+            <div class="appbar-actions">
+                <span id="syncAnchor"></span><!-- engine injects Refetch Attempts here -->
+                <button type="button" class="icon-btn theme-btn" id="themeToggle" aria-label="Toggle theme"></button>
+            </div>
+        </div>
+
+        <!-- The three status tabs (the only filters on the page) -->
+        <div class="live-tabs" id="status-tabs-wrap"></div>
+    </div>
+
+    <!-- ══ Mock grid — box cards, fluid 1→4 columns ═════════════════════ -->
+    <main class="scrollable-grid-area">
+        <div id="grid-sync" class="hidden"></div>
+        <div id="quizGrid" class="live-grid"></div>
+    </main>
+</div>
+
+<button type="button" id="backTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg>
+</button>
+
+<div id="toastRoot" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth.js?v=260908f"></script>
+<script src="/js/live-mock-engine.js?v=260908f"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    lmApplyTheme(lmCurrentTheme());
+    initLiveMockEngine();
+});
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3653f3a1882fa33',t:'MTc4ODYxMTQ0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>

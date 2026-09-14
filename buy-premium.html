@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Premium Pass — Mock Matrix Hub | Unlimited Mocks, 2500+ PYQs &amp; Sectional Tests</title>
+    <meta name="description" content="Unlock unlimited mock tests, 2500+ solved PYQs, sectional timers, live all-India ranks and first access to future exam mocks. Instant activation, secure Razorpay checkout, 7-day refund.">
+    <link rel="canonical" href="https://mockmatrixhub.in/buy-premium.html">
+
+    <script>
+        (function(){ try{
+            var t = localStorage.getItem('mmh_theme');
+            if (t !== 'light' && t !== 'dark'){
+                t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+            }
+            if (t === 'dark') document.body.classList.add('dark-mode');
+            var m = document.querySelector('meta[name="theme-color"]');
+            if (m) m.content = t === 'dark' ? '#121a30' : '#ffffff';
+        }catch(e){}})();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/auth.js?v=260913c"></script>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="/css/design.css?v=260913c">
+    <link rel="stylesheet" href="/css/home.css?v=260913c">
+    <link rel="stylesheet" href="/css/premium.css?v=260913c">
+</head>
+<body>
+
+<div class="exam-page-container">
+
+    <!-- ══ Screen 1 · Plan select ═══════════════════════════════════════════ -->
+    <section class="screen active" id="screenPlans">
+        <header class="screen-header sticky-header-section">
+            <div class="appbar">
+                <a class="icon-btn nav-back" href="/" aria-label="Back to home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </a>
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">
+                        <img class="brand-logo-img" src="/logo.png" alt=""
+                             onerror="this.outerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;3.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;3.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot; fill=&quot;currentColor&quot; stroke=&quot;none&quot;/></svg>'">
+                    </div>
+                    <div class="brand-text">
+                        <div class="brand-title">Mock Matrix Hub</div>
+                        <div class="brand-sub">Premium</div>
+                    </div>
+                </div>
+                <div class="appbar-actions">
+                    <button type="button" class="icon-btn theme-btn" aria-label="Toggle theme"></button>
+                    <a href="/notifications.html" class="icon-btn notif-wrap" aria-label="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9.2a6 6 0 1 0-12 0c0 5-2 6.3-2 6.3h16s-2-1.3-2-6.3"/><path d="M10.3 19.2a2.2 2.2 0 0 0 3.4 0"/></svg>
+                        <span class="notif-badge-dot"></span>
+                    </a>
+                    <div id="authHeaderArea"></div>
+                </div>
+            </div>
+        </header>
+        <div class="screen-scroll">
+            <div class="screen-inner pr-screen-inner" id="plansRoot">
+                <div id="prHero" class="pr-hero"></div>
+                <div class="pr-layout">
+                    <div class="pr-main">
+                        <div id="prPlans" class="pr-plans"></div>
+                        <div id="prFeatures"></div>
+                        <div id="prCompare"></div>
+                        <div id="prStats" class="pr-stats"></div>
+                        <div id="prFaqs"></div>
+                    </div>
+                    <aside class="pr-aside" id="prAside" aria-label="Order summary"></aside>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ Screen 2 · Checkout (same checkout.js as before) ═════════════════ -->
+    <section class="screen" id="screenCheckout">
+        <header class="screen-header sticky-header-section">
+            <div class="appbar">
+                <button type="button" class="icon-btn nav-back" id="backToPlans" aria-label="Back to plans">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">
+                        <img class="brand-logo-img" src="/logo.png" alt=""
+                             onerror="this.style.display='none'">
+                    </div>
+                    <div class="brand-text">
+                        <div class="brand-title">Secure Checkout</div>
+                        <div class="brand-sub">Mock Matrix Hub</div>
+                    </div>
+                </div>
+                <div class="appbar-actions">
+                    <button type="button" class="icon-btn theme-btn" aria-label="Toggle theme"></button>
+                </div>
+            </div>
+        </header>
+        <div class="screen-scroll">
+            <div class="screen-inner">
+
+                <div class="ck-securebar rv">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.2" width="14.8" height="10.4" rx="2.6"/><path d="M8.2 10.2V7.6a3.8 3.8 0 0 1 7.6 0v2.6M12 14.4v2.4"/></svg>
+                    256-bit SSL encrypted · payments processed by Razorpay · 7-day refund
+                </div>
+
+                <div class="ck-steps rv">
+                    <span class="ck-step done"><span class="st-n">✓</span> Plan</span>
+                    <span class="ck-step-line"></span>
+                    <span class="ck-step active"><span class="st-n">2</span> Payment</span>
+                    <span class="ck-step-line"></span>
+                    <span class="ck-step"><span class="st-n">3</span> Access</span>
+                </div>
+
+                <div id="planSelector"></div>
+
+                <div class="ck-card rv">
+                    <div class="ck-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.2" width="14.8" height="10.4" rx="2.6"/><path d="M8.2 10.2V7.6a3.8 3.8 0 0 1 7.6 0v2.6M12 14.4v2.4"/></svg>
+                        Order summary
+                    </div>
+                    <div class="ck-planrow">
+                        <span class="ck-planname" id="planNameLabel">Premium</span>
+                        <span class="ck-validity" id="validityBadge">VALID 365 DAYS</span>
+                    </div>
+                    <div class="ck-pricerow">
+                        <span class="ck-final">₹<b id="finalPrice">—</b></span>
+                        <span class="ck-original">₹<span id="originalPrice">—</span></span>
+                    </div>
+                    <div class="ck-permonth" id="ckPerMonth"></div>
+                    <div class="ck-saverow" id="ckSaveRow"></div>
+                    <div class="pr-sum-div"></div>
+                    <div class="pr-coupon" id="couponBox">
+                        <input type="text" id="couponCode" placeholder="COUPON CODE" autocomplete="off">
+                        <button type="button" id="applyCouponBtn">APPLY</button>
+                    </div>
+                    <div class="pr-coupon-msg" id="couponMsg"></div>
+                    <div id="expiringInfo" class="ck-expiring-info" style="display:none"></div>
+                    <button type="button" class="pr-cta" id="payBtn">Continue</button>
+                    <div class="pr-aside-trust" id="ckTrust"></div>
+                    <div class="pr-payrow" id="ckPayments"></div>
+                </div>
+
+                <p class="ck-guarantee rv" id="ckGuarantee"></p>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- sticky mobile price bar (plans screen, above the dock) -->
+<div id="prSticky" class="pr-stickybar"></div>
+
+<!-- floating support bot -->
+<button type="button" id="botFab" class="pr-bot-fab" aria-label="Premium support chat">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.4" y="8.4" width="15.2" height="11" rx="3.4"/><path d="M12 8.4V5.2M12 5.2a1.4 1.4 0 1 0-.1 0zM8.8 13v1.6M15.2 13v1.6M2.8 12.4v3.2M21.2 12.4v3.2"/></svg>
+    <span class="bot-ping" aria-hidden="true"></span>
+</button>
+<div id="botPanel" class="pr-bot-panel" role="dialog" aria-label="Support bot"></div>
+
+<!-- pre-payment instruction popup (checkout.js) -->
+<div class="popup-overlay" id="paymentInstructionOverlay">
+    <div class="popup-box">
+        <div class="popup-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.6 19.4h18.8L12 3zM12 9.6v4.6M12 17.2h.01"/></svg>
+        </div>
+        <h3>Important — Before You Pay</h3>
+        <div class="popup-lang-block">
+            <div class="note-head">Important Notice</div>
+            <div class="note-body">
+                <p><span class="lbl">EN</span>Do not close this tab or press back after payment. Wait until the page automatically redirects to the Home page.</p>
+                <p><span class="lbl">HI</span>भुगतान के बाद इस टैब को बंद न करें या बैक न दबाएं। पेज के स्वतः होम पेज पर रीडायरेक्ट होने तक प्रतीक्षा करें।</p>
+            </div>
+        </div>
+        <label class="popup-checkbox-row">
+            <input type="checkbox" id="popupAckCheckbox">
+            <span>I have read and understood this — मैंने इसे पढ़ और समझ लिया है</span>
+        </label>
+        <button class="popup-pay-btn" id="popupContinueBtn" disabled>Continue to Payment</button>
+    </div>
+</div>
+
+<!-- post-payment overlays (checkout.js) -->
+<div class="processing-overlay" id="processingOverlay">
+    <div class="processing-box">
+        <div class="processing-spinner"></div>
+        <h3>Confirming Your Payment...</h3>
+        <div class="note-body">
+            <p><span class="lbl">EN</span>Do not close this tab or press back. Wait until the page automatically redirects to the Home page.</p>
+            <p><span class="lbl">HI</span>इस टैब को बंद न करें या बैक न दबाएं। पेज के स्वतः होम पेज पर रीडायरेक्ट होने तक प्रतीक्षा करें।</p>
+        </div>
+    </div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+    <div class="success-box">
+        <div class="success-check">
+            <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none"/><path fill="none" d="M14 27l7 7 16-16"/></svg>
+        </div>
+        <h3>Payment Successful</h3>
+        <p class="success-sub">Premium Access Granted 🎉</p>
+        <p class="success-redirect">Redirecting to home page...</p>
+    </div>
+</div>
+
+<!-- bottom dock -->
+<nav class="ex-dock" id="bottomNav" aria-label="Primary"></nav>
+
+<script src="/js/app-core.js?v=260913c"></script>
+<script src="/checkout.js?v=260913c"></script>
+<script src="/js/premium-engine.js?v=260913c"></script>
+<script src="/js/capacitor.js?v=260913c"></script>
+<script src="/js/app-plugins.js?v=260913c"></script>
+</body>
+</html>

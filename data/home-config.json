@@ -1,0 +1,44 @@
+{
+  "buttons": [
+    { "id": "explore-exams", "title": "EXPLORE EXAMS", "icon": "grad-cap", "url": "/exams/index.html", "badge": "", "visible": true },
+    { "id": "important-series", "title": "IMPORTANT SERIES", "icon": "layers", "url": "/series/index.html", "badge": "", "visible": true },
+    { "id": "live-tests", "title": "LIVE TESTS", "icon": "bolt", "url": "/live-test/index.html", "badge": "FREE", "visible": true },
+    { "id": "pdfs-notes", "title": "IMPORTANT PDFs & NOTES", "icon": "file-pdf", "url": "#", "badge": "", "comingSoonMessage": "Important PDFs and Notes are coming soon!", "visible": true }
+  ],
+
+  "_statsNote": "Static values for now — home-engine reads this 'stats' key at load. To go live later, just replace these numbers from your backend/API; no page-code change needed.",
+  "stats": [
+    { "id": "total-users",     "label": "Total Users",   "value": 15400, "suffix": "+", "icon": "users",    "color": "blue"   },
+    { "id": "premium-users",   "label": "Premium Users", "value": 2400,  "suffix": "+", "icon": "crown",    "color": "amber"  },
+    { "id": "total-mocks",     "label": "Total Mocks",   "value": 2500,   "suffix": "+", "icon": "notebook", "color": "violet" },
+    { "id": "total-questions", "label": "Questions",     "value": 45000, "suffix": "+", "icon": "doc",      "color": "teal"   }
+  ],
+
+  "recommendations": [
+    { "id": "ssc-cgl", "title": "SSC CGL", "subtitle": "Mocks", "logo": "/ssc-logo.jpg", "icon": "grad-cap", "url": "/exams/cgl/index.html", "visible": true },
+    { "id": "ssc-chsl", "title": "SSC CHSL", "subtitle": "Mocks", "logo": "/ssc-logo.jpg", "icon": "notebook", "url": "/exams/chsl/index.html", "visible": true }
+  ],
+
+  "popup": {
+    "id": "telegram-private-channel",
+    "enabled": true,
+    "audience": "paid",
+    "icon": "telegram",
+    "title": "Join Private Channel",
+    "message": "Exclusive updates, PDFs, and Premium Mocks await you in our private group.",
+    "link": "https://t.me/+O4W4bDNdT1Mzdl",
+    "buttonLabel": "JOIN NOW",
+    "dismissLabel": "ALREADY JOINED"
+  },
+
+  "salePopup": {
+    "id": "premium-sale",
+    "enabled": false,
+    "icon": "crown",
+    "title": "Limited Time Offer",
+    "message": "Unlock all premium mocks at a special price — today only.",
+    "link": "/buy-premium.html",
+    "buttonLabel": "VIEW OFFER",
+    "dismissLabel": "MAYBE LATER"
+  }
+}

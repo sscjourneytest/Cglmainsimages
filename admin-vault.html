@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin Vault — Mock Matrix Hub</title>
+<meta name="description" content="Mock Matrix Hub Admin Vault — revenue, partner coupons, pricing, payouts and payment clearances.">
+<meta name="theme-color" content="#ffffff">
+<script>
+    /* early theme apply — same mmh_theme key + meta values the common shell
+       (app-shell.js / app-core.js) uses, so the status bar never flashes */
+    (function(){ try{
+        var t = localStorage.getItem('mmh_theme');
+        if (t !== 'light' && t !== 'dark'){
+            t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        }
+        window.__mmhTheme = t;
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.content = t === 'dark' ? '#121a30' : '#ffffff';
+    }catch(e){}})();
+</script>
+<link rel="stylesheet" href="/css/design.css?v=260908f">
+<link rel="stylesheet" href="/css/admin-vault.css?v=260908f">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/auth.js?v=260908f"></script>
+<script src="/js/app-shell.js?v=260908f"></script>
+</head>
+<body>
+<script>
+    /* body exists now — apply saved theme before first paint (no flash) */
+    try{ if ((window.__mmhTheme || 'light') === 'dark') document.body.classList.add('dark-mode'); }catch(e){}
+</script>
+
+<header class="screen-header sticky-header-section">
+    <div class="appbar">
+        <a class="icon-btn nav-back" href="/" aria-label="Back to home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </a>
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+                <img class="brand-logo-img" src="/logo.png" alt=""
+                     onerror="this.outerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;3.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;3.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot; fill=&quot;currentColor&quot; stroke=&quot;none&quot;/></svg>'">
+            </div>
+            <div class="brand-text">
+                <div class="brand-title">Mock Matrix Hub</div>
+                <div class="brand-sub">Admin Vault</div>
+            </div>
+        </div>
+        <div class="appbar-actions">
+            <button type="button" class="icon-btn" id="syncBtn" aria-label="Refresh all data">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+            </button>
+            <button type="button" class="icon-btn theme-btn" id="themeBtn" aria-label="Toggle theme"></button>
+        </div>
+    </div>
+</header>
+
+<main class="screen-scroll">
+<div id="deniedScreen" class="av-denied" style="display:none;">
+    <div class="av-denied-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/><path d="M12 14.5v2.5"/></svg>
+    </div>
+    <h2>Access Restricted</h2>
+    <p>This page is limited to Owner, Subowner, and Admin roles.</p>
+</div>
+
+<div id="vaultApp" class="av-wrap" style="display:none;">
+
+    <!-- ══ Stats ══ -->
+    <div class="av-stats">
+        <div class="av-stat">
+            <div class="av-stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M3.6 19c.8-3.2 2.9-5 5.4-5s4.6 1.8 5.4 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.8 14.4c2.2.2 3.9 1.7 4.6 4.6"/></svg></div>
+            <div class="av-stat-body"><p>Total Users</p><h3 id="statTotalUsers">--</h3></div>
+        </div>
+        <div class="av-stat gold">
+            <div class="av-stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5 3 7l5 4 4-6.5L16 11l5-4-1 10.5z"/><path d="M4 20.5h16"/></svg></div>
+            <div class="av-stat-body"><p>Premium Users</p><h3 id="statPaidUsers">--</h3></div>
+        </div>
+        <div class="av-stat navy">
+            <div class="av-stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6.5 20v-6M12 20V7M17.5 20V10.5"/></svg></div>
+            <div class="av-stat-body"><p>All-Time Revenue</p><h3 id="statTotalRevenue">₹--</h3></div>
+        </div>
+        <div class="av-stat seal">
+            <div class="av-stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
+            <div class="av-stat-body"><p>Not Cleared Revenue</p><h3 id="statNotCleared">₹--</h3><span class="stat-sub" id="clearedUpToLabel">Cleared up to: --</span></div>
+        </div>
+    </div>
+
+    <!-- ══ Tabs ══ -->
+    <div class="av-tabs" id="tabBar">
+        <button class="tab-btn active" data-tab="revenue">Revenue</button>
+        <button class="tab-btn" data-tab="coupons">Partner Coupons</button>
+        <button class="tab-btn owner-only" data-tab="pricing">Pricing &amp; Sale</button>
+        <button class="tab-btn owner-only" data-tab="grant">Direct Grant</button>
+        <button class="tab-btn owner-only" data-tab="cancel">Cancel Premium</button>
+        <button class="tab-btn" data-tab="payouts">Payouts</button>
+        <button class="tab-btn" data-tab="clearance">Clear Payments</button>
+        <button class="tab-btn" data-tab="userinfo">User Info</button>
+        <button class="tab-btn" data-tab="legacy">Legacy Requests</button>
+    </div>
+
+    <!-- ================= REVENUE TAB ================= -->
+    <section id="tab-revenue" class="tab-panel active">
+        <div class="panel-card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6.5 20v-6M12 20V7M17.5 20V10.5"/></svg>Transactions</h3>
+            <div class="filter-row">
+                <button class="filter-btn active" data-range="today">Today</button>
+                <button class="filter-btn" data-range="7">Last 7 Days</button>
+                <button class="filter-btn" data-range="30">Last 30 Days</button>
+                <button class="filter-btn" data-range="all">All Time</button>
+                <input type="date" id="customFrom">
+                <span class="av-to">to</span>
+                <input type="date" id="customTo">
+                <button class="filter-btn" id="customApply">Apply</button>
+            </div>
+            <div class="period-summary">
+                <div><p>Period Revenue</p><h2 id="periodRevenue">₹0</h2></div>
+                <div><p>Payments</p><h2 id="periodCount">0</h2></div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Time</th><th>Amount</th><th>Coupon</th><th>User ID</th></tr></thead>
+                    <tbody id="revenueTable"></tbody>
+                </table>
+            </div>
+            <div style="text-align:center; margin-top:14px;">
+                <button class="filter-btn" id="revenueViewMoreBtn">View More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= COUPONS TAB ================= -->
+    <section id="tab-coupons" class="tab-panel">
+        <div class="panel-card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5M12 16h.01"/></svg>Pending Partner Requests</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>User</th><th>Requested Code</th><th>Links</th><th>UPI</th><th>Discount %</th><th>Payout %</th><th>Actions</th></tr></thead>
+                    <tbody id="pendingCouponTable"></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="av-2col">
+            <div class="panel-card">
+                <div class="section-header"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 5 5h14l2 5.5a2.6 2.6 0 0 1 0 5L19 21H5l-2-5.5a2.6 2.6 0 0 1 0-5z"/><path d="M9 5v16M15 5v16" opacity=".45"/></svg>Partner Coupons</h3></div>
+                <div class="bulk-bar">
+                    <input type="number" class="inline-input" id="bulkDiscountPartner" placeholder="Discount %">
+                    <button class="btn-primary" id="bulkDiscountPartnerBtn">Update Discount — All Partner Coupons</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Code</th><th>Owner</th><th>Discount %</th><th>Payout %</th><th>Valid Until</th><th>Revenue via code</th><th>Uses</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="couponsTablePartner"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel-card">
+                <div class="section-header"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4 13.8 9l5.6 1.8-5.6 1.8L12 18.2l-1.8-5.6L4.6 10.8 10.2 9 12 3.4z"/></svg>Owner / Sub-owner / Admin Coupons</h3></div>
+                <div class="bulk-bar">
+                    <input type="number" class="inline-input" id="bulkDiscountStaff" placeholder="Discount %">
+                    <button class="btn-primary" id="bulkDiscountStaffBtn">Update Discount — All Staff Coupons</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Code</th><th>Owner</th><th>Discount %</th><th>Payout %</th><th>Valid Until</th><th>Revenue via code</th><th>Uses</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="couponsTableStaff"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PRICING TAB (owner only) ================= -->
+    <section id="tab-pricing" class="tab-panel">
+        <div class="av-2col">
+            <div class="panel-card">
+                <div class="section-header"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.5 13 21l-8-8 7.5-7.5h5a3 3 0 0 1 3 3z"/><circle cx="16" cy="8" r="1.4"/></svg>Plans</h3><button class="btn-primary" id="addPlanBtn">+ Add Plan</button></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Plan Name</th><th>Original ₹</th><th>Offer ₹</th><th>Validity (days)</th><th>Active</th><th>Actions</th></tr></thead>
+                        <tbody id="pricingTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel-card">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Create Sale Coupon</h3>
+                <p class="hint">Linked to your own account automatically — you'll see any sales made through it under "Partner Coupons."</p>
+                <div class="form-grid">
+                    <input type="text" class="av-input" id="saleCode" placeholder="COUPON CODE">
+                    <input type="text" class="av-input" id="saleOwnerDisplay" placeholder="Owner" readonly>
+                    <input type="number" class="av-input" id="saleDiscount" placeholder="Discount %" value="20">
+                    <input type="number" class="av-input" id="salePayout" placeholder="Payout %" value="0">
+                    <input type="text" class="av-input" id="saleUpi" placeholder="UPI ID (optional)">
+                    <input type="date" class="av-input" id="saleValidUntil">
+                </div>
+                <button class="btn-primary" id="createSaleCouponBtn">Create Coupon</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= DIRECT GRANT TAB (owner only) ================= -->
+    <section id="tab-grant" class="tab-panel">
+        <div class="panel-card" style="max-width:520px;">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6v5.5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>Grant Premium Directly</h3>
+            <p class="hint">Bypasses payment entirely — use only for manual approvals, refund goodwill, etc.</p>
+            <div class="av-field-col">
+                <input type="email" class="av-input" id="grantEmail" placeholder="user@email.com">
+                <input type="number" class="av-input" id="grantDays" placeholder="Validity in days" value="365">
+            </div>
+            <button class="btn-primary" id="grantBtn">Grant Access</button>
+            <p id="grantMsg" class="av-inline-msg"></p>
+        </div>
+    </section>
+
+    <!-- ================= CANCEL PREMIUM TAB (owner only) ================= -->
+    <section id="tab-cancel" class="tab-panel">
+        <div class="panel-card" style="max-width:520px;">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m9 9 6 6M15 9l-6 6"/></svg>Cancel Premium</h3>
+            <p class="hint">Deletes the D1 access row and sets is_paid false / expires_at null on the profile. Accepts email, username, mobile, or UUID.</p>
+            <div class="av-field-col">
+                <input type="text" class="av-input" id="cancelSearchInput" placeholder="Email, username, mobile, or UUID">
+            </div>
+            <button class="btn-primary" id="cancelPremiumBtn">Cancel Premium</button>
+            <p id="cancelMsg" class="av-inline-msg"></p>
+        </div>
+    </section>
+
+    <!-- ================= PAYOUTS TAB ================= -->
+    <section id="tab-payouts" class="tab-panel">
+        <div class="av-2col">
+            <div class="panel-card">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Pending Payout Requests</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Partner</th><th>Amount</th><th>Upto Date</th><th>Actions</th></tr></thead>
+                        <tbody id="payoutTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel-card">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>History</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Partner</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody id="payoutHistoryTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CLEAR PAYMENTS TAB ================= -->
+    <section id="tab-clearance" class="tab-panel">
+
+        <div class="av-2col">
+            <div class="panel-card owner-only">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8.5c1.7-1.4 3.3-1.4 5 0s3.3 1.4 5 0M7 15.5c1.7-1.4 3.3-1.4 5 0s3.3 1.4 5 0" opacity=".9"/></svg>Revenue Split % (Owner Only)</h3>
+                <p class="hint">Decides how each new clearance is divided. Doesn't affect clearances already created.</p>
+                <div id="splitEditor"></div>
+                <button class="btn-primary" id="saveSplitBtn">Save Split</button>
+            </div>
+
+            <div class="panel-card">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg>New Clearance</h3>
+                <p class="hint" id="clearanceFromLabel">From: --</p>
+                <div class="form-grid">
+                    <input type="date" class="av-input" id="clearanceToDate">
+                    <button class="btn-primary" id="previewClearanceBtn">Preview Revenue</button>
+                </div>
+                <div id="clearancePreview" class="clearance-preview" style="display:none;">
+                    <p>Revenue in this range: <b id="previewAmount">₹0</b> (<span id="previewCount">0</span> payments)</p>
+                    <button class="btn-primary" id="confirmClearanceBtn">Clear Payment</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="av-2col">
+            <div class="panel-card">
+                <div class="section-header"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5h8l4 4.5v12.5H4V8z"/><path d="M4 8h16M9.5 12.5h5M9.5 16h5" opacity=".6"/></svg>All-Time Partner Summary</h3><button class="btn-primary" id="downloadReceiptBtn">Download Receipt (PDF)</button></div>
+                <p class="hint">Totals across every clearance batch combined.</p>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Partner</th><th>Total Due</th><th>Total Paid</th><th>Total Pending</th></tr></thead>
+                        <tbody id="summaryTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Clearance History</h3>
+                <div id="clearanceHistory"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clearance confirmation popup -->
+
+<div class="modal-overlay" id="clearanceModal">
+        <div class="modal-box">
+            <h3>Confirm Clearance</h3>
+            <p class="hint" id="modalRangeLabel"></p>
+            <div id="modalShareRows"></div>
+            <div class="modal-actions">
+                <button class="btn-ghost" id="modalCancelBtn">Cancel</button>
+                <button class="btn-primary" id="modalConfirmBtn">Create Batch</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= USER INFO TAB ================= -->
+    <section id="tab-userinfo" class="tab-panel">
+        <div class="av-2col">
+            <div class="panel-card" style="max-width:520px;">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></svg>Find User</h3>
+                <p class="hint">Enter an email, username, or mobile number — exact match only.</p>
+                <div class="av-field-col">
+                    <input type="text" class="av-input" id="userSearchInput" placeholder="Email, username, or mobile">
+                </div>
+                <button class="btn-primary" id="userSearchBtn">Search</button>
+            </div>
+            <div class="panel-card" id="userResultCard" style="display:none;">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.6 3.7-5.6 7.2-5.6s6.3 2 7.2 5.6"/></svg>User Details</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+                        <tbody id="userInfoTable"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top:14px;">
+                    <button class="btn-primary" id="saveUserBtn">Save Changes</button>
+                </div>
+                <p id="userSaveMsg" class="av-inline-msg"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= LEGACY REQUESTS TAB (last) ================= -->
+    <section id="tab-legacy" class="tab-panel">
+        <div class="panel-card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v13H4z"/><path d="M4 10h16M8 14h8" opacity=".6"/></svg>Legacy Manual Buy Requests</h3>
+            <p class="hint">Kept as a fallback only — the automated Razorpay flow handles all new purchases.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>User</th><th>UTR</th><th>Amount</th><th>Actions</th></tr></thead>
+                    <tbody id="legacyPaymentTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+</div>
+</main>
+
+<!-- ══ Generic dialog (replaces confirm/prompt) ══ -->
+<div class="av-dialog-overlay" id="avDialog">
+    <div class="av-dialog-box">
+        <h3 id="avDialogTitle">Confirm</h3>
+        <p class="av-dialog-msg" id="avDialogMsg"></p>
+        <input type="text" class="av-input av-dialog-input" id="avDialogInput" style="display:none;">
+        <div class="modal-actions">
+            <button class="btn-ghost" id="avDialogCancel">Cancel</button>
+            <button class="btn-primary" id="avDialogOk">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<div class="av-toast-root" id="avToastRoot"></div>
+
+<script src="/js/admin-vault.js?v=260908f"></script>
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a386d4a30cc7d4e2',t:'MTc4ODk2MzU5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

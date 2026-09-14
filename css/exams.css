@@ -1,0 +1,189 @@
+/* ── Exams hub — page-specific styles ─────────────────────────────────────────
+   Everything visual (tokens, header/appbar, screens, nav-cards, search-box,
+   skeletons, empty states, toasts) comes from /css/design.css — the same
+   stylesheet the mock pages use, so the two feel identical.
+   This file only adds what the exams hub needs on top of it.               */
+
+/* ── App frame — locked to the viewport (Android-app behaviour) ──────────
+   position:fixed (not height:100vh) so mobile browsers' show/hide address
+   bar can NEVER create page slack that scrolls the header away. The body
+   has nothing to scroll; only .screen-scroll moves inside this frame.   */
+.exam-page-container{
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    /* room for the floating dock */
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+/* Native-app top edge: the header owns the status-bar / notch area, so in
+   PWA standalone (no address bar) there is no gap or seam above it — the
+   white/dark surface runs right up under the clock, like a real app.    */
+.exam-page-container .screen-header{
+    padding-top:env(safe-area-inset-top, 0px);
+}
+
+/* ── Search row (in-content, like the mock pages — never in the header) ─── */
+.ex-tools{ margin:0 2px 12px; }
+
+/* design.css styles #mockSearch; our two inputs share the exact same specs */
+.ex-search-input{
+    width:100%;
+    height:42px;
+    border:none;
+    background:transparent;
+    color:var(--text);
+    font-size:13.5px;
+    font-weight:500;
+    padding:0 40px 0 39px;
+    outline:none;
+}
+.ex-search-input::placeholder{ color:var(--text-3); }
+
+/* ── Cards: badges, count chip, logo images, coming-soon state ──────────── */
+a.nav-card{ text-decoration:none; color:inherit; }
+
+.nav-card.is-soon{ opacity:.72; }
+.nav-card.is-soon .nc-chev{ display:none; }
+
+.nc-title{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+
+.nc-badge{
+    display:inline-block;
+    font-size:8.5px;
+    font-weight:800;
+    letter-spacing:.7px;
+    text-transform:uppercase;
+    padding:3px 7px;
+    border-radius:999px;
+    line-height:1;
+    white-space:nowrap;
+}
+.nc-badge.new { background:var(--emerald-soft); color:var(--emerald-strong); }
+.nc-badge.soon{ background:var(--amber-soft);   color:var(--amber-strong);   }
+body.dark-mode .nc-badge.new { color:#34d399; }
+body.dark-mode .nc-badge.soon{ color:#fbbf24; }
+
+.nc-count{
+    flex-shrink:0;
+    font-size:10.5px;
+    font-weight:800;
+    color:var(--primary);
+    background:var(--primary-soft);
+    border-radius:999px;
+    padding:4px 9px;
+    font-variant-numeric:tabular-nums;
+}
+
+.nc-logo{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:12px;
+    background:var(--surface-2);
+    display:block;
+}
+
+/* ── Retry button inside the load-failure empty state ───────────────────── */
+.ex-retry{
+    margin-top:14px;
+    border:none;
+    cursor:pointer;
+    background:var(--grad-primary);
+    color:#fff;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.2px;
+    padding:10px 22px;
+    border-radius:999px;
+    box-shadow:0 6px 16px rgba(61,90,254,.32);
+}
+.ex-retry:active{ transform:scale(.96); }
+
+/* ── Bottom dock — floating pill bar, raised center button ──────────────
+   Identical on phones and desktops: a centered capsule that hovers above
+   the content, with the middle item lifted into a gradient circle (same
+   language as the app dock in the reference screenshot).               */
+.ex-dock{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:calc(12px + env(safe-area-inset-bottom));
+    z-index:1200;
+    display:flex;
+    align-items:stretch;
+    justify-content:space-between;
+    width:min(calc(100vw - 20px), 620px);
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:26px;
+    padding:8px 10px;
+    box-shadow:0 18px 40px rgba(15,23,42,.16);
+}
+body.dark-mode .ex-dock{
+    box-shadow:0 18px 44px rgba(0,0,0,.5);
+}
+
+.ex-dock-item{
+    position:relative;
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    gap:3px;
+    padding:9px 2px 11px;
+    border-radius:16px;
+    color:var(--text-3);
+    text-decoration:none;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.2px;
+    transition:color .15s ease;
+}
+.ex-dock-item svg{ width:21px; height:21px; }
+.ex-dock-item:active{ transform:scale(.94); }
+.ex-dock-item.active{ color:var(--primary); }
+.ex-dock-item.active::after{
+    content:'';
+    position:absolute;
+    bottom:3px; left:50%;
+    transform:translateX(-50%);
+    width:4px; height:4px;
+    border-radius:50%;
+    background:var(--primary);
+}
+
+/* Raised center button — gradient circle lifted above the capsule */
+.ex-dock-center{
+    flex:0 0 auto;
+    justify-content:center;
+    padding:0 8px;
+}
+.ex-dock-fab{
+    width:52px; height:52px;
+    border-radius:50%;
+    background:var(--grad-primary);
+    color:#fff;
+    display:grid; place-items:center;
+    margin-top:-34px;
+    box-shadow:0 0 0 5px var(--bg), 0 10px 26px rgba(61,90,254,.45);
+    transition:transform .12s ease;
+}
+.ex-dock-fab svg{ width:22px; height:22px; }
+.ex-dock-center:active .ex-dock-fab{ transform:scale(.93); }
+.ex-dock-center.active .ex-dock-fab{
+    box-shadow:0 0 0 5px var(--bg), 0 0 0 8px var(--primary-soft), 0 10px 26px rgba(61,90,254,.5);
+}
+
+/* Small phones — tighten, never wrap */
+@media (max-width:379.98px){
+    .ex-dock{ padding:7px 6px; border-radius:22px; }
+    .ex-dock-item{ font-size:9px; padding:8px 1px 10px; }
+    .ex-dock-item svg{ width:19px; height:19px; }
+    .ex-dock-fab{ width:46px; height:46px; margin-top:-30px; }
+    .ex-dock-fab svg{ width:20px; height:20px; }
+}

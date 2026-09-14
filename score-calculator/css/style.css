@@ -1,0 +1,498 @@
+/* ═══════════════════════════════════════════════════
+   MOCK MATRIX HUB — Score Calculator design system
+   MMH site theme (same tokens as the main app) with a
+   bridge layer that maps the calculator's legacy token
+   names (--ink, --bg-card, --text-primary, ...) onto the
+   MMH palette, so every engine-rendered component picks
+   up the new theme with zero logic changes.
+   Loaded by every page in this section.
+═══════════════════════════════════════════════════ */
+
+:root {
+  /* ── MMH site tokens (identical to the main app) ── */
+  --bg:#f3f5fb; --surface:#ffffff; --surface-2:#f8fafc;
+  --border:#e5eaf3; --border-strong:#d6deeb;
+  --text:#0b1220; --text-2:#41506b; --text-3:#7c8aa5;
+  --primary:#3d5afe; --primary-2:#2b44d8; --primary-soft:rgba(61,90,254,.10);
+  --grad-primary:linear-gradient(135deg,#4d6bff 0%,#2b44d8 100%);
+  --emerald:#0ea371; --emerald-soft:rgba(14,163,113,.12);
+  --amber:#b45309; --amber-soft:rgba(245,158,11,.14);
+  --red:#dc2643; --red-soft:rgba(225,29,72,.10);
+  --shadow-card:0 1px 2px rgba(15,23,42,.04), 0 10px 26px -14px rgba(15,23,42,.14);
+
+  /* ── Legacy bridge: fonts / spacing / radii (unchanged names) ── */
+  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-7: 32px; --sp-8: 32px; --sp-10: 40px; --sp-12: 48px;
+
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 18px; --r-full: 999px;
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur: 180ms;
+
+  /* ── Legacy bridge: light theme ── */
+  --ink: #3d5afe;
+  --ink-deep: #2b44d8;
+  --ink-light: #2b44d8;
+  --gold: #b45309;
+  --gold-light: #f59e0b;
+
+  --pass: #0ea371;
+  --fail: #dc2643;
+  --skip: #7c8aa5;
+  --bonus: #b45309;
+  --pass-bg: rgba(14,163,113,.10);
+  --fail-bg: rgba(220,38,67,.08);
+  --bonus-bg: rgba(245,158,11,.12);
+  --skip-bg: rgba(124,138,165,.10);
+
+  --bg-page: #f3f5fb;
+  --bg-base: #f3f5fb;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-input: #f8fafc;
+
+  --rule: rgba(11,18,32,.06);
+
+  --text-primary: #0b1220;
+  --text-secondary: #41506b;
+  --text-muted: #7c8aa5;
+
+  --shadow-sm: 0 1px 2px rgba(15,23,42,.05);
+  --shadow-md: 0 6px 20px rgba(15,23,42,.08);
+  --shadow-lg: 0 14px 36px rgba(15,23,42,.12);
+  --glow: 0 0 0 3px rgba(61,90,254,.14);
+
+  --scrollbar-track: #f3f5fb;
+  --scrollbar-thumb: #c9d4e8;
+}
+
+[data-theme="dark"], body.dark-mode {
+  /* ── MMH dark tokens ── */
+  --bg:#0a0f1e; --surface:#101a2e; --surface-2:#16233c;
+  --border:#22304b; --border-strong:#2e4062;
+  --text:#eaf0fb; --text-2:#b9c6dd; --text-3:#8494b0;
+  --primary:#6d81ff; --primary-2:#5468f0; --primary-soft:rgba(109,129,255,.16);
+  --emerald:#34d399; --emerald-soft:rgba(52,211,153,.14);
+  --amber:#fbbf24; --amber-soft:rgba(251,191,36,.14);
+  --red:#fb7185; --red-soft:rgba(251,113,133,.14);
+  --shadow-card:0 1px 2px rgba(0,0,0,.35), 0 14px 30px -16px rgba(0,0,0,.6);
+
+  /* ── Legacy bridge: dark theme ── */
+  --ink: #6d81ff;
+  --ink-deep: #5468f0;
+  --ink-light: #93a3ff;
+  --gold: #fbbf24;
+  --gold-light: #fbbf24;
+
+  --pass: #34d399;
+  --fail: #fb7185;
+  --skip: #8494b0;
+  --bonus: #fbbf24;
+  --pass-bg: rgba(52,211,153,.13);
+  --fail-bg: rgba(251,113,133,.12);
+  --bonus-bg: rgba(251,191,36,.13);
+  --skip-bg: rgba(132,148,176,.12);
+
+  --bg-page: #0a0f1e;
+  --bg-base: #0a0f1e;
+  --bg-surface: #101a2e;
+  --bg-card: #101a2e;
+  --bg-card-hover: #16233c;
+  --bg-input: #16233c;
+
+  --rule: rgba(255,255,255,.07);
+
+  --text-primary: #eaf0fb;
+  --text-secondary: #b9c6dd;
+  --text-muted: #8494b0;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.5);
+  --shadow-md: 0 6px 20px rgba(0,0,0,.45);
+  --shadow-lg: 0 14px 40px rgba(0,0,0,.55);
+  --glow: 0 0 0 3px rgba(109,129,255,.22);
+
+  --scrollbar-track: #101a2e;
+  --scrollbar-thumb: #2e4062;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  /* area ABOVE the header (status bar / overscroll) blends with the header */
+  background: var(--bg-surface);
+  height: 100%;
+}
+
+/* ── Locked app frame (same as every MMH screen): the body never
+   scrolls, only .screen-scroll does — the header cannot move at all,
+   even during fast flings / overscroll. ── */
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.5;
+  height: 100%;
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: background-color .3s ease, color .3s ease;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+@media (min-width: 760px) {
+  body {
+    background:
+      radial-gradient(circle at 12% 8%, var(--primary-soft), transparent 44%),
+      radial-gradient(circle at 88% 92%, var(--emerald-soft), transparent 40%),
+      var(--bg-base);
+  }
+}
+
+.screen-scroll {
+  flex: 1; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; }
+p { line-height: 1.6; }
+a { color: var(--ink-light); text-decoration: none; }
+img { max-width: 100%; }
+button { font-family: inherit; }
+
+/* ── Appbar header (verbatim MMH site system) ── */
+.screen-header {
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.appbar { display: flex; align-items: center; gap: 10px; padding: 9px 16px 10px; }
+.appbar .icon-btn {
+  width: 38px; height: 38px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--bg-surface); color: var(--text-secondary);
+  display: grid; place-items: center; cursor: pointer; padding: 0; flex-shrink: 0;
+  text-decoration: none; position: relative;
+  transition: transform .12s ease, color .15s ease, border-color .15s ease, background .15s ease;
+}
+.appbar .icon-btn svg { width: 18px; height: 18px; }
+.appbar .icon-btn:hover { color: var(--primary); border-color: var(--border-strong); }
+.appbar .icon-btn:active { transform: scale(.9); }
+.appbar .nav-back { width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark {
+  width: 37px; height: 37px; border-radius: 11px;
+  background: var(--grad-primary);
+  display: grid; place-items: center; color: #fff; flex-shrink: 0;
+  box-shadow: 0 5px 14px rgba(61,90,254,.35);
+  overflow: hidden;
+}
+.brand-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; display: block; background: var(--surface-2); }
+.brand-mark svg { width: 19px; height: 19px; }
+.brand-text { min-width: 0; }
+.brand-title {
+  font-size: 16px; font-weight: 700; letter-spacing: -.2px; line-height: 1.2;
+  color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: clip;
+}
+.brand-sub {
+  margin-top: 1px; font-size: 10px; font-weight: 700; letter-spacing: .9px;
+  text-transform: uppercase; color: var(--text-3); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.appbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.chip-btn {
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--primary);
+  font: inherit; font-size: 11.5px; font-weight: 800; letter-spacing: .3px;
+  padding: 8px 13px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  transition: background .15s ease, color .15s ease, transform .12s ease;
+}
+.chip-btn:active { transform: scale(.94); }
+.chip-btn:hover { background: var(--primary-soft); }
+
+/* Notification bell badge (inside an appbar icon-btn) */
+.bell-btn { position: relative; }
+.bell-badge {
+  position: absolute; top: 2px; right: 2px;
+  min-width: 16px; height: 16px; padding: 0 3px; border-radius: 999px;
+  background: #e11d48; color: #fff; font-size: 0.6rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; line-height: 1;
+}
+.bell-badge.hidden { display: none; }
+
+/* ── Layout ── */
+.page-main { padding: var(--sp-5) 0 calc(var(--sp-10) + env(safe-area-inset-bottom)); }
+.container {
+  width: 100%; max-width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(14px, 2.6vw, 34px);
+}
+.container--wide { max-width: 100%; }
+
+/* ── Hero band (MMH pg-hero) ── */
+.pg-hero {
+  position: relative; overflow: hidden;
+  background: var(--grad-primary); color: #fff;
+  border-radius: 20px;
+  padding: clamp(22px, 3vw, 36px) clamp(20px, 2.6vw, 34px);
+  box-shadow: 0 14px 34px -14px rgba(43,68,216,.55);
+  margin-bottom: var(--sp-5);
+  animation: pg-up .5s cubic-bezier(.22,.9,.3,1) both;
+}
+.pg-hero::after {
+  content: ''; position: absolute; top: -80px; right: -60px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: rgba(255,255,255,.08); pointer-events: none;
+}
+.pg-hero .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase;
+  color: rgba(255,255,255,.72);
+}
+.pg-hero h1 {
+  margin: 8px 0 6px; font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 800; letter-spacing: -.4px;
+  color: #fff;
+}
+.pg-hero p { margin: 0; font-size: 13.5px; color: rgba(255,255,255,.85); max-width: 70ch; }
+.pg-hero .hero-ico {
+  position: absolute; right: clamp(16px, 3vw, 34px); top: 50%; transform: translateY(-50%);
+  width: 64px; height: 64px; border-radius: 18px;
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
+  display: grid; place-items: center;
+}
+.pg-hero .hero-ico svg { width: 30px; height: 30px; color: #fff; }
+@media (max-width: 640px) { .pg-hero .hero-ico { display: none; } }
+
+/* ── Card ── */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: var(--sp-5);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.card--hover:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); }
+
+.section-label {
+  font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--sp-3);
+  display: flex; align-items: center; gap: var(--sp-2);
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+/* ── Forms ── */
+.form-group { display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+.form-group:last-child { margin-bottom: 0; }
+.form-label { font-size: 0.76rem; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.01em; }
+.form-label .required { color: var(--fail); margin-left: 2px; }
+.form-hint { font-size: 0.68rem; color: var(--text-muted); margin-top: -2px; }
+
+.form-input, .form-select {
+  width: 100%; padding: 11px var(--sp-3);
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--r-md); color: var(--text-primary);
+  font-size: 0.85rem; font-family: var(--font-body); outline: none;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  -webkit-appearance: none; appearance: none;
+}
+.form-input::placeholder { color: var(--text-muted); }
+.form-input:focus, .form-select:focus { border-color: var(--ink); box-shadow: var(--glow); }
+
+.form-select-wrap { position: relative; }
+.form-select-wrap::after {
+  content: ''; position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-muted); pointer-events: none;
+}
+.form-select-wrap .form-select { padding-right: 32px; }
+
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+@media (max-width: 480px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+.checkbox-wrap {
+  display: flex; align-items: flex-start; gap: var(--sp-3); cursor: pointer;
+  padding: var(--sp-3); border-radius: var(--r-md); border: 1px solid var(--border);
+  background: var(--bg-input); transition: border-color var(--dur) var(--ease);
+}
+.checkbox-wrap:has(input:checked) { border-color: var(--ink); background: var(--primary-soft); }
+.checkbox-wrap input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; accent-color: var(--ink); cursor: pointer; }
+.checkbox-text { font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5; }
+.checkbox-text strong { color: var(--text-primary); }
+.checkbox-text a { text-decoration: underline; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  padding: 13px var(--sp-5); border-radius: var(--r-md);
+  font-size: 0.87rem; font-weight: 700; font-family: var(--font-body);
+  cursor: pointer; border: none; transition: all var(--dur) var(--ease);
+  letter-spacing: 0.01em; text-decoration: none; white-space: nowrap;
+}
+.btn--primary { background: var(--ink); color: #fff; box-shadow: 0 4px 14px rgba(61,90,254,.32); }
+.btn--primary:hover { background: var(--ink-deep); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(61,90,254,.4); }
+.btn--primary:active { transform: translateY(0); }
+.btn--secondary { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-strong); }
+.btn--secondary:hover { background: var(--bg-card-hover); border-color: var(--ink); color: var(--ink-light); }
+.btn--full { width: 100%; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+.btn-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
+  animation: btn-spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+.btn-check { width: 18px; height: 18px; flex-shrink: 0; animation: btn-check-pop 0.35s var(--ease); }
+@keyframes btn-check-pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* ── Badges ── */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: var(--r-full); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.badge--new { background: var(--amber-soft); color: var(--gold-light); border: 1px solid rgba(245,158,11,.3); }
+.badge--live { background: var(--emerald-soft); color: var(--pass); border: 1px solid rgba(14,163,113,.3); }
+.badge--closed { background: rgba(148,163,184,0.15); color: var(--text-muted); border: 1px solid var(--border); }
+
+.tag-new { color: var(--fail); font-weight: 700; font-size: 0.78em; margin-left: 5px; }
+
+.divider { height: 1px; background: var(--border); margin: var(--sp-5) 0; }
+
+/* ── Log box ── */
+.log-box {
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: var(--sp-4); font-family: var(--font-mono); font-size: 0.74rem;
+  max-height: 220px; overflow-y: auto; line-height: 1.85;
+}
+.log-ok { color: var(--pass); }
+.log-err { color: var(--fail); }
+.log-warn { color: var(--gold-light); }
+.log-info { color: var(--text-muted); }
+
+/* ── Score boxes ── */
+.score-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+.score-box { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--r-lg); padding: var(--sp-4) var(--sp-3); text-align: center; }
+.score-box--total { grid-column: 1 / -1; background: var(--primary-soft); border-color: var(--ink); }
+.score-box__num { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 600; line-height: 1; margin-bottom: var(--sp-1); font-variant-numeric: tabular-nums; }
+.score-box--total .score-box__num { font-size: 2.2rem; color: var(--ink-light); }
+.score-box__label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.score-pass { color: var(--pass); } .score-fail { color: var(--fail); } .score-skip { color: var(--skip); } .score-bonus { color: var(--bonus); }
+
+/* ── Tabs ── */
+.tab-row { display: flex; gap: 2px; background: var(--bg-input); border-radius: var(--r-md); padding: 3px; margin-bottom: var(--sp-4); }
+.tab-btn { flex: 1; padding: var(--sp-2) var(--sp-3); border-radius: calc(var(--r-md) - 2px); border: none; background: transparent; color: var(--text-muted); font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all var(--dur) var(--ease); font-family: var(--font-body); white-space: nowrap; }
+.tab-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+
+/* ── Footer ── */
+.app-footer { text-align: center; padding: var(--sp-6) var(--sp-4); border-top: 1px solid var(--border); margin-top: var(--sp-8); }
+.app-footer p { font-size: 0.7rem; color: var(--text-muted); }
+.app-footer a { color: var(--ink-light); }
+
+/* ── Util ── */
+.hidden { display: none !important; }
+
+.form-input.field-error,
+.form-select.field-error {
+  border-color: var(--fail) !important;
+  background: var(--fail-bg);
+  box-shadow: 0 0 0 3px var(--red-soft);
+}
+.checkbox-wrap.field-error {
+  outline: 1.5px solid var(--fail);
+  outline-offset: 4px;
+  border-radius: var(--r-md);
+}
+.input-error { border-color: var(--fail) !important; }
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+.mt-4 { margin-top: var(--sp-4); } .mt-5 { margin-top: var(--sp-5); } .mt-6 { margin-top: var(--sp-6); }
+.flex { display: flex; } .items-center { align-items: center; } .justify-between { justify-content: space-between; }
+.w-full { width: 100%; }
+
+/* ── Animations ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pg-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.fade-up { animation: fadeUp 0.45s var(--ease) both; }
+.fade-up-1 { animation-delay: 0.06s; } .fade-up-2 { animation-delay: 0.12s; } .fade-up-3 { animation-delay: 0.18s; }
+
+/* ── Adaptive appbar — shrinks ONLY when the brand name / tagline would
+   otherwise truncate ("strip") on tight screens. home-engine.js fitAppbar()
+   measures real overflow and toggles .appbar-compact; on roomy screens the
+   header stays exactly as designed. Icons shrink with it to make room.  */
+.appbar .brand-mark, .appbar .brand-title, .appbar .brand-sub,
+.appbar .icon-btn, .appbar .avatar-chip, .appbar .login-chip{
+    transition:width .15s ease, height .15s ease, font-size .15s ease;
+}
+/* Step ≥1 — first icon/logo/toggle squeeze + toggle slides leftward
+   (16px → 10px left padding) so the brand text gets the room */
+.appbar.appbar-compact{ gap:9px; }
+.screen-header .appbar.appbar-compact{ padding-left:10px; }
+.appbar.appbar-compact .brand{ gap:8px; }
+.appbar.appbar-compact .brand-mark{ width:33px; height:33px; border-radius:10px; }
+.appbar.appbar-compact .brand-mark svg,
+.appbar.appbar-compact .brand-mark img{ width:17px; height:17px; }
+.appbar.appbar-compact .icon-btn,
+.appbar.appbar-compact .nav-back{ width:34px; height:34px; border-radius:11px; }
+.appbar.appbar-compact .icon-btn svg{ width:17px; height:17px; }
+.appbar.appbar-compact .appbar-actions{ gap:7px; }
+.appbar.appbar-compact .avatar-chip{ width:33px; height:33px; border-radius:10px; font-size:13px; }
+.appbar.appbar-compact .login-chip{ height:29px; padding:0 12px; font-size:10.5px; }
+
+/* Step ≥3 — second squeeze: every header icon, the logo AND the sidebar
+   toggle go smaller again; toggle moves further left (→ 8px) */
+.appbar.appbar-fit-3{ gap:8px; }
+.screen-header .appbar.appbar-fit-3{ padding-left:8px; }
+.appbar.appbar-fit-3 .brand-mark{ width:30px; height:30px; }
+.appbar.appbar-fit-3 .brand-mark svg,
+.appbar.appbar-fit-3 .brand-mark img{ width:16px; height:16px; }
+.appbar.appbar-fit-3 .icon-btn,
+.appbar.appbar-fit-3 .nav-back{ width:31px; height:31px; border-radius:10px; }
+.appbar.appbar-fit-3 .icon-btn svg{ width:15px; height:15px; }
+.appbar.appbar-fit-3 .appbar-actions{ gap:6px; }
+.appbar.appbar-fit-3 .avatar-chip{ width:30px; height:30px; font-size:12px; }
+.appbar.appbar-fit-3 .login-chip{ height:27px; padding:0 10px; font-size:10px; }
+
+/* Step 5 — deepest squeeze on the tiniest screens (→ 6px left padding) */
+.appbar.appbar-fit-5{ gap:7px; }
+.screen-header .appbar.appbar-fit-5{ padding-left:6px; }
+.appbar.appbar-fit-5 .brand-mark{ width:28px; height:28px; border-radius:8px; }
+.appbar.appbar-fit-5 .brand-mark svg,
+.appbar.appbar-fit-5 .brand-mark img{ width:15px; height:15px; }
+.appbar.appbar-fit-5 .icon-btn,
+.appbar.appbar-fit-5 .nav-back{ width:29px; height:29px; border-radius:9px; }
+.appbar.appbar-fit-5 .icon-btn svg{ width:14px; height:14px; }
+.appbar.appbar-fit-5 .appbar-actions{ gap:5px; }
+.appbar.appbar-fit-5 .avatar-chip{ width:28px; height:28px; font-size:11px; }
+.appbar.appbar-fit-5 .login-chip{ height:25px; padding:0 9px; font-size:9.5px; }
+
+/* Auto-fit ladder — the brand name / tagline are NEVER ellipsised on this
+   page. fitAppbar() walks these steps (smaller size AND lighter weight)
+   until the COMPLETE text fits; icons shrink alongside for extra room. */
+.appbar .brand-title{ text-overflow:clip; }        /* no "…" — full text only */
+.appbar.appbar-fit-1 .brand-title{ font-size:14.5px; }
+.appbar.appbar-fit-1 .brand-sub{ font-size:9.5px; }
+.appbar.appbar-fit-2 .brand-title{ font-size:13.5px; font-weight:600; }
+.appbar.appbar-fit-2 .brand-sub{ font-size:9px; font-weight:600; }
+.appbar.appbar-fit-3 .brand-title{ font-size:12.5px; font-weight:600; letter-spacing:0; }
+.appbar.appbar-fit-3 .brand-sub{ font-size:8.5px; font-weight:600; letter-spacing:.5px; }
+.appbar.appbar-fit-4 .brand-title{ font-size:11.5px; font-weight:500; letter-spacing:0; }
+.appbar.appbar-fit-4 .brand-sub{ font-size:8px; font-weight:500; letter-spacing:.4px; }
+.appbar.appbar-fit-5 .brand-title{ font-size:10.5px; font-weight:500; letter-spacing:0; }
+.appbar.appbar-fit-5 .brand-sub{ font-size:7.5px; font-weight:500; letter-spacing:.4px; }
+/* absolute last resort (tiny screens): wrap instead of cutting — still no … */
+.appbar.appbar-wrap .brand-title,
+.appbar.appbar-wrap .brand-sub{ white-space:normal; text-overflow:clip; line-height:1.15; }
