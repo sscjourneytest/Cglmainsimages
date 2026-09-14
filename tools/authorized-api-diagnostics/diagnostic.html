@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Authorized API Diagnostic</title>
+  <style>
+    :root { color-scheme: light dark; font-family: Inter, system-ui, sans-serif; }
+    body { max-width: 850px; margin: 0 auto; padding: 28px 18px 60px; background: Canvas; color: CanvasText; }
+    h1 { font-size: 1.45rem; margin-bottom: .25rem; }
+    .note { color: color-mix(in srgb, CanvasText 68%, transparent); line-height: 1.5; }
+    .warning { margin: 18px 0; padding: 13px 15px; border-left: 4px solid #d97706; background: color-mix(in srgb, #f59e0b 13%, Canvas); line-height: 1.5; }
+    label { font-weight: 700; display: block; margin: 18px 0 7px; }
+    input, select, textarea, button { font: inherit; box-sizing: border-box; }
+    input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #75809b; border-radius: 8px; background: Canvas; color: CanvasText; }
+    textarea { min-height: 280px; resize: vertical; font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .row { display: grid; grid-template-columns: 1fr 170px; gap: 14px; }
+    button { margin-top: 18px; cursor: pointer; padding: 11px 17px; border: 0; border-radius: 8px; background: #2563eb; color: #fff; font-weight: 750; }
+    button:disabled { opacity: .65; cursor: wait; }
+    pre { overflow: auto; padding: 16px; min-height: 120px; border-radius: 8px; background: #111827; color: #e5e7eb; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; word-break: break-word; }
+    .status { min-height: 1.4em; margin: 12px 0; font-weight: 600; }
+    .ok { color: #15803d; } .error { color: #dc2626; }
+    code { padding: 2px 4px; border-radius: 4px; background: color-mix(in srgb, CanvasText 10%, Canvas); }
+    @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>Authorized API Diagnostic</h1>
+  <p class="note">This page sends a JSON payload to <em>your</em> diagnostic Worker. The Worker calls only the upstream endpoint configured at deployment and returns an observable HTTP diagnostic.</p>
+
+  <div class="warning">
+    <strong>Use only with an API you own or are explicitly authorized to test.</strong><br>
+    This tool intentionally does not send browser cookies, Cloudflare-clearance values, <code>Origin</code>, <code>Referer</code>, or copied authorization headers to the Worker.
+  </div>
+
+  <div class="row">
+    <div>
+      <label for="workerUrl">Worker URL</label>
+      <input id="workerUrl" type="url" placeholder="https://your-worker.workers.dev" autocomplete="off" required>
+    </div>
+    <div>
+      <label for="method">Upstream method</label>
+      <select id="method">
+        <option value="POST" selected>POST</option>
+        <option value="GET">GET</option>
+      </select>
+    </div>
+  </div>
+
+  <label for="payload">JSON payload for your authorized upstream</label>
+  <textarea id="payload" spellcheck="false">{
+  "url": "https://example.gov.in/your-authorized-response-sheet-url",
+  "category_vertical": "SC",
+  "category_horizontal": null,
+  "gender": null,
+  "state": "Bihar",
+  "paper_language": "EN",
+  "paper_medium": null,
+  "job_status": null,
+  "rrb_zone": null,
+  "force_ssc": false,
+  "exam_tab": "rrb"
+}</textarea>
+
+  <button id="sendButton" type="button">Send authorized diagnostic request</button>
+  <div id="status" class="status" aria-live="polite"></div>
+  <pre id="output">The Worker response will appear here.</pre>
+
+  <script>
+    const workerUrl = document.getElementById('workerUrl');
+    const method = document.getElementById('method');
+    const payload = document.getElementById('payload');
+    const button = document.getElementById('sendButton');
+    const status = document.getElementById('status');
+    const output = document.getElementById('output');
+
+    function diagnosticEndpoint(value) {
+      const base = new URL(value.trim());
+      base.pathname = base.pathname.replace(/\/$/, '') + '/diagnose';
+      base.search = '';
+      base.hash = '';
+      return base.toString();
+    }
+
+    button.addEventListener('click', async () => {
+      let body;
+      let endpoint;
+      try {
+        body = JSON.parse(payload.value);
+        endpoint = diagnosticEndpoint(workerUrl.value);
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = `Input error: ${error.message}`;
+        return;
+      }
+
+      button.disabled = true;
+      status.className = 'status';
+      status.textContent = 'Requesting diagnostic Worker…';
+      output.textContent = '';
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          // No credentials: browser cookies must never be sent to a diagnostic proxy.
+          credentials: 'omit',
+          body: JSON.stringify({ method: method.value, payload: body })
+        });
+        const raw = await response.text();
+        let data;
+        try { data = JSON.parse(raw); } catch { data = { rawResponse: raw }; }
+        output.textContent = JSON.stringify(data, null, 2);
+        const succeeded = response.ok && data.ok;
+        status.className = `status ${succeeded ? 'ok' : 'error'}`;
+        status.textContent = succeeded
+          ? 'Diagnostic completed. The configured upstream returned success.'
+          : `Diagnostic completed with Worker/upstream result: ${data.diagnostic?.category || response.status}.`;
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = `Browser-to-Worker failure: ${error.message}`;
+        output.textContent = 'No response from the Worker. Check the Worker URL and ALLOWED_UI_ORIGIN setting.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

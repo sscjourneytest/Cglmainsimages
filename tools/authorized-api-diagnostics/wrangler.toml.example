@@ -1,0 +1,10 @@
+name = "authorized-api-diagnostic"
+main = "worker.js"
+compatibility_date = "2026-09-14"
+
+# Do not place real endpoint credentials in this file or commit them.
+# Set these from the Cloudflare dashboard or with Wrangler secrets:
+#   wrangler secret put UPSTREAM_URL
+#   wrangler secret put ALLOWED_UI_ORIGIN
+#   wrangler secret put UPSTREAM_BEARER_TOKEN   # only if the provider documents bearer auth
+#   wrangler secret put UPSTREAM_API_KEY        # only if the provider documents X-API-Key auth
