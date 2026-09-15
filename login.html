@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Join Mock Matrix Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/auth.js?v=260908f"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+        /* Professional Aesthetic */
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: #f8fafc;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Top header bar — site appbar system (same geometry as home /
+           admin / partner headers): back-to-home button, logo tile, brand
+           text. Pinned with position:sticky so it NEVER depends on body
+           scrolling, and padding-top:safe-area + meta theme-color make the
+           status-bar area above it match the header surface exactly. */
+        /* Locked app frame (home / exams pattern): the body never scrolls,
+           only .screen-scroll does — so the header cannot jitter or move on
+           fast mobile flings, exactly like the mock pages. */
+        html, body{ height:100%; }
+        body{
+            position:fixed; inset:0;
+            display:flex; flex-direction:column;
+            overflow:hidden;
+        }
+        .screen-header{
+            flex-shrink:0;
+            background:#ffffff;
+            border-bottom:1px solid #e5e7eb;
+            padding-top:env(safe-area-inset-top, 0px);
+            font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        }
+        .screen-scroll{
+            flex:1; overflow-y:auto;
+            -webkit-overflow-scrolling:touch;
+            overscroll-behavior:contain;
+        }
+        .appbar{
+            display:flex; align-items:center; gap:10px;
+            padding:9px 16px 10px;
+        }
+        .icon-btn{
+            width:38px; height:38px; border-radius:12px;
+            border:1px solid #e2e8f0; background:#ffffff; color:#475569;
+            display:grid; place-items:center; cursor:pointer; padding:0;
+            flex-shrink:0; text-decoration:none;
+            transition:transform .12s ease, color .15s ease, border-color .15s ease, background .15s ease;
+        }
+        .icon-btn svg{ width:18px; height:18px; }
+        .icon-btn:hover{ color:#2563eb; border-color:#cbd5e1; background:#f8fafc; }
+        .icon-btn:active{ transform:scale(.9); }
+        .nav-back{ width:38px; height:38px; border-radius:12px; flex-shrink:0; }
+        .brand{ display:flex; align-items:center; gap:10px; min-width:0; }
+        .brand-mark{
+            width:37px; height:37px; border-radius:11px;
+            background:linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            display:grid; place-items:center; color:#fff; flex-shrink:0;
+            box-shadow:0 5px 14px rgba(37,99,235,.35);
+            overflow:hidden;
+        }
+        .brand-logo-img{
+            width:100%; height:100%; object-fit:cover;
+            border-radius:11px; display:block; background:#eff6ff;
+        }
+        .brand-mark svg{ width:19px; height:19px; }
+        .brand-text{ min-width:0; }
+        .brand-title{
+            font-size:16px; font-weight:700; letter-spacing:-.2px; line-height:1.2;
+            color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:clip;
+        }
+        .brand-sub{
+            margin-top:1px; font-size:10px; font-weight:700; letter-spacing:.9px;
+            text-transform:uppercase; color:#64748b; white-space:nowrap;
+        }
+        .appbar-actions{ margin-left:auto; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+
+        /* Hamburger menu (right side of header) */
+        .menu-wrap {
+            position: relative;
+        }
+        .hamburger-btn {
+            width: 38px;
+            height: 38px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #475569;
+            transition: background 0.2s;
+        }
+        .hamburger-btn:hover {
+            background: #f1f5f9;
+        }
+        .hamburger-dropdown {
+            position: absolute;
+            top: 44px;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05);
+            min-width: 160px;
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            z-index: 200;
+        }
+        .hamburger-dropdown.open {
+            display: flex;
+        }
+        .hamburger-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            text-align: left;
+        }
+        .hamburger-dropdown button:hover {
+            background: #f1f5f9;
+        }
+        .hamburger-dropdown button svg {
+            flex-shrink: 0;
+            color: #64748b;
+        }
+
+        /* Floating Help button */
+        .floating-help {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            z-index: 150;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+        .floating-help .help-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff7a45 0%, #ff5722 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px -4px rgba(255, 87, 34, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 21px;
+            color: #ffffff;
+        }
+        .floating-help:hover .help-circle {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -4px rgba(37, 99, 235, 0.55);
+        }
+        .floating-help .help-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e293b;
+            background: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .page-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 20px;
+        }
+
+        .auth-card { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 32px; 
+            width: 100%; 
+            max-width: 420px; 
+            color: #1e293b; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); 
+            border: 1px solid #e2e8f0; 
+        }
+
+        /* Mock Matrix Hub Logo Branding (inside card) */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .logo-box {
+            width: 56px;
+            height: 56px;
+            background: #2563eb;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 26px;
+            font-weight: 800;
+            box-shadow: 0 8px 16px -4px rgba(37, 99, 235, 0.35);
+        }
+        .brand-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+        .brand-hub {
+            color: #2563eb;
+            font-weight: 800;
+        }
+        .brand-subtitle {
+            font-size: 13.5px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* Signup Guide (shown outside the card, below it, only during signup) */
+        .guide-box-external {
+            width: 100%;
+            max-width: 420px;
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 12px;
+            color: #1e40af;
+            box-sizing: border-box;
+        }
+
+        h2 { text-align: center; color: #1e293b; margin: 0 0 4px 0; font-size: 22px; font-weight: 800; }
+        .mandatory-notice { text-align: center; font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        .mandatory-notice span { color: #ef4444; }
+        
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+        label span { color: #ef4444; }
+
+        .pass-container { position: relative; width: 100%; }
+        .toggle-eye { position: absolute; right: 12px; top: 12px; cursor: pointer; color: #94a3b8; user-select: none; display: flex; }
+        .toggle-eye:hover { color: #64748b; }
+        .toggle-eye svg { display: block; }
+        .toggle-eye .eye-off { display: none; }
+        .match-msg { font-size: 12px; font-weight: 600; margin: -10px 0 12px; min-height: 15px; display: none; }
+        .match-msg.show { display: block; }
+        .match-msg.error { color: #dc2626; }
+        .match-msg.ok { color: #16a34a; }
+
+        .pass-reqs { list-style: none; padding: 0; margin: -8px 0 14px; font-size: 11.5px; }
+        .pass-reqs li { color: #dc2626; font-weight: 600; margin-bottom: 2px; transition: color 0.2s; }
+        .pass-reqs li::before { content: "✕ "; }
+        .pass-reqs li.met { color: #16a34a; }
+        .pass-reqs li.met::before { content: "✓ "; }
+
+        .input-box { 
+            width: 100%; padding: 11px 12px; margin-bottom: 14px; 
+            background: #f8fafc; border: 1px solid #cbd5e1; 
+            border-radius: 10px; color: #1e293b; box-sizing: border-box; 
+            outline: none; transition: 0.2s; font-family: 'Verdana', 'Segoe UI', sans-serif;
+        }
+        .input-box:focus { border-color: #2563eb; background: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+
+        .btn { width: 100%; padding: 13px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 15px; margin-top: 4px; }
+        .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
+        
+        .btn-link { background: transparent; color: #2563eb; font-size: 14px; font-weight: 600; text-decoration: none; margin-top: 12px; display: block; width: 100%; text-align: center; }
+        .btn-link:hover { text-decoration: underline; }
+        .btn-link.disabled { color: #94a3b8; cursor: not-allowed; pointer-events: none; }
+        
+        .hidden { display: none; }
+        #msg { text-align: center; font-size: 13px; margin-top: 16px; font-weight: 600; min-height: 20px; padding: 10px; border-radius: 8px; }
+
+        /* Footer — platform details, app-like feel */
+        .site-footer {
+            width: 100%;
+            max-width: 420px;
+            margin: 28px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .site-footer .footer-tagline {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+            margin: 0 0 14px;
+            padding: 0 8px;
+        }
+        .site-footer .footer-copy {
+            font-size: 11.5px;
+            color: #94a3b8;
+            margin: 0;
+        }
+
+   
+  
+</style>
+   
+</head>
+
+<body>
+    <header class="screen-header">
+        <div class="appbar">
+            <a class="icon-btn nav-back" href="/" aria-label="Back to home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </a>
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <img class="brand-logo-img" src="/logo.png" alt=""
+                         onerror="this.outerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;3.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;3.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot; fill=&quot;currentColor&quot; stroke=&quot;none&quot;/></svg>'">
+                </div>
+                <div class="brand-text">
+                    <div class="brand-title">Mock Matrix Hub</div>
+                    <div class="brand-sub">Login</div>
+                </div>
+            </div>
+            <div class="appbar-actions">
+                <div class="menu-wrap">
+                    <button class="icon-btn" id="hamburger-btn" onclick="toggleHamburgerMenu()" aria-label="Menu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="hamburger-dropdown" id="hamburger-dropdown">
+                        <button onclick="handleGoBack()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                            Go Back
+                        </button>
+                        <button onclick="handleHelp()">
+                            <i class="fas fa-headset" style="font-size:15px; width:16px; text-align:center;"></i>
+                            Help
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <a href="https://t.me/MOCK_MATRIX__HUB_SUPPORT_BOT" target="_blank" class="floating-help" id="floating-help-btn" aria-label="Help">
+        <span class="help-circle">
+            <i class="fas fa-headset"></i>
+        </span>
+        <span class="help-label">Help?</span>
+    </a>
+
+    <main class="screen-scroll">
+    <div class="page-body">
+    <div class="auth-card">
+        <div class="brand-header">
+            <div class="logo-box">M</div>
+            <div class="brand-name">MOCK MATRIX <span class="brand-hub">HUB</span></div>
+            <div class="brand-subtitle">Log in to continue your exam prep</div>
+        </div>
+        
+        <div id="login-section">
+            <h2>Welcome Back</h2>
+            <p class="mandatory-notice">Please enter your credentials <span>*</span></p>
+            
+            <label>Email/Mobile/Username<span>*</span></label>
+            <input type="text" id="l-identity" class="input-box" placeholder="Email, Mobile, Username">
+            
+            <label>Password <span>*</span></label>
+            <div class="pass-container">
+                <input type="password" id="l-password" class="input-box" placeholder="••••••••">
+                <span class="toggle-eye" onclick="toggleEye('l-password')">
+                    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.8 21.8 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a21.8 21.8 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </span>
+            </div>
+            
+            <a href="javascript:void(0)" onclick="toggleView('reset')" style="font-size: 12px; color: #2563eb; text-decoration: none; display: block; margin-bottom: 15px; text-align: right; font-weight: 600;">Forgot Password?</a>
+            
+            <button class="btn btn-primary" id="login-btn" onclick="login()">Sign In</button>
+            <button class="btn btn-link" onclick="toggleView('signup')">New here? Create Account</button>
+        </div>
+
+        <div id="reset-section" class="hidden">
+            <h2>Reset Password</h2>
+            <p class="mandatory-notice">Enter your registered Gmail to receive a reset code.</p>
+            
+            <label>Gmail Address <span>*</span></label>
+            <input type="email" id="r-email" class="input-box" placeholder="example@gmail.com">
+            
+            <button class="btn btn-primary" onclick="forgotPassword()">Send Reset Code</button>
+            <button class="btn btn-link" onclick="toggleView('login')">Back to Login</button>
+        </div>
+
+        <div id="otp-reset-section" class="hidden">
+            <h2>Verify OTP</h2>
+            <p class="mandatory-notice">Enter the 6-digit code sent to your Gmail.</p>
+            
+            <label>OTP Code <span>*</span></label>
+            <input type="text" id="otp-code" class="input-box" placeholder="123456" maxlength="6">
+            
+            <label>New Password <span>*</span></label>
+            <div class="pass-container">
+                <input type="password" id="otp-new-password" class="input-box" placeholder="Min 6 characters">
+                <span class="toggle-eye" onclick="toggleEye('otp-new-password')">
+                    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.8 21.8 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a21.8 21.8 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </span>
+            </div>
+            <ul class="pass-reqs" id="otp-pass-reqs">
+                <li id="otp-req-len">Minimum 6 characters</li>
+                <li id="otp-req-upper">One capital letter (A-Z)</li>
+                <li id="otp-req-digit">One digit (0-9)</li>
+                <li id="otp-req-special">One special symbol (!@#$%...)</li>
+            </ul>
+
+            <label>Confirm New Password <span>*</span></label>
+            <div class="pass-container">
+                <input type="password" id="otp-confirm-password" class="input-box" placeholder="Re-enter new password">
+                <span class="toggle-eye" onclick="toggleEye('otp-confirm-password')">
+                    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.8 21.8 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a21.8 21.8 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </span>
+            </div>
+            <p class="match-msg" id="otp-match-msg"></p>
+            
+            <button id="otp-verify-btn" class="btn btn-primary" onclick="verifyOtpAndChangePassword()">Update Password</button>
+            <button class="btn btn-link" id="resend-otp-btn" onclick="handleResendOtp()">You can resend OTP in <span id="resend-timer">65</span>s</button>
+            <button class="btn btn-link" onclick="localStorage.removeItem('mmh_otp_reset_pending'); toggleView('login')">Back to Login</button>
+        </div>
+
+        <div id="signup-section" class="hidden">
+            <h2>Create Account</h2>
+            
+            <label>Full Name <span>*</span></label>
+            <input type="text" id="s-name" class="input-box" placeholder="Real Name">
+
+             <label>Unique Username <span>*</span></label>
+            <input type="text" id="s-username" class="input-box" placeholder="Letters and numbers only">
+            <p style="font-size:11.5px; color:#64748b; margin:-10px 0 14px;">This will be used as your ID for mock tests.</p>
+
+            <label>Gmail Address <span>*</span></label>
+            <input type="email" id="s-email" class="input-box" placeholder="example@gmail.com">
+              <p style="font-size:11.5px; color:#64748b; margin:-10px 0 14px;">Must be a valid email if invalid your account will be terminated.</p>
+
+            
+            <label>Mobile Number <span>*</span></label>
+            <input type="tel" id="s-mobile" class="input-box" placeholder="10-digit mobile number" maxlength="10">
+            <p style="font-size:11.5px; color:#64748b; margin:-10px 0 14px;">This number must have an active Telegram or WhatsApp account — used for support and important updates.</p>
+            
+            <label>Create Password <span>*</span></label>
+            <div class="pass-container">
+                <input type="password" id="s-password" class="input-box" placeholder="Min 6 characters">
+                <span class="toggle-eye" onclick="toggleEye('s-password')">
+                    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.8 21.8 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a21.8 21.8 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </span>
+            </div>
+            <ul class="pass-reqs" id="s-pass-reqs">
+                <li id="s-req-len">Minimum 6 characters</li>
+                <li id="s-req-upper">One capital letter (A-Z)</li>
+                <li id="s-req-digit">One digit (0-9)</li>
+                <li id="s-req-special">One special symbol (!@#$%...)</li>
+            </ul>
+
+            <label>Confirm Password <span>*</span></label>
+            <div class="pass-container">
+                <input type="password" id="s-confirm-password" class="input-box" placeholder="Re-enter password">
+                <span class="toggle-eye" onclick="toggleEye('s-confirm-password')">
+                    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.8 21.8 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a21.8 21.8 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </span>
+            </div>
+            <p class="match-msg" id="s-match-msg"></p>
+            
+            <button class="btn btn-primary" id="signup-btn" onclick="signup()">Verify & Register</button>
+            <button class="btn btn-link" onclick="toggleView('login')">Already have account? Login</button>
+        </div>
+        <p id="msg"></p>
+    </div>
+
+    <div class="guide-box-external hidden" id="signup-guide-external">
+        <strong>How to Sign Up:</strong><br>
+        • Use a valid Gmail address.<br>
+        • Username: A-Z and 0-9 only (No spaces/signs).<br>
+        • Password must be at least 6 characters.
+    </div>
+
+    <div class="site-footer">
+        <p class="footer-tagline">Mock Matrix Hub is your platform for SSC &amp; RRB — full-length, sectional, and chapter-wise mock tests, previous year questions (PYQs), and new mocks added regularly.</p>
+        <p class="footer-copy">© 2026 Mock Matrix Hub. All rights reserved.</p>
+    </div>
+    </div>
+    </main>
+
+    <script>
+        async function getLoginClient() {
+            return await getClient();
+        }
+
+        function toggleEye(id) {
+            const input = document.getElementById(id);
+            const wasHidden = input.type === "password";
+            input.type = wasHidden ? "text" : "password";
+
+            const wrapper = input.closest('.pass-container');
+            if (wrapper) {
+                wrapper.querySelector('.eye-open').style.display = wasHidden ? "none" : "block";
+                wrapper.querySelector('.eye-off').style.display = wasHidden ? "block" : "none";
+            }
+        }
+
+        // Live "passwords match" check — runs on every keystroke in the
+        // confirm-password box (and also re-checks if the original password
+        // is edited afterward), so the user sees the mismatch immediately
+        // instead of only after clicking submit.
+        function checkPasswordMatch(passId, confirmId, msgId) {
+            const pass = document.getElementById(passId).value;
+            const confirm = document.getElementById(confirmId).value;
+            const msgEl = document.getElementById(msgId);
+
+            if (!confirm) {
+                msgEl.className = "match-msg";
+                msgEl.innerText = "";
+                return;
+            }
+
+            if (pass !== confirm) {
+                msgEl.className = "match-msg show error";
+                msgEl.innerText = "Passwords do not match";
+            } else {
+                msgEl.className = "match-msg show ok";
+                msgEl.innerText = "Passwords match";
+            }
+        }
+
+        // Live password-strength checklist — turns each rule green as soon
+        // as the typed password satisfies it, red otherwise. Visual only;
+        // does not change what signup()/verifyOtpAndChangePassword() accept.
+        function checkPasswordStrength(passId, prefix) {
+            const pass = document.getElementById(passId).value;
+            const rules = {
+                len: pass.length >= 6,
+                upper: /[A-Z]/.test(pass),
+                digit: /[0-9]/.test(pass),
+                special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?~`]/.test(pass)
+            };
+            Object.keys(rules).forEach(key => {
+                const li = document.getElementById(prefix + '-req-' + key);
+                if (li) li.classList.toggle('met', rules[key]);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sPass = document.getElementById('s-password');
+            const sConfirm = document.getElementById('s-confirm-password');
+            if (sPass && sConfirm) {
+                const check = () => checkPasswordMatch('s-password', 's-confirm-password', 's-match-msg');
+                sConfirm.addEventListener('input', check);
+                sPass.addEventListener('input', check);
+                sPass.addEventListener('input', () => checkPasswordStrength('s-password', 's'));
+            }
+
+            const otpPass = document.getElementById('otp-new-password');
+            const otpConfirm = document.getElementById('otp-confirm-password');
+            if (otpPass && otpConfirm) {
+                const check = () => checkPasswordMatch('otp-new-password', 'otp-confirm-password', 'otp-match-msg');
+                otpConfirm.addEventListener('input', check);
+                otpPass.addEventListener('input', check);
+                otpPass.addEventListener('input', () => checkPasswordStrength('otp-new-password', 'otp'));
+            }
+
+            // auth.js redirects here with this flag when it retried loading
+            // the profile 3x and gave up (and had no cache to fall back on),
+            // signing the user out in the process. Let them know why they're
+            // back on the login screen instead of leaving it unexplained.
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('authFailed') === '1') {
+                showMessage("Could not log you in. Please try again.", true);
+                // Clean the URL so a refresh doesn't re-show the message.
+                params.delete('authFailed');
+                const cleanQs = params.toString();
+                history.replaceState({}, '', window.location.pathname + (cleanQs ? '?' + cleanQs : ''));
+            }
+
+            restoreOtpFlowIfPending();
+        });
+
+        // If the page reloaded (PWA process killed by Android on tab switch,
+        // manual refresh, etc.) while the user was mid-way through the
+        // "enter OTP + new password" screen, put them right back on that
+        // screen instead of silently dropping them back to the login form.
+        // Supabase's recovery OTP is typically valid for about an hour, so a
+        // 45-minute local cutoff stays safely inside that window without
+        // resurrecting a flow so old the code would fail anyway.
+        function restoreOtpFlowIfPending() {
+            const raw = localStorage.getItem('mmh_otp_reset_pending');
+            if (!raw) return;
+
+            let pending;
+            try { pending = JSON.parse(raw); } catch (e) { localStorage.removeItem('mmh_otp_reset_pending'); return; }
+
+            const fortyFiveMin = 45 * 60 * 1000;
+            if (!pending.email || !pending.ts || Date.now() - pending.ts > fortyFiveMin) {
+                localStorage.removeItem('mmh_otp_reset_pending');
+                return;
+            }
+
+            window.tempEmail = pending.email;
+            toggleView('otp');
+            showMessage(`Resuming — enter the 6-digit code sent to ${pending.email}.`, false);
+            const elapsedSec = Math.floor((Date.now() - pending.ts) / 1000);
+            startResendCountdown(Math.max(0, 65 - elapsedSec));
+        }
+
+        function toggleView(v) {
+            document.getElementById('login-section').classList.toggle('hidden', v !== 'login');
+            document.getElementById('signup-section').classList.toggle('hidden', v !== 'signup');
+            document.getElementById('reset-section').classList.toggle('hidden', v !== 'reset');
+            document.getElementById('otp-reset-section').classList.toggle('hidden', v !== 'otp');
+            document.getElementById('signup-guide-external').classList.toggle('hidden', v !== 'signup');
+            const msg = document.getElementById('msg');
+            msg.innerText = "";
+            msg.style.background = "transparent";
+        }
+
+        async function forgotPassword() {
+            const email = document.getElementById('r-email').value.trim().toLowerCase();
+            if (!email) return showMessage("Error: Please enter your Gmail address.", true);
+
+            showMessage("Checking email...", false);
+            try {
+                const client = await getLoginClient();
+
+                // Supabase's resetPasswordForEmail() always returns success —
+                // even for an email that was never registered — as an
+                // anti-enumeration security measure. So we check via a
+                // security-definer function (RLS blocks a direct table read
+                // for an anonymous, not-yet-logged-in visitor) to give an
+                // accurate message instead of a false "code sent" confirmation.
+                const { data: check } = await client.rpc('check_availability', { p_email: email });
+                const emailExists = check && check[0] && check[0].email_taken;
+
+                if (!emailExists) {
+                    return showMessage("Error: This email is not registered with us.", true);
+                }
+
+                showMessage("Sending code to your email...", false);
+                const { error } = await client.auth.resetPasswordForEmail(email);
+
+                if (error) {
+                    showMessage("Error: " + error.message, true);
+                } else {
+                    window.tempEmail = email; // Save for OTP verification
+                    // Also persist to localStorage — a PWA's process can be
+                    // killed by Android on tab switch (unlike a Chrome tab,
+                    // which the OS keeps alive). Without this, window.tempEmail
+                    // and the visible OTP section both reset to nothing on
+                    // reload, making the page look like it "disappeared"
+                    // mid-OTP-entry. See restoreOtpFlowIfPending() below.
+                    localStorage.setItem('mmh_otp_reset_pending', JSON.stringify({ email, ts: Date.now() }));
+                    toggleView('otp');
+                    showMessage("Check your Gmail for the 6-digit code.", false);
+                    startResendCountdown(65);
+                }
+            } catch (err) {
+                showMessage("Error: " + err.message, true);
+            }
+        }
+
+        async function verifyOtpAndChangePassword() {
+            const code = document.getElementById('otp-code').value.trim();
+            const newPass = document.getElementById('otp-new-password').value;
+            const confirmPass = document.getElementById('otp-confirm-password').value;
+            const email = window.tempEmail;
+
+            if (!code || newPass.length < 6) {
+                return showMessage("Error: Enter code and valid password (min 6 chars).", true);
+            }
+            if (newPass !== confirmPass) {
+                return showMessage("Error: Passwords do not match.", true);
+            }
+
+            const otpBtn = document.getElementById('otp-verify-btn');
+            setButtonLoading(otpBtn, true);
+
+            try {
+                showMessage("Verifying code...", false);
+                const client = await getLoginClient();
+
+                const { error: verifyError } = await client.auth.verifyOtp({
+                    email: email,
+                    token: code,
+                    type: 'recovery'
+                });
+
+                if (verifyError) throw verifyError;
+
+                const { error: updateError } = await client.auth.updateUser({ password: newPass });
+                if (updateError) throw updateError;
+
+                localStorage.removeItem('mmh_otp_reset_pending');
+
+                // Don't redirect back to login.html — verifyOtp(type: 'recovery')
+                // already signed this session in, so reloading login.html here
+                // just makes auth.js's initAuth() detect the login and
+                // auto-redirect AGAIN right after, which is the double-hop
+                // that looks like the page "getting stuck / flipping" on
+                // login. Load the profile and go straight to the destination
+                // instead — same pattern login()/signup() already use.
+                showMessage("Success! Password updated. Loading your profile...", false);
+                const { data: { session } } = await getSessionOnce(client);
+                const profile = session?.user ? await fetchAndCacheProfile(client, session.user) : null;
+
+                if (profile) {
+                    showMessage("Success! Redirecting...", false);
+                    window.location.href = getSafeRedirectTarget();
+                }
+                // If profile is null, fetchAndCacheProfile() already retried
+                // 3x, found no cached fallback, and called handleLogout()
+                // itself — that redirect to index.html is already in flight,
+                // so we don't also navigate here (would double-hop / flash).
+            } catch (error) {
+                showMessage("Error: " + error.message, true);
+            } finally {
+                setButtonLoading(otpBtn, false);
+            }
+        }
+
+        let resendCountdownInterval = null;
+
+        function startResendCountdown(seconds) {
+            seconds = (typeof seconds === 'number') ? seconds : 65;
+            const btn = document.getElementById('resend-otp-btn');
+            const timerSpan = document.getElementById('resend-timer');
+            if (!btn || !timerSpan) return;
+
+            clearInterval(resendCountdownInterval);
+            btn.disabled = true;
+            btn.classList.add('disabled');
+
+            let remaining = seconds;
+            const tick = () => {
+                if (remaining <= 0) {
+                    clearInterval(resendCountdownInterval);
+                    btn.disabled = false;
+                    btn.classList.remove('disabled');
+                    btn.innerText = "Resend Code";
+                    return;
+                }
+                btn.innerHTML = `You can resend OTP in <span id="resend-timer">${remaining}</span>s`;
+                remaining--;
+            };
+            tick();
+            resendCountdownInterval = setInterval(tick, 1000);
+        }
+
+        async function handleResendOtp() {
+            const btn = document.getElementById('resend-otp-btn');
+            if (btn && btn.disabled) return;
+            localStorage.removeItem('mmh_otp_reset_pending');
+            toggleView('reset');
+        }
+
+        function toggleHamburgerMenu() {
+            document.getElementById('hamburger-dropdown').classList.toggle('open');
+        }
+
+        function handleGoBack() {
+            document.getElementById('hamburger-dropdown').classList.remove('open');
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        function handleHelp() {
+            document.getElementById('hamburger-dropdown').classList.remove('open');
+            window.open('https://t.me/MOCK_MATRIX__HUB_SUPPORT_BOT', '_blank');
+        }
+
+        document.addEventListener('click', function(e) {
+            const wrap = document.querySelector('.menu-wrap');
+            const dropdown = document.getElementById('hamburger-dropdown');
+            if (wrap && dropdown && !wrap.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        function showMessage(text, isError) {
+            const msg = document.getElementById('msg');
+            msg.innerText = text;
+            msg.style.color = isError ? "#991b1b" : "#166534";
+            msg.style.background = isError ? "#fef2f2" : "#f0fdf4";
+        }
+
+        function setButtonLoading(btn, isLoading, idleText) {
+            if (!btn) return;
+            if (isLoading) {
+                btn.dataset.originalText = btn.dataset.originalText || btn.innerText;
+                btn.innerText = "Verifying...";
+                btn.disabled = true;
+            } else {
+                btn.innerText = idleText || btn.dataset.originalText || btn.innerText;
+                btn.disabled = false;
+            }
+        }
+
+        async function signup() {
+            const email = document.getElementById('s-email').value.trim().toLowerCase();
+            const pass = document.getElementById('s-password').value;
+            const confirmPass = document.getElementById('s-confirm-password').value;
+            const name = document.getElementById('s-name').value.trim();
+            const user = document.getElementById('s-username').value.trim();
+            const mobile = document.getElementById('s-mobile').value.trim();
+            const userRegex = /^[A-Za-z0-9]+$/;
+            const mobileRegex = /^[0-9]{10}$/;
+
+            if(!email || !pass || !confirmPass || !name || !user || !mobile) return showMessage("Error: All fields are mandatory!", true);
+            if(!userRegex.test(user)) return showMessage("Error: Username must only contain letters and numbers.", true);
+            if(!mobileRegex.test(mobile)) return showMessage("Error: Enter a valid 10-digit mobile number.", true);
+            if(pass.length < 6) return showMessage("Error: Password should be at least 6 characters.", true);
+            if(pass !== confirmPass) return showMessage("Error: Passwords do not match.", true);
+
+            const btn = document.getElementById('signup-btn');
+            setButtonLoading(btn, true);
+            showMessage("Checking availability...", false);
+
+            try {
+                const client = await getLoginClient();
+
+                // Quick instant-feedback checks (the DB's unique constraint + the
+                // trigger below are what actually enforce this — this is just UX).
+                const { data: check } = await client.rpc('check_availability', {
+                    p_email: email, p_username: user, p_mobile: mobile
+                });
+                const result = check && check[0];
+
+                if (result && result.email_taken) return showMessage("Error: This Email is already registered!", true);
+                if (result && result.username_taken) return showMessage("Error: Username already taken.", true);
+                if (result && result.mobile_taken) return showMessage("Error: This mobile number is already registered with another account.", true);
+
+                // Everything the profile needs travels as signup metadata — a
+                // database trigger creates the profiles row automatically, in the
+                // SAME transaction as the auth user itself. No separate insert
+                // step here means no way for a profile row to end up missing.
+                const { data: authData, error: authError } = await client.auth.signUp({
+                    email,
+                    password: pass,
+                    options: {
+                        data: { full_name: name, username: user, mobile: mobile }
+                    }
+                });
+
+                if (authError) {
+                    // The trigger's unique constraints surface here as a raw
+                    // Postgres error if someone raced past the pre-checks above.
+                    const msg = (authError.message || '').toLowerCase();
+                    if (msg.includes('username')) {
+                        return showMessage("Error: That username was just taken. Please pick another.", true);
+                    }
+                    if (msg.includes('mobile')) {
+                        return showMessage("Error: That mobile number is already registered with another account.", true);
+                    }
+                    return showMessage("Error: " + authError.message, true);
+                }
+                if (!authData.user) return showMessage("Error: Registration failed. Please try again.", true);
+
+                // Don't leave this page until the profile has actually loaded.
+                showMessage("Loading your profile...", false);
+                const profile = await fetchAndCacheProfile(client, authData.user);
+                if (!profile) return showMessage("Error: Could not load your profile. Please refresh and try again.", true);
+
+                showMessage("Registration Successful! Redirecting...", false);
+                window.location.href = getSafeRedirectTarget();
+            } catch (err) {
+                showMessage("Error: " + err.message, true);
+            } finally {
+                setButtonLoading(btn, false, "Verify & Register");
+            }
+        }
+
+        async function login() {
+            const identity = document.getElementById('l-identity').value.trim();
+            const pass = document.getElementById('l-password').value.trim();
+            if(!identity || !pass) return showMessage("Error: All fields are mandatory!", true);
+
+            const btn = document.getElementById('login-btn');
+            setButtonLoading(btn, true);
+            showMessage("Authenticating...", false);
+
+            try {
+                const client = await getLoginClient();
+                let loginEmail = identity;
+
+                if (!identity.includes('@')) {
+                    // Accepts either a username or a 10-digit mobile number here.
+                    const { data, error: lookupError } = await client.rpc('get_login_email', {
+                        p_identity: identity
+                    });
+                    if (lookupError) return showMessage("Error: " + lookupError.message, true);
+                    if (data) loginEmail = data;
+                    else return showMessage("Error: Username or mobile number not found.", true);
+                } else {
+
+                    loginEmail = identity.toLowerCase();
+                }
+
+                const { data: signInData, error } = await client.auth.signInWithPassword({ email: loginEmail, password: pass });
+                if (error) return showMessage("Error: " + error.message, true);
+
+                // Don't leave this page until the profile has actually loaded.
+                showMessage("Loading your profile...", false);
+                const profile = await fetchAndCacheProfile(client, signInData.user);
+                if (!profile) return showMessage("Error: Could not load your profile. Please try again.", true);
+
+                showMessage("Success! Redirecting...", false);
+                // Sends the user back to the page they came from (or home if none)
+                window.location.href = getSafeRedirectTarget();
+            } catch (err) {
+                showMessage("Error: " + err.message, true);
+            } finally {
+                setButtonLoading(btn, false, "Sign In");
+            }
+        }
+    </script>
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>

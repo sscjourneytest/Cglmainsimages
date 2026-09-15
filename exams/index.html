@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ═══ TAB NAME ════════════════════════════════════════════════
+     Edit the <title> below for the browser-tab text.
+     The tab ICON is your existing /logo.png (site root) — already wired.
+     ═══════════════════════════════════════════════════════════════ -->
+<title>Exams — Mock Matrix Hub</title>
+<link rel="icon" href="/logo.png">
+<link rel="stylesheet" href="/css/design.css?v=260908f">
+<link rel="stylesheet" href="/css/exams.css?v=260908f">
+</head>
+<body>
+<script>
+/* Early theme apply — before first paint (shares the `mmh_theme` key with every page) */
+(function(){ try{
+    var t = localStorage.getItem('mmh_theme');
+    if (t !== 'light' && t !== 'dark'){
+        t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    if (t === 'dark') document.body.classList.add('dark-mode');
+}catch(e){}})();
+</script>
+
+<div class="exam-page-container">
+
+    <!-- ══ Screen 1 · Exam boards (SSC / Railway / State) ══════════════════
+         Header = the same appbar the mock pages use: brand mark + title,
+         back arrow, theme toggle. Search lives in the content, not here. -->
+    <section class="screen active" id="screenCategories">
+        <header class="screen-header">
+            <div class="appbar">
+                <button type="button" class="icon-btn nav-back" id="backFromCategories" aria-label="Back to home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true"><img class="brand-logo-img" src="/logo.png" alt=""></div>
+                    <div class="brand-text">
+                        <div class="brand-title">Mock Matrix Hub</div>
+                        <div class="brand-sub">Exam Categories</div>
+                    </div>
+                </div>
+                <div class="appbar-actions">
+                    <button type="button" class="icon-btn theme-btn" id="themeToggleCats" aria-label="Toggle theme"></button>
+                </div>
+            </div>
+        </header>
+        <div class="screen-scroll">
+            <div class="screen-inner">
+                <div class="screen-intro">
+                    <div class="si-title">Choose Your Exam</div>
+                    <div class="si-sub" id="catsIntroSub">Loading boards…</div>
+                </div>
+                <div class="ex-tools">
+                    <div class="search-box">
+                        <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
+                        <input type="text" class="ex-search-input" id="catSearch" placeholder="Search boards or exams…"
+                               autocomplete="off" autocapitalize="off" spellcheck="false">
+                        <button type="button" class="search-clear" id="catSearchClear" aria-label="Clear search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="categoryCards" class="nav-list">
+                    <div class="nav-card skeleton-nav-card"><div class="nc-ico skeleton-line"></div><div class="nc-body"><div class="skeleton-line skeleton-nc-title"></div><div class="skeleton-line skeleton-nc-meta"></div></div></div>
+                    <div class="nav-card skeleton-nav-card"><div class="nc-ico skeleton-line"></div><div class="nc-body"><div class="skeleton-line skeleton-nc-title"></div><div class="skeleton-line skeleton-nc-meta"></div></div></div>
+                    <div class="nav-card skeleton-nav-card"><div class="nc-ico skeleton-line"></div><div class="nc-body"><div class="skeleton-line skeleton-nc-title"></div><div class="skeleton-line skeleton-nc-meta"></div></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ Screen 2 · Exams inside a board (CGL / CHSL / MTS / …) ══════════
+         Back + board name header, its own search, same nav-cards. Opening
+         this screen writes #<board-id> into the URL, so a reload drops the
+         user exactly back here.                                             -->
+    <section class="screen" id="screenSubs">
+        <header class="screen-header">
+            <div class="appbar">
+                <button type="button" class="icon-btn nav-back" id="backFromSubs" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="screen-title-wrap">
+                    <div class="screen-title" id="subsTitle">Exams</div>
+                    <div class="screen-subtitle" id="subsSubtitle">Mock Matrix Hub</div>
+                </div>
+                <div class="appbar-actions">
+                    <button type="button" class="icon-btn theme-btn" id="themeToggleSubs" aria-label="Toggle theme"></button>
+                </div>
+            </div>
+        </header>
+        <div class="screen-scroll">
+            <div class="screen-inner">
+                <div class="ex-tools">
+                    <div class="search-box">
+                        <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
+                        <input type="text" class="ex-search-input" id="subSearch" placeholder="Search exams…"
+                               autocomplete="off" autocapitalize="off" spellcheck="false">
+                        <button type="button" class="search-clear" id="subSearchClear" aria-label="Clear search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="subCards" class="nav-list"></div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- ══ Bottom dock — floating pill bar with raised center button.
+     Items come from the engine's nav config (DEFAULT_BOTTOM_NAV /
+     window.MMH_BOTTOM_NAV) — add new ones there, layout re-balances. ══ -->
+<nav class="ex-dock" id="bottomNav" aria-label="Primary"></nav>
+
+<div id="toastRoot" aria-live="polite"></div>
+
+<script src="/js/exams-index-engine.js?v=260908f"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a365dc8b8e50407d',t:'MTc4ODYxNzg4OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>

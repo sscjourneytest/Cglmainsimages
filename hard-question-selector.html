@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hard Question Selector | MockMatrixHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F2F4F9; --surface:#FFFFFF; --border:#E4E7EF; --border-strong:#CBD1E0;
+    --text:#171A24; --text-muted:#666F82;
+    --accent:#4F46E5; --accent-dark:#3F37C9; --accent-soft:#EEF0FE;
+    --accent-2:#0EA5A0;
+    --ok:#15803D; --ok-soft:#E7F6ED;
+    --err:#C0271E; --err-soft:#FCEBEA;
+    --shadow-sm:0 1px 3px rgba(23,26,36,.06);
+    --shadow-md:0 10px 30px rgba(79,70,229,.12);
+    --shadow-lg:0 20px 50px rgba(23,26,36,.14);
+    --radius:16px;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono','SF Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 12% 0%, rgba(79,70,229,.10) 0%, transparent 45%),
+      radial-gradient(circle at 90% 8%, rgba(14,165,160,.10) 0%, transparent 40%),
+      var(--bg);
+    color:var(--text);font-family:var(--sans);font-size:14.5px;line-height:1.55;
+    min-height:100vh;padding:0 0 70px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px;}
+
+  /* ---------- Hero header ---------- */
+  header.hero{padding:40px 0 26px;text-align:center;}
+  .hero-mark{
+    width:52px;height:52px;border-radius:15px;margin:0 auto 16px;
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+    font-weight:800;font-size:22px;box-shadow:var(--shadow-md);
+  }
+  .hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-dark);font-weight:600;margin:0 0 8px;}
+  .hero h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px;}
+  .hero p{color:var(--text-muted);font-size:13.5px;max-width:480px;margin:0 auto;}
+
+  /* ---------- Progress stepper ---------- */
+  .stepper{display:flex;align-items:center;justify-content:center;gap:6px;margin:26px 0 30px;}
+  .step-dot{
+    width:30px;height:30px;border-radius:50%;background:var(--surface);border:2px solid var(--border-strong);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;color:var(--text-muted);
+    transition:all .2s;
+  }
+  .step-dot.active{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+  .step-dot.done{border-color:var(--ok);color:#fff;background:var(--ok);}
+  .step-line{width:34px;height:2px;background:var(--border-strong);}
+  .step-line.done{background:var(--ok);}
+
+  /* ---------- Cards ---------- */
+  .app-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:26px 26px 24px;margin-bottom:18px;box-shadow:var(--shadow-sm);
+    opacity:.45;pointer-events:none;filter:grayscale(.4);transition:opacity .25s,filter .25s;
+  }
+  .app-card.unlocked{opacity:1;pointer-events:auto;filter:none;}
+  .app-card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .app-card-num{
+    flex:none;width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent-dark);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;
+  }
+  .app-card-head h2{margin:0;font-size:16.5px;font-weight:700;letter-spacing:-.01em;}
+  .app-card-desc{color:var(--text-muted);font-size:12.5px;margin:0 0 16px;}
+
+  /* ---------- Dropzone ---------- */
+  .dropzone{
+    border:2px dashed var(--border-strong);border-radius:14px;padding:34px 20px;text-align:center;
+    cursor:pointer;background:#FAFBFF;transition:.15s;
+  }
+  .dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--accent-soft);}
+  .dropzone .dz-icon{font-size:30px;margin-bottom:8px;}
+  .dropzone .dz-main{font-weight:600;font-size:14.5px;}
+  .dropzone .dz-sub{color:var(--text-muted);font-size:12px;margin-top:4px;}
+  input[type=file]{display:none;}
+
+  /* ---------- Fields ---------- */
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:6px;}
+  .field input[type=text],.field input[type=number],.field select{
+    width:100%;padding:11px 13px;border:1.5px solid var(--border-strong);border-radius:10px;
+    font-family:var(--sans);font-size:13.5px;background:#fff;color:var(--text);transition:border-color .12s;
+  }
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent);}
+  .field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+
+  /* ---------- Weight sliders ---------- */
+  .weight-row{display:grid;grid-template-columns:1fr 44px;align-items:center;gap:12px;margin-bottom:14px;}
+  .weight-row-label{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:6px;}
+  .weight-row-label .w-val{color:var(--accent-dark);font-weight:800;}
+  input[type=range]{
+    -webkit-appearance:none;width:100%;height:6px;border-radius:4px;
+    background:linear-gradient(90deg,var(--accent) 0%,var(--accent) var(--pct,30%),var(--border) var(--pct,30%),var(--border) 100%);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--surface);
+    border:3px solid var(--accent);box-shadow:var(--shadow-sm);cursor:pointer;margin-top:-6px;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    font-family:var(--sans);font-size:13.5px;font-weight:700;border-radius:11px;border:1.5px solid var(--border-strong);
+    background:#fff;color:var(--text);padding:11px 20px;cursor:pointer;transition:.14s;width:100%;
+  }
+  .btn:hover{background:#F4F5FA;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);
+    border-color:var(--accent-dark);color:#fff;box-shadow:var(--shadow-md);
+  }
+  .btn-primary:hover:not(:disabled){filter:brightness(1.06);transform:translateY(-1px);}
+  .btn-success{
+    background:linear-gradient(135deg,#16A34A 0%,#0F7A38 100%);border-color:#0F7A38;color:#fff;box-shadow:0 10px 30px rgba(22,163,74,.18);
+    font-size:15px;padding:15px 20px;
+  }
+  .btn-success:hover:not(:disabled){filter:brightness(1.05);transform:translateY(-1px);}
+
+  /* ---------- Status ---------- */
+  .status-line{margin-top:12px;font-size:12.5px;color:var(--text-muted);min-height:1.3em;}
+  .status-ok{color:var(--ok);font-weight:600;}
+  .status-err{color:var(--err);font-weight:600;}
+
+  /* ---------- Progress bar ---------- */
+  .progress-track{height:8px;border-radius:6px;background:var(--border);overflow:hidden;margin-top:12px;display:none;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%;transition:width .2s;}
+
+  /* ---------- Debug / results table ---------- */
+  .mini-table-wrap{margin-top:14px;max-height:260px;overflow:auto;border:1px solid var(--border);border-radius:10px;display:none;}
+  table.mini-table{width:100%;border-collapse:collapse;font-size:11.5px;}
+  table.mini-table th{position:sticky;top:0;background:#F7F8FC;text-align:left;padding:7px 10px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border);}
+  table.mini-table td{padding:6px 10px;border-bottom:1px solid var(--border);}
+  table.mini-table td.mono{font-family:var(--mono);font-size:10.5px;}
+
+  /* ---------- Summary stat cards ---------- */
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+  .stat-box{background:var(--accent-soft);border-radius:12px;padding:14px 10px;text-align:center;}
+  .stat-box .stat-num{font-size:22px;font-weight:800;color:var(--accent-dark);}
+  .stat-box .stat-label{font-size:10.5px;color:var(--text-muted);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.03em;}
+
+  .badge-pill{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent-dark);font-weight:600;}
+
+  footer.app-footer{text-align:center;color:var(--text-muted);font-size:11.5px;margin-top:30px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-mark">M</div>
+    <p class="hero-eyebrow">MockMatrixHub</p>
+    <h1>Hard Question Selector</h1>
+    <p>Upload a topic file, pull real attempt stats from D1, and pick out the toughest questions — ready to feed into whatever you build next.</p>
+  </header>
+
+  <div class="stepper" id="stepper">
+    <div class="step-dot active" id="dotStep1">1</div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" id="dotStep2">2</div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot" id="dotStep3">3</div>
+    <div class="step-line" id="line3"></div>
+    <div class="step-dot" id="dotStep4">4</div>
+  </div>
+
+  <!-- STEP 1: Upload -->
+  <div class="app-card unlocked" id="cardStep1">
+    <div class="app-card-head">
+      <div class="app-card-num">1</div>
+      <h2>Load topic JSON</h2>
+    </div>
+    <p class="app-card-desc">The same file you publish live — one <code>meta.id</code>, PART-1..PART-N sections.</p>
+    <div class="dropzone" id="dropZone">
+      <input type="file" id="fileInput" accept="application/json">
+      <div class="dz-icon">📄</div>
+      <div class="dz-main">Click to choose a file, or drag it here</div>
+      <div class="dz-sub">.json only</div>
+    </div>
+    <div class="status-line" id="loadStatus"></div>
+  </div>
+
+  <!-- STEP 2: Fetch stats -->
+  <div class="app-card" id="cardStep2">
+    <div class="app-card-head">
+      <div class="app-card-num">2</div>
+      <h2>Fetch real attempt stats</h2>
+    </div>
+    <p class="app-card-desc">Reads <span class="badge-pill">GET /question-stats</span> once per part — read-only, nothing gets written.</p>
+    <div class="field-grid">
+      <div class="field">
+        <label>Attempts worker URL</label>
+        <input type="text" id="workerUrl" placeholder="https://mmh-attempts-xxx.workers.dev">
+      </div>
+      <div class="field">
+        <label>Minimum attempts to trust a question</label>
+        <input type="number" id="minAttempts" value="10" min="0">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="fetchBtn">Fetch stats for all parts</button>
+    <div class="progress-track" id="fetchProgressTrack"><div class="progress-fill" id="fetchProgressFill"></div></div>
+    <div class="status-line" id="fetchStatus"></div>
+    <div class="mini-table-wrap" id="queriedIdsWrap"></div>
+  </div>
+
+  <!-- STEP 3: Hardness filter -->
+  <div class="app-card" id="cardStep3">
+    <div class="app-card-head">
+      <div class="app-card-num">3</div>
+      <h2>Pick the toughest questions</h2>
+    </div>
+    <p class="app-card-desc">Hardness = a weighted blend of low correct%, high wrong%, high avg time, and high skip% (time is min–max normalized across the topic so seconds and percentages combine fairly). Weights auto-normalize to sum to 1.</p>
+
+    <div class="weight-row">
+      <div>
+        <div class="weight-row-label"><span>Low correct % (harder)</span><span class="w-val" id="wCorrectVal">30%</span></div>
+        <input type="range" id="wCorrect" min="0" max="100" value="30">
+      </div>
+    </div>
+    <div class="weight-row">
+      <div>
+        <div class="weight-row-label"><span>High wrong %</span><span class="w-val" id="wWrongVal">30%</span></div>
+        <input type="range" id="wWrong" min="0" max="100" value="30">
+      </div>
+    </div>
+    <div class="weight-row">
+      <div>
+        <div class="weight-row-label"><span>High avg time taken</span><span class="w-val" id="wTimeVal">20%</span></div>
+        <input type="range" id="wTime" min="0" max="100" value="20">
+      </div>
+    </div>
+    <div class="weight-row">
+      <div>
+        <div class="weight-row-label"><span>High skip %</span><span class="w-val" id="wSkipVal">20%</span></div>
+        <input type="range" id="wSkip" min="0" max="100" value="20">
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:6px;">
+      <label>How many hardest questions to select</label>
+      <input type="number" id="topN" value="50" min="1">
+    </div>
+
+    <button class="btn btn-primary" id="generateBtn">Select hardest questions</button>
+    <div class="status-line" id="generateStatus"></div>
+
+    <div class="stat-grid" id="statGrid" style="display:none;">
+      <div class="stat-box"><div class="stat-num" id="statSelected">0</div><div class="stat-label">Selected</div></div>
+      <div class="stat-box"><div class="stat-num" id="statEligible">0</div><div class="stat-label">Eligible</div></div>
+      <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total questions</div></div>
+    </div>
+    <div class="mini-table-wrap" id="resultsTableWrap"></div>
+  </div>
+
+  <!-- STEP 4: Download -->
+  <div class="app-card" id="cardStep4">
+    <div class="app-card-head">
+      <div class="app-card-num">4</div>
+      <h2>Download</h2>
+    </div>
+    <p class="app-card-desc">Exact copy of each selected question, unchanged — with one new field added: <code id="fieldNamePreview">hardness_stats</code> (a string like <code>"Correct: 42.5% | Wrong: 38.2%"</code>) for whatever you build next.</p>
+    <button class="btn btn-success" id="downloadBtn">⬇ Download JSON</button>
+    <div class="status-line" id="downloadStatus"></div>
+  </div>
+
+  <footer class="app-footer">MockMatrixHub &middot; Hard Question Selector &middot; runs entirely in your browser</footer>
+</div>
+
+<script>
+"use strict";
+
+var STATE = {
+  topicJson: null,
+  flatQuestions: [],   // [{ q, partKey, partNum }]
+  statsByPart: {},     // partKey -> stats object or null
+  scored: [],
+  selected: []
+};
+
+function el(id){ return document.getElementById(id); }
+function escapeHtml(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+function setStatus(id, msg, cls){
+  var e = el(id);
+  e.textContent = msg;
+  e.className = "status-line" + (cls ? " " + cls : "");
+}
+function unlockCard(n){
+  el("cardStep" + n).classList.add("unlocked");
+  el("dotStep" + n).classList.add("active");
+}
+function markDone(n){
+  el("dotStep" + n).classList.remove("active");
+  el("dotStep" + n).classList.add("done");
+  var line = el("line" + n);
+  if (line) line.classList.add("done");
+}
+
+/* ---------- Step 1: load file ---------- */
+function handleTopicFile(file){
+  var reader = new FileReader();
+  reader.onload = function(){
+    var parsed;
+    try { parsed = JSON.parse(reader.result); }
+    catch(e){ setStatus("loadStatus", "Could not parse JSON: " + e.message, "status-err"); return; }
+
+    if (!parsed.meta || !parsed.meta.id || !parsed.sections){
+      setStatus("loadStatus", "Doesn't look like a topic file (missing meta.id / sections).", "status-err");
+      return;
+    }
+
+    STATE.topicJson = parsed;
+    STATE.flatQuestions = [];
+    Object.keys(parsed.sections).forEach(function(partKey){
+      var m = partKey.match(/PART-(\d+)/i);
+      var partNum = m ? m[1] : partKey;
+      (parsed.sections[partKey].questions || []).forEach(function(q){
+        STATE.flatQuestions.push({ q: q, partKey: partKey, partNum: partNum });
+      });
+    });
+
+    var partCount = Object.keys(parsed.sections).length;
+    setStatus("loadStatus",
+      "Loaded \"" + parsed.meta.title + "\" — " + partCount + " part(s), " + STATE.flatQuestions.length + " question(s).",
+      "status-ok");
+    markDone(1);
+    unlockCard(2);
+  };
+  reader.onerror = function(){ setStatus("loadStatus", "Could not read file.", "status-err"); };
+  reader.readAsText(file);
+}
+
+var dropZone = el("dropZone");
+var fileInput = el("fileInput");
+dropZone.addEventListener("click", function(){ fileInput.click(); });
+fileInput.addEventListener("change", function(){ if (this.files[0]) handleTopicFile(this.files[0]); });
+dropZone.addEventListener("dragover", function(e){ e.preventDefault(); dropZone.classList.add("drag"); });
+dropZone.addEventListener("dragleave", function(){ dropZone.classList.remove("drag"); });
+dropZone.addEventListener("drop", function(e){
+  e.preventDefault(); dropZone.classList.remove("drag");
+  if (e.dataTransfer.files[0]) handleTopicFile(e.dataTransfer.files[0]);
+});
+
+/* ---------- Step 2: fetch stats ---------- */
+// Only the "-part-N" suffix is lowercase (it already is, by construction) —
+// meta.id keeps whatever case it has in the source file.
+function partQuizId(baseId, partNum){
+  return baseId + "-part-" + partNum;
+}
+
+function renderQueriedIdsDebug(rows){
+  var wrap = el("queriedIdsWrap");
+  var html = "<table class='mini-table'><thead><tr><th>Quiz ID queried</th><th>Found</th><th>Attempts</th></tr></thead><tbody>";
+  rows.forEach(function(r){
+    var foundCell = r.found ? "&#10003;" : (r.error ? "error" : "&#10007;");
+    html += "<tr><td class='mono'>" + escapeHtml(r.quizId) + "</td><td>" + foundCell + "</td><td>" + (r.found ? r.totalAttempts : "-") + "</td></tr>";
+  });
+  html += "</tbody></table>";
+  wrap.innerHTML = html;
+  wrap.style.display = "block";
+}
+
+function fetchAllStats(){
+  var workerUrl = el("workerUrl").value.trim().replace(/\/+$/, "");
+  if (!workerUrl){ alert("Enter the attempts worker URL first"); return; }
+  if (!STATE.topicJson){ alert("Load a topic JSON first"); return; }
+
+  var partKeys = Object.keys(STATE.topicJson.sections);
+  var baseId = STATE.topicJson.meta.id;
+  STATE.statsByPart = {};
+  var i = 0, foundCount = 0, failedCount = 0;
+  var queried = [];
+
+  el("fetchBtn").disabled = true;
+  el("fetchProgressTrack").style.display = "block";
+
+  function updateProgress(){
+    el("fetchProgressFill").style.width = Math.round((i / partKeys.length) * 100) + "%";
+  }
+
+  function next(){
+    updateProgress();
+    if (i >= partKeys.length){
+      var summary = "Queried " + partKeys.length + " part(s) — " + foundCount + " had recorded attempts" +
+        (failedCount ? ", " + failedCount + " request(s) failed" : "") + ".";
+      if (foundCount === 0){
+        summary += " None of the quiz_ids below have data yet — check them against your D1 table.";
+        setStatus("fetchStatus", summary, "status-err");
+      } else {
+        setStatus("fetchStatus", summary, "status-ok");
+        markDone(2);
+        unlockCard(3);
+      }
+      renderQueriedIdsDebug(queried);
+      el("fetchBtn").disabled = false;
+      return;
+    }
+    var partKey = partKeys[i];
+    var m = partKey.match(/PART-(\d+)/i);
+    var partNum = m ? m[1] : partKey;
+    var quizId = partQuizId(baseId, partNum);
+    setStatus("fetchStatus", "Fetching " + (i+1) + "/" + partKeys.length + ": " + quizId + " ...");
+
+    fetch(workerUrl + "/question-stats?quizId=" + encodeURIComponent(quizId))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        STATE.statsByPart[partKey] = data.found ? data : null;
+        if (data.found) foundCount++;
+        queried.push({ quizId: quizId, found: !!data.found, totalAttempts: data.found ? data.totalAttempts : 0 });
+        i++; next();
+      })
+      .catch(function(err){
+        STATE.statsByPart[partKey] = null;
+        failedCount++;
+        queried.push({ quizId: quizId, found: false, error: err.message });
+        i++; next();
+      });
+  }
+  next();
+}
+el("fetchBtn").addEventListener("click", fetchAllStats);
+
+/* ---------- Step 3: hardness scoring ---------- */
+function readWeights(){
+  var wC = parseFloat(el("wCorrect").value) || 0;
+  var wW = parseFloat(el("wWrong").value) || 0;
+  var wT = parseFloat(el("wTime").value) || 0;
+  var wS = parseFloat(el("wSkip").value) || 0;
+  var sum = wC + wW + wT + wS;
+  if (sum <= 0) return { correct: .25, wrong: .25, time: .25, skip: .25 };
+  return { correct: wC/sum, wrong: wW/sum, time: wT/sum, skip: wS/sum };
+}
+function updateWeightLabels(){
+  var wC = parseFloat(el("wCorrect").value) || 0;
+  var wW = parseFloat(el("wWrong").value) || 0;
+  var wT = parseFloat(el("wTime").value) || 0;
+  var wS = parseFloat(el("wSkip").value) || 0;
+  var sum = wC + wW + wT + wS || 1;
+  el("wCorrectVal").textContent = Math.round(wC/sum*100) + "%";
+  el("wWrongVal").textContent = Math.round(wW/sum*100) + "%";
+  el("wTimeVal").textContent = Math.round(wT/sum*100) + "%";
+  el("wSkipVal").textContent = Math.round(wS/sum*100) + "%";
+  ["wCorrect","wWrong","wTime","wSkip"].forEach(function(id){
+    var input = el(id);
+    input.style.setProperty("--pct", input.value + "%");
+  });
+}
+["wCorrect","wWrong","wTime","wSkip"].forEach(function(id){
+  el(id).addEventListener("input", updateWeightLabels);
+});
+updateWeightLabels();
+
+function renderResultsTable(){
+  var wrap = el("resultsTableWrap");
+  var html = "<table class='mini-table'><thead><tr><th>#</th><th>ID</th><th>Correct%</th><th>Wrong%</th><th>Skip%</th><th>AvgTime</th><th>Hardness</th></tr></thead><tbody>";
+  STATE.selected.forEach(function(s, i){
+    html += "<tr><td>" + (i+1) + "</td><td class='mono'>" + escapeHtml(s.q.id) + "</td>" +
+      "<td>" + s.correctPct.toFixed(1) + "</td><td>" + s.wrongPct.toFixed(1) + "</td><td>" + s.skipPct.toFixed(1) + "</td>" +
+      "<td>" + s.avgTime.toFixed(1) + "</td><td>" + s.hardness.toFixed(3) + "</td></tr>";
+  });
+  html += "</tbody></table>";
+  wrap.innerHTML = html;
+  wrap.style.display = "block";
+}
+
+function generateSelection(){
+  if (!STATE.topicJson){ alert("Load a topic JSON first"); return; }
+  var minAttempts = parseInt(el("minAttempts").value, 10) || 0;
+  var topN = parseInt(el("topN").value, 10) || 50;
+  var weights = readWeights();
+
+  var scored = [];
+  var partIndexCounters = {};
+  STATE.flatQuestions.forEach(function(item){
+    partIndexCounters[item.partKey] = partIndexCounters[item.partKey] || 0;
+    var iInPart = partIndexCounters[item.partKey]++;
+    var stats = STATE.statsByPart[item.partKey];
+    if (!stats) return;
+
+    var total = stats.totalAttempts || 0;
+    var ansIdx = parseInt(item.q.answer, 10);
+    var optArrays = { 1: stats.opt1, 2: stats.opt2, 3: stats.opt3, 4: stats.opt4, 5: stats.opt5 };
+    var correctArr = optArrays[ansIdx];
+    var correctCnt = correctArr ? (correctArr[iInPart] || 0) : 0;
+    var skipCnt = (stats.opt0 && stats.opt0[iInPart]) || 0;
+    var wrongCnt = Math.max(0, total - correctCnt - skipCnt);
+    var avgTime = (stats.avgTime && stats.avgTime[iInPart]) || 0;
+
+    scored.push({
+      q: item.q,
+      totalAttempts: total,
+      correctPct: total ? (correctCnt/total*100) : 0,
+      wrongPct: total ? (wrongCnt/total*100) : 0,
+      skipPct: total ? (skipCnt/total*100) : 0,
+      avgTime: avgTime
+    });
+  });
+
+  var eligible = scored.filter(function(s){ return s.totalAttempts >= minAttempts; });
+  if (!eligible.length){
+    if (scored.length === 0){
+      setStatus("generateStatus", "No stats data was found for any question — check Step 2's debug list against your D1 data.", "status-err");
+    } else {
+      setStatus("generateStatus", scored.length + " question(s) have stats, but none reach >= " + minAttempts + " attempts — lower the minimum.", "status-err");
+    }
+    return;
+  }
+
+  var times = eligible.map(function(s){ return s.avgTime; });
+  var minT = Math.min.apply(null, times), maxT = Math.max.apply(null, times);
+  function normTime(t){ return maxT > minT ? (t - minT) / (maxT - minT) : 0; }
+
+  eligible.forEach(function(s){
+    s.hardness =
+      weights.correct * ((100 - s.correctPct) / 100) +
+      weights.wrong   * (s.wrongPct / 100) +
+      weights.time    * normTime(s.avgTime) +
+      weights.skip    * (s.skipPct / 100);
+  });
+  eligible.sort(function(a,b){ return b.hardness - a.hardness; });
+
+  STATE.scored = eligible;
+  STATE.selected = eligible.slice(0, topN);
+
+  setStatus("generateStatus", "Selected " + STATE.selected.length + " hardest question(s).", "status-ok");
+  el("statSelected").textContent = STATE.selected.length;
+  el("statEligible").textContent = eligible.length;
+  el("statTotal").textContent = scored.length;
+  el("statGrid").style.display = "grid";
+  renderResultsTable();
+  markDone(3);
+  unlockCard(4);
+}
+el("generateBtn").addEventListener("click", generateSelection);
+
+/* ---------- Step 4: download ---------- */
+var STATS_FIELD_NAME = "hardness_stats"; // the one new field added to each question
+
+function downloadJson(){
+  if (!STATE.selected.length){ alert("Select questions first"); return; }
+
+  var sectionName = prompt("Section name for this file (e.g. MATH):", "");
+  if (sectionName === null) return; // user cancelled
+  sectionName = sectionName.trim().toUpperCase();
+  if (!sectionName){ alert("Section name can't be empty"); return; }
+
+  // Exact copy of each original question object — nothing removed, nothing
+  // renamed, no id changes — with exactly one new field added.
+  var questions = STATE.selected.map(function(s){
+    var qCopy = JSON.parse(JSON.stringify(s.q)); // deep clone, original untouched
+    qCopy[STATS_FIELD_NAME] = "Correct: " + s.correctPct.toFixed(1) + "% | Wrong: " + s.wrongPct.toFixed(1) + "%";
+    return qCopy;
+  });
+
+  var out = {
+    meta: { id: STATE.topicJson.meta.id },
+    sections: {}
+  };
+  out.sections[sectionName] = questions;
+
+  var blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = STATE.topicJson.meta.id + "-top-" + questions.length + "-hard-questions-wrapped.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  setStatus("downloadStatus", "Downloaded " + questions.length + " question(s) under section \"" + sectionName + "\".", "status-ok");
+}
+el("downloadBtn").addEventListener("click", downloadJson);
+
+el("fieldNamePreview").textContent = STATS_FIELD_NAME;
+</script>
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>
+

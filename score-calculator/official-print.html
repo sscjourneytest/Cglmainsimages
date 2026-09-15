@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Answer Key — Mock Matrix Hub</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<style>
+  /* ── App chrome (MMH appbar look, scoped so the merged official content
+     below is NEVER touched) — excluded from print, see @media print ── */
+  html { height: 100%; }
+  body {
+    margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #f3f5fb; color: #0b1220;
+    height: 100%; position: fixed; inset: 0;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .op-header {
+    flex-shrink: 0; background: #ffffff; border-bottom: 1px solid #e5eaf3;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .op-header .appbar { display: flex; align-items: center; gap: 10px; padding: 9px 16px 10px; }
+  .op-header .icon-btn {
+    width: 38px; height: 38px; border-radius: 12px; border: 1px solid #e5eaf3;
+    background: #ffffff; color: #41506b; display: grid; place-items: center;
+    cursor: pointer; padding: 0; flex-shrink: 0;
+    transition: transform .12s ease;
+  }
+  .op-header .icon-btn svg { width: 18px; height: 18px; }
+  .op-header .icon-btn:active { transform: scale(.9); }
+  .op-header .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .op-header .brand-mark {
+    width: 37px; height: 37px; border-radius: 11px; flex-shrink: 0; overflow: hidden;
+    background: linear-gradient(135deg, #4d6bff 0%, #2b44d8 100%);
+    box-shadow: 0 5px 14px rgba(61,90,254,.35);
+    display: grid; place-items: center;
+  }
+  .op-header .brand-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; display: block; }
+  .op-header .brand-text { min-width: 0; }
+  .op-header .brand-title { font-size: 16px; font-weight: 700; letter-spacing: -0.2px; line-height: 1.2; color: #0b1220; white-space: nowrap; }
+  .op-header .brand-sub {
+    margin-top: 1px; font-size: 10px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase;
+    color: #7c8aa5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
+  }
+  .op-header .appbar-actions { margin-left: auto; flex-shrink: 0; }
+  .op-save {
+    padding: 9px 15px; border-radius: 999px; border: none;
+    background: #3d5afe; color: #fff; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; white-space: nowrap;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+    box-shadow: 0 4px 14px rgba(61,90,254,.32);
+  }
+  .op-save:active { transform: scale(0.96); }
+  .op-save:disabled { opacity: 0.6; }
+
+  .screen-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; min-height: 0; }
+
+  .op-img-warning {
+    display: flex; align-items: center; gap: 8px;
+    margin: 10px 14px 0; padding: 10px 14px; border-radius: 10px;
+    background: #fff7ed; border: 1px solid #fdba74; color: #9a3412;
+    font-size: 0.82rem; font-weight: 600;
+  }
+  .op-img-warning.hidden { display: none; }
+
+  .op-loading, .op-error {
+    text-align: center; padding: 60px 20px; color: #7c8aa5; font-size: 0.85rem;
+  }
+
+  /* The merged official content renders here full-bleed with the source
+     portal's own formatting — deliberately untouched by app styles. */
+  #officialPrintRoot { background: #fff; }
+  #officialPrintRoot.hidden, .op-loading.hidden, .op-error.hidden { display: none; }
+
+  /* Print: chrome hidden + locked frame released so the full merged
+     answer key prints, exactly like before. */
+  @media print {
+    body { position: static; display: block; overflow: visible; height: auto; background: #fff; }
+    .screen-scroll { overflow: visible; height: auto; flex: none; }
+    .op-header { display: none !important; }
+    .op-img-warning { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="op-header no-print">
+  <div class="appbar">
+    <button type="button" class="icon-btn nav-back" id="opBackBtn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <img class="brand-logo-img" src="/logo.png" alt="">
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">Mock Matrix Hub</div>
+        <span class="brand-sub op-toolbar__title">Answer Key</span>
+      </div>
+    </div>
+    <div class="appbar-actions">
+      <button type="button" class="op-save" id="opSaveBtn">Save / Print Answer Key</button>
+    </div>
+  </div>
+</header>
+
+<div class="screen-scroll">
+
+<div class="op-img-warning hidden" id="opImgWarning">⚠️ All images not loaded, wait for all images to load</div>
+
+<div class="op-loading" id="opLoading">Preparing your answer key…</div>
+<div class="op-error hidden" id="opError">
+  This answer key couldn't be prepared. Please go back and try again.
+</div>
+<div id="officialPrintRoot" class="hidden"></div>
+</div>
+
+<script>
+(function () {
+  const HANDOFF_KEY = 'rsm-official-print-handoff';
+
+  function consumeHandoff() {
+    let raw = null;
+    try {
+      raw = sessionStorage.getItem(HANDOFF_KEY);
+      sessionStorage.removeItem(HANDOFF_KEY); // one-time use, same as review.html's pattern
+    } catch (e) { /* storage unavailable */ }
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+
+  function wipeHandoff() {
+    try { sessionStorage.removeItem(HANDOFF_KEY); } catch (e) {}
+  }
+  window.addEventListener('pagehide', wipeHandoff);
+  window.addEventListener('beforeunload', wipeHandoff);
+
+  const els = {
+    loading: document.getElementById('opLoading'),
+    error: document.getElementById('opError'),
+    root: document.getElementById('officialPrintRoot'),
+    backBtn: document.getElementById('opBackBtn'),
+    saveBtn: document.getElementById('opSaveBtn'),
+    toolbarTitle: document.querySelector('.op-toolbar__title'),
+    imgWarning: document.getElementById('opImgWarning')
+  };
+
+  // True only once every <img> inside the merged content has actually
+  // finished loading (or failed — either way, it's settled, not still
+  // pending). A src that 404s still counts as "settled" here since
+  // there's nothing further to wait for.
+  function allImagesLoaded() {
+    const imgs = els.root.querySelectorAll('img');
+    for (const img of imgs) {
+      if (!img.complete) return false;
+    }
+    return true;
+  }
+
+  function init() {
+    const data = consumeHandoff();
+    if (!data || !data.bodyHtml) {
+      els.loading.classList.add('hidden');
+      els.error.classList.remove('hidden');
+      return;
+    }
+
+    document.title = data.title || 'Answer Key';
+    if (els.toolbarTitle) els.toolbarTitle.textContent = data.title || 'Answer Key';
+
+    // Inject the merged, de-duplicated styles collected from every
+    // part into this page's own <head> — the source portal's
+    // formatting renders exactly as it did originally, just without
+    // the watermark/scripts/dead buttons that were stripped already.
+    if (data.styles && data.styles.length) {
+      const styleEl = document.createElement('style');
+      styleEl.textContent = data.styles.join('\n');
+      document.head.appendChild(styleEl);
+    }
+
+    els.root.innerHTML = data.bodyHtml;
+    els.loading.classList.add('hidden');
+    els.root.classList.remove('hidden');
+  }
+
+  els.backBtn.addEventListener('click', () => {
+    wipeHandoff();
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = 'calculator.html';
+  });
+
+  els.saveBtn.addEventListener('click', async () => {
+    if (!allImagesLoaded()) {
+      els.imgWarning.classList.remove('hidden');
+      return;
+    }
+    els.imgWarning.classList.add('hidden');
+
+    els.saveBtn.disabled = true;
+    els.saveBtn.textContent = 'Opening…';
+    try {
+      if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.WebviewPrint) {
+        await Capacitor.Plugins.WebviewPrint.print({ name: document.title || 'Answer-Key' });
+      } else if (typeof window.print === 'function') {
+        if (window.mmhToast && typeof Capacitor !== 'undefined' && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) {
+          window.mmhToast('Print is unavailable inside the app — open mockmatrixhub.in in a browser to print');
+        } else {
+          window.print(); // plain browser preview fallback
+        }
+      }
+    } catch (e) {
+      // user cancelled the native print sheet, or it genuinely failed —
+      // either way there's nothing more useful to do here than reset the button
+    } finally {
+      els.saveBtn.disabled = false;
+      els.saveBtn.textContent = 'Save / Print Answer Key';
+    }
+  });
+
+  init();
+})();
+</script>
+
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>

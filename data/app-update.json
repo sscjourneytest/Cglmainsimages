@@ -1,0 +1,18 @@
+{
+  "latestVersion": "1.0.1",
+  "latestVersionCode": 2,
+  "minVersion": "1.0.0",
+  "forceUpdate": false,
+  "playStoreUrl": "https://play.google.com/store/apps/details?id=com.mockmatrixhub.app",
+  "title": "New Update Available! 🚀",
+  "message": "We've improved your experience with new features and performance upgrades.",
+  "whatsNew": [
+    "✨ New SSC 2026 pattern mock tests added",
+    "⚡ Faster performance and bug fixes",
+    "📊 Improved rank calculation and analysis",
+    "🎨 Enhanced dark mode and UI improvements",
+    "🔔 Better notifications for new mocks"
+  ],
+  "releaseDate": "2026-09-14",
+  "bannerType": "major"
+}

@@ -1,0 +1,153 @@
+{
+  "categories": [
+    {
+      "id": "ssc",
+      "title": "SSC EXAMS",
+      "subtitle": "CGL, CHSL, MTS, CPO, STENO, PHASE...",
+      "logo": "/ssc-logo.jpg",
+      "icon": "landmark",
+      "badge": "",
+      "comingSoon": false,
+      "items": [
+        {
+          "id": "ssc-sub",
+          "title": "SSC SUBJECT WISE PYQ",
+          "subtitle": "All SSC exams subject wise Chapter wise PYQs",
+          "icon": "book-open",
+          "logo": "",
+          "url": "/exams/ssc-sub/index.html",
+          "badge": ""
+        },
+        {
+          "id": "ssc-sub-top",
+          "title": "SSC TOP QUESTIONS",
+          "subtitle": "All SSC exams subject wise Chapter wise TOP Questions",
+          "icon": "star",
+          "logo": "",
+          "url": "/exams/ssc-sub-top/index.html",
+          "badge": "New"
+        },
+        {
+          "id": "cgl",
+          "title": "SSC CGL",
+          "subtitle": "Combined Graduate Level",
+          "icon": "grad-cap",
+          "logo": "",
+          "url": "/exams/cgl/index.html",
+          "badge": ""
+        },
+        {
+          "id": "chsl",
+          "title": "SSC CHSL",
+          "subtitle": "Combined Higher Secondary Level",
+          "icon": "notebook",
+          "logo": "",
+          "url": "/exams/chsl/index.html",
+          "badge": ""
+        },
+        {
+          "id": "mts",
+          "title": "SSC MTS",
+          "subtitle": "Multi Tasking Staff",
+          "icon": "briefcase",
+          "logo": "",
+          "url": "/exams/mts/index.html",
+          "badge": ""
+        },
+        {
+          "id": "cpo",
+          "title": "SSC CPO",
+          "subtitle": "Central Police Organization",
+          "icon": "shield-check",
+          "logo": "",
+          "url": "/exams/cpo/index.html",
+          "badge": ""
+        },
+        {
+          "id": "steno",
+          "title": "SSC STENO",
+          "subtitle": "Stenographer Grade C & D",
+          "icon": "keyboard",
+          "logo": "",
+          "url": "/exams/steno/index.html",
+          "badge": ""
+        },
+        {
+          "id": "selection-post",
+          "title": "SSC PHASE",
+          "subtitle": "Selection Posts Phase",
+          "icon": "id-badge",
+          "logo": "",
+          "url": "/exams/selection-post/index.html",
+          "badge": ""
+        },
+        {
+          "id": "gd",
+          "title": "SSC GD",
+          "subtitle": "GD CONSTABLE",
+          "icon": "shield-star",
+          "logo": "",
+          "url": "/exams/gd/index.html",
+          "badge": ""
+        }
+      ]
+    },
+    {
+      "id": "railway",
+      "title": "RAILWAY EXAMS",
+      "subtitle": "NTPC, Group D, ALP, RPF...",
+      "logo": "/railway-logo.jpg",
+      "icon": "train-front",
+      "badge": "",
+      "comingSoon": false,
+      "items": [
+        {
+          "id": "ntpcg",
+          "title": "RRB NTPC GRADUATE LEVEL",
+          "subtitle": "Non-Technical Popular Categories",
+          "icon": "train-front",
+          "logo": "",
+          "url": "/exams/ntpcg/index.html",
+          "badge": ""
+        },
+        {
+          "id": "ntpc-ug",
+          "title": "RRB NTPC UG",
+          "subtitle": "Non-Technical Popular Categories",
+          "icon": "tram",
+          "logo": "",
+          "url": "/exams/ntpc-ug/index.html",
+          "badge": ""
+        },
+        {
+          "id": "group-d",
+          "title": "RRB Group D",
+          "subtitle": "Level 1 Post",
+          "icon": "users",
+          "logo": "",
+          "url": "/exams/group-d/index.html",
+          "badge": ""
+        },
+        {
+          "id": "alp",
+          "title": "RRB ALP",
+          "subtitle": "Assistant Loco Pilot",
+          "icon": "gauge",
+          "logo": "",
+          "url": "/exams/alp/index.html",
+          "badge": ""
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "title": "STATE EXAMS",
+      "subtitle": "PCS, Police, Patwari & State Govt...",
+      "logo": "",
+      "icon": "map",
+      "badge": "COMING SOON",
+      "comingSoon": true,
+      "items": []
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+--- /tmp/v14b/css/home.css	2026-09-14 11:46:21.000000000 +0000
++++ css/home.css	2026-09-15 10:34:57.341024272 +0000
+@@ -555,21 +555,26 @@
+ .app-switch__btn img{ width:16px; height:16px; border-radius:4px; }
+ .app-switch__btn--active{ border-color:var(--primary); color:var(--primary); background:var(--primary-soft); }
+ 
+-/* ── Bottom dock (identical to the exams page dock) ───────────────────────── */
++/* ── Bottom dock (identical to the exams page dock) ─────────────────────────
++   Attached bar: full-bleed on ALL FOUR sides — no left/right/bottom gap and
++   no bottom rounding. Same opaque --surface background + same hairline, but
++   the shadow now falls UPWARDS (into the page) instead of around a floating
++   rectangle. Only this container rule changed; items / FAB are untouched.  */
+ .ex-dock{
+     position:fixed;
+-    left:50%; transform:translateX(-50%);
+-    bottom:calc(12px + env(safe-area-inset-bottom));
++    left:0; right:0; transform:none;
++    bottom:0;
+     z-index:1200;
+-    display:flex; align-items:stretch; justify-content:space-between;
+-    width:min(calc(100vw - 20px), 620px);
++    display:flex; align-items:stretch; justify-content:center;
++    width:auto; max-width:none;
+     background:var(--surface);
+-    border:1px solid var(--border);
+-    border-radius:26px;
+-    padding:8px 10px;
+-    box-shadow:0 18px 40px rgba(15,23,42,.16);
++    border:0;
++    border-top:1px solid var(--border);
++    border-radius:0;
++    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
++    box-shadow:0 -10px 28px rgba(15,23,42,.08);
+ }
+-body.dark-mode .ex-dock{ box-shadow:0 18px 44px rgba(0,0,0,.5); }
++body.dark-mode .ex-dock{ box-shadow:0 -12px 30px rgba(0,0,0,.42); }
+ .ex-dock-item{
+     position:relative;
+     flex:1; min-width:0;
+@@ -608,12 +613,17 @@
+     position:absolute; top:4px; right:calc(50% - 16px);
+ }
+ @media (max-width:379.98px){
+-    .ex-dock{ padding:7px 6px; border-radius:22px; }
++    .ex-dock{ padding:7px 6px calc(7px + env(safe-area-inset-bottom)); }
+     .ex-dock-item{ font-size:9px; padding:8px 1px 10px; }
+     .ex-dock-item svg{ width:19px; height:19px; }
+     .ex-dock-fab{ width:46px; height:46px; margin-top:-30px; }
+     .ex-dock-fab svg{ width:20px; height:20px; }
+ }
++/* Wide screens — bar stays full-bleed, items keep a sane width instead of
++   stretching across the whole desktop window */
++@media (min-width:768px){
++    .ex-dock-item{ flex:0 1 132px; }
++}
+ 
+ /* ── Adaptive appbar — shrinks ONLY when the brand name / tagline would
+    otherwise truncate ("strip") on tight screens. home-engine.js fitAppbar()
+--- /tmp/v14b/css/exams.css	2026-09-13 19:28:02.000000000 +0000
++++ css/exams.css	2026-09-15 10:35:04.597060921 +0000
+@@ -108,22 +108,25 @@
+    language as the app dock in the reference screenshot).               */
+ .ex-dock{
+     position:fixed;
+-    left:50%;
+-    transform:translateX(-50%);
+-    bottom:calc(12px + env(safe-area-inset-bottom));
++    left:0;
++    right:0;
++    transform:none;
++    bottom:0;
+     z-index:1200;
+     display:flex;
+     align-items:stretch;
+-    justify-content:space-between;
+-    width:min(calc(100vw - 20px), 620px);
++    justify-content:center;
++    width:auto;
++    max-width:none;
+     background:var(--surface);
+-    border:1px solid var(--border);
+-    border-radius:26px;
+-    padding:8px 10px;
+-    box-shadow:0 18px 40px rgba(15,23,42,.16);
++    border:0;
++    border-top:1px solid var(--border);
++    border-radius:0;
++    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
++    box-shadow:0 -10px 28px rgba(15,23,42,.08);
+ }
+ body.dark-mode .ex-dock{
+-    box-shadow:0 18px 44px rgba(0,0,0,.5);
++    box-shadow:0 -12px 30px rgba(0,0,0,.42);
+ }
+ 
+ .ex-dock-item{
+@@ -181,9 +184,12 @@
+ 
+ /* Small phones — tighten, never wrap */
+ @media (max-width:379.98px){
+-    .ex-dock{ padding:7px 6px; border-radius:22px; }
++    .ex-dock{ padding:7px 6px calc(7px + env(safe-area-inset-bottom)); }
+     .ex-dock-item{ font-size:9px; padding:8px 1px 10px; }
+     .ex-dock-item svg{ width:19px; height:19px; }
+     .ex-dock-fab{ width:46px; height:46px; margin-top:-30px; }
+     .ex-dock-fab svg{ width:20px; height:20px; }
+ }
++@media (min-width:768px){
++    .ex-dock-item{ flex:0 1 132px; }
++}

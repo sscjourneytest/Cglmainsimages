@@ -1,0 +1,99 @@
+{
+  "_note": "Plan DETAILS only — features, chips, FAQs, bot. Prices & validity are NOT here: they come live from the Supabase 'pricing' table. 'planIds' = the plan_name column values of the rows this card sells. Three rows in Supabase: 'Annual' (365d), 'HalfYearly' (180d), 'Monthly' (30d) — one card, three term choices (1 Year / 6 Months / 1 Month).",
+  "meta": {
+    "eyebrow": "PREMIUM ACCESS",
+    "title": "One pass. Every mock. Zero limits.",
+    "subtitle": "Unlock the complete Mock Matrix Hub arsenal — PYQs, sectionals, live rankings and first access to future exam mocks.",
+    "currency": "₹"
+  },
+  "trust": {
+    "badges": [
+      { "icon": "lock",   "label": "256-bit SSL secure checkout" },
+      { "icon": "shield", "label": "Razorpay protected payments" },
+      { "icon": "bolt",   "label": "Instant activation after payment" },
+      { "icon": "refund", "label": "7-day easy refund policy" }
+    ],
+    "payments": ["UPI", "Cards", "NetBanking", "Wallets"],
+    "stats": [
+      { "value": 15400, "suffix": "+",  "label": "Aspirants trust us", "icon": "users" },
+      { "value": 25000,  "suffix": "+",  "label": "PYQs solved",        "icon": "notebook" },
+      { "value": 2500,   "suffix": "+",  "label": "Mock tests",         "icon": "doc" },
+      { "value": 24,    "suffix": "×7", "label": "Support",            "icon": "headset" }
+    ],
+    "guarantee": "If Premium isn't for you, write to us within 7 days of purchase for a full refund — no questions asked."
+  },
+  "plans": [
+    {
+      "id": "premium-pass",
+      "name": "Premium Pass",
+      "tagline": "Everything you need to crack your target exam",
+      "badge": "BEST VALUE",
+      "highlight": true,
+      "planIds": ["Annual", "HalfYearly", "Monthly"],
+      "chips": ["25000+ PYQs", "Unlimited Attempts", "Sectional Timer", "Live Rankings"],
+      "features": [
+        { "icon": "notebook", "text": "25000+ PYQs — chapter-wise previous year questions with full solutions" },
+        { "icon": "doc",      "text": "Thousands of tests — full-length, subject-wise & topic-wise mocks" },
+        { "icon": "bolt",     "text": "New mocks every week — fresh papers added on the latest pattern" },
+        { "icon": "layers",   "text": "Full sectional tests — Maths, Reasoning, English, GK separately" },
+        { "icon": "timer",    "text": "Sectional timer — real-exam style time limits per section" },
+        { "icon": "infinity", "text": "Unlimited attempts — re-attempt any mock as many times as you want" },
+        { "icon": "trophy",   "text": "Real competition — live all-India rank with every attempt" },
+        { "icon": "star",     "text": "Future exam mocks — very first access the moment they release" },
+        { "icon": "chart",    "text": "Deep analysis — accuracy, speed, weak topics & attempt trends" },
+        { "icon": "telegram", "text": "Private Telegram group — premium-only updates & PDF drops" },
+        { "icon": "headset",  "text": "Instant support — real humans, quick replies on chat & Telegram" },
+        { "icon": "shield",   "text": "Exam-day readiness — full syllabus coverage before your exam" }
+      ]
+    }
+  ],
+  "compare": {
+    "freeLabel": "Free",
+    "premiumLabel": "Premium",
+    "rows": [
+      { "label": "Full-length mock tests",  "free": "3 only",  "premium": "Unlimited" },
+      { "label": "PYQ library",             "free": "Limited", "premium": "25000+ solved" },
+      { "label": "Sectional tests + timer", "free": "—",       "premium": "All sections" },
+      { "label": "Attempts per mock",       "free": "1",       "premium": "Unlimited" },
+      { "label": "All-India live rank",     "free": "—",       "premium": "Every attempt" },
+      { "label": "Future exam mocks",       "free": "Later",   "premium": "First access" },
+      { "label": "Private Telegram group",  "free": "—",       "premium": "Included" },
+      { "label": "Support",                 "free": "Email",   "premium": "Instant + Telegram" }
+    ]
+  },
+  "faqs": [
+    { "q": "What exactly do I get with the Premium Pass?", "a": "Unlimited access to every mock test on Mock Matrix Hub — full-length, sectional and subject-wise — plus the complete 25000+ PYQ library, sectional timers, unlimited attempts, live all-India rankings, detailed analytics and the private Telegram group. Future exam mocks unlock for you first." },
+    { "q": "How long is my Premium valid?", "a": "You pick at checkout: 1 Month (30 days), 6 Months (180 days) or 1 Year (365 days). Your Premium stays active for exactly the validity of the plan you choose — one payment, no auto-renewal, no hidden charges." },
+    { "q": "How fast is my access activated after payment?", "a": "Instantly. The moment Razorpay confirms your payment, your profile flips to Premium automatically — usually within a few seconds. No codes to enter, no waiting for email approval." },
+    { "q": "Which payment methods are supported?", "a": "UPI (GPay, PhonePe, Paytm), all debit/credit cards, netbanking and popular wallets — processed securely by Razorpay over a 256-bit encrypted connection. We never see or store your card details." },
+    { "q": "Can I attempt a mock test more than once?", "a": "Yes — unlimited attempts on every mock for the whole year of your validity. Re-attempts are the fastest way to fix mistakes, so we never cap them." },
+    { "q": "What is the refund policy?", "a": "If Premium isn't what you expected, write to support within 7 days of purchase and we refund the full amount — no questions asked. After 7 days, refunds follow the standard refund policy." },
+    { "q": "Do I need to pay again when new mocks are added?", "a": "Never. Every mock, PYQ set and sectional added during your validity is included automatically — including future exam mocks, which Premium members get first access to." },
+    { "q": "Can I use Premium on multiple devices?", "a": "Yes — login with the same account on phone, tablet or desktop. Your attempts, analysis and rankings stay in sync across all of them." },
+    { "q": "How do coupons work?", "a": "Enter your coupon on the checkout step and the discounted price updates instantly before you pay. Partner and referral coupons are applied exactly as issued — case sensitive, as stored." }
+  ],
+  "bot": {
+    "name": "Premium Support Bot",
+    "greeting": "Hi! I'm the Premium Support Bot. Ask me anything about the plan, pricing, refunds or activation — or tap a quick question below.",
+    "quick": ["What's included?", "How much does it cost?", "Refund policy?", "How fast is activation?", "Payment methods?"],
+    "intents": [
+      { "match": ["price", "cost", "much", "kitna"], "answer": "Choose 1 Month, 6 Months or 1 Year on the card above — each term has its own live price from our server, so what you see is exactly what you pay. Every plan unlocks the same full Premium Pass." },
+      { "match": ["included", "features", "get", "milta", "what do i get"], "answer": "Everything: unlimited mocks, 25000+ PYQs, sectional tests with timers, unlimited attempts, live all-India ranks, deep analytics, private Telegram group and first access to future exam mocks — on every plan." },
+      { "match": ["valid", "validity", "expire", "how long", "kitne din"], "answer": "Your Premium stays active for the plan you pick — 1 Month (30 days), 6 Months (180 days) or 1 Year (365 days) from payment. One-time payment, no auto-renewal." },
+      { "match": ["refund", "return", "paisa wapas"], "answer": "Full refund within 7 days of purchase, no questions asked — just message support. After that, the standard refund policy applies." },
+      { "match": ["activation", "activate", "fast", "kitni der", "when"], "answer": "Instant. The second Razorpay confirms your payment your profile flips to Premium automatically — usually within seconds." },
+      { "match": ["payment", "upi", "card", "method", "pay how"], "answer": "UPI, cards, netbanking and wallets — all processed by Razorpay over 256-bit encryption. We never store your card or UPI details." },
+      { "match": ["coupon", "discount", "code"], "answer": "Enter your coupon on the checkout step — the total updates instantly before you pay. Partner/referral codes work exactly as issued." },
+      { "match": ["telegram", "group", "channel"], "answer": "Premium members get the private Telegram group with exclusive PDFs, updates and direct support. The join link appears in your sidebar once Premium activates." }
+    ],
+    "fallback": "I didn't catch that — try one of the quick questions, or reach a human instantly on Telegram or WhatsApp using the buttons below.",
+    "handoff": [
+      { "icon": "telegram", "label": "Telegram", "url": "https://t.me/MOCK_MATRIX_HUB_SUPPORT_BOT" },
+      { "icon": "whatsapp", "label": "WhatsApp", "url": "https://whatsapp.com/channel/0029VbC1BdBHgZWkQHWyLh2z" }
+    ]
+  },
+  "seo": {
+    "title": "Premium Pass — Mock Matrix Hub | Unlimited Mocks, 25000+ PYQs & Sectional Tests",
+    "description": "Unlock unlimited mock tests, 25000+ solved PYQs, sectional timers, live all-India ranks and first access to future exam mocks. Choose 1 Month, 6 Months or 1 Year. Instant activation, secure Razorpay checkout, 7-day refund."
+  }
+}

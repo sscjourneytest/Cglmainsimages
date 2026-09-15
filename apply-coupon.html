@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Become a Partner — Mock Matrix Hub</title>
+<meta name="description" content="Join the Mock Matrix Hub Partner Program — share your coupon code, earn commission on every sale, track payouts from your Partner Dashboard.">
+<meta name="theme-color" content="#f3f5fb">
+<script>
+    /* early theme apply — same `mmh_theme` key + prefers-color-scheme
+       fallback the live pages use (app-shell.js currentTheme()) */
+    (function(){ try{
+        var t = localStorage.getItem('mmh_theme');
+        if (t !== 'light' && t !== 'dark'){
+            t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        }
+        window.__mmhTheme = t;
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.content = t === 'dark' ? '#0a0f1e' : '#f3f5fb';
+    }catch(e){}})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth.js?v=260908f"></script>
+
+<style>
+/* ── Theme tokens — identical to /css/design.css so the page matches ─────── */
+:root{
+    --bg:#f3f5fb; --surface:#ffffff; --surface-2:#f6f8fd;
+    --border:#e5e8f2; --border-strong:#d3d9e8;
+    --text:#0e1428; --text-2:#5c6580; --text-3:#8a93ab;
+    --primary:#3d5afe; --primary-2:#3050e8; --primary-soft:rgba(61,90,254,.10);
+    --grad-primary:linear-gradient(135deg,#4d6bff 0%,#3050e8 100%);
+    --emerald-strong:#059669; --emerald-soft:rgba(16,185,129,.11);
+    --amber-strong:#d97706; --amber-soft:rgba(245,158,11,.13);
+    --red:#e11d48; --red-soft:rgba(225,29,72,.10);
+    --hair:linear-gradient(90deg,#4d6bff 0%,#8b5cf6 55%,#f59e0b 100%);
+    --shadow-card:0 1px 2px rgba(15,23,42,.04), 0 6px 18px rgba(15,23,42,.05);
+    --shadow-pop:0 14px 34px rgba(15,23,42,.14);
+}
+body.dark-mode, html[data-theme="dark"] body{
+    --bg:#0a0f1e; --surface:#121a30; --surface-2:#19233c;
+    --border:#232e4d; --border-strong:#31406a;
+    --text:#eef1fb; --text-2:#9aa4c3; --text-3:#6d7898;
+    --primary:#5b74ff; --primary-2:#4356e8; --primary-soft:rgba(91,116,255,.15);
+    --grad-primary:linear-gradient(135deg,#5b74ff 0%,#4356e8 100%);
+    --emerald-strong:#34d399; --emerald-soft:rgba(52,211,153,.14);
+    --amber-strong:#fbbf24; --amber-soft:rgba(251,191,36,.14);
+    --red:#fb7185; --red-soft:rgba(251,113,133,.14);
+    --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.35);
+    --shadow-pop:0 16px 40px rgba(0,0,0,.5);
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ -webkit-text-size-adjust:100%; }
+html, body{ height:100%; }
+/* Locked app frame — identical to home / exams / mock hub: the BODY never
+   scrolls (fixed flex column), only the inner .screen-scroll moves, so the
+   header outside it cannot jitter or shift on fast mobile flings. */
+body{
+    background:var(--bg); color:var(--text);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    position:fixed; inset:0;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+}
+.screen-scroll{
+    flex:1; overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+}
+button{ font-family:inherit; }
+
+/* ── App header — verbatim design.css / home.css appbar system ───────────── */
+.screen-header, .sticky-header-section{ padding-top:env(safe-area-inset-top, 0px); }
+.screen-header{
+    flex-shrink:0;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+}
+.screen-header .appbar{ width:100%; padding:9px 16px 10px; }
+.appbar{ display:flex; align-items:center; gap:10px; padding:6px 0 10px; }
+.back-btn{ width:38px; height:38px; border-radius:12px; flex-shrink:0; }
+.nav-back{ width:38px; height:38px; border-radius:12px; flex-shrink:0; text-decoration:none; }
+.brand{ display:flex; align-items:center; gap:10px; min-width:0; }
+.brand-mark{
+    width:37px; height:37px;
+    border-radius:11px;
+    background:var(--grad-primary);
+    display:grid; place-items:center;
+    color:#fff;
+    flex-shrink:0;
+    box-shadow:0 5px 14px rgba(61,90,254,.35);
+}
+.brand-mark svg{ width:19px; height:19px; }
+.brand-logo-img{
+    width:100%; height:100%;
+    object-fit:cover;
+    border-radius:11px;
+    display:block;
+    background:var(--surface-2);
+}
+.brand-text{ min-width:0; }
+.brand-title{
+    font-size:16px; font-weight:700; letter-spacing:-.2px; line-height:1.2;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.brand-sub{
+    margin-top:1px;
+    font-size:10px; font-weight:700; letter-spacing:.9px;
+    text-transform:uppercase; color:var(--text-3); white-space:nowrap;
+}
+.appbar-actions{ margin-left:auto; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.icon-btn{
+    width:38px; height:38px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text-2);
+    display:grid; place-items:center;
+    cursor:pointer;
+    padding:0;
+    transition:transform .12s ease, color .15s ease, border-color .15s ease, background .15s ease;
+}
+.icon-btn svg{ width:18px; height:18px; }
+.icon-btn:hover{ color:var(--primary); border-color:var(--border-strong); }
+.icon-btn:active{ transform:scale(.9); }
+.icon-btn:disabled{ opacity:.5; cursor:default; }
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.pc-wrap{ max-width:680px; margin:0 auto; padding:20px 16px 56px; }
+
+.pc-hero{ text-align:center; margin:6px 0 20px; }
+.pc-eyebrow{
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:10px; font-weight:800; letter-spacing:1.6px;
+    color:var(--amber-strong); background:var(--amber-soft);
+    padding:6px 12px; border-radius:999px;
+}
+.pc-eyebrow svg{ width:12px; height:12px; }
+.pc-hero h1{
+    margin-top:12px;
+    font-size:clamp(23px,4.4vw,34px); font-weight:800; line-height:1.15; letter-spacing:-.6px;
+}
+.pc-hero h1 em{ font-style:normal; background:var(--grad-primary); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.pc-hero p{ margin-top:9px; font-size:13px; font-weight:500; color:var(--text-2); }
+
+/* steps */
+.pc-steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
+.pc-step{
+    position:relative; text-align:center;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; padding:14px 8px 12px;
+    box-shadow:var(--shadow-card);
+}
+.pc-step-ico{
+    width:34px; height:34px; margin:0 auto 8px; border-radius:10px;
+    background:var(--primary-soft); color:var(--primary);
+    display:grid; place-items:center;
+}
+.pc-step-ico svg{ width:16px; height:16px; }
+.pc-step p{ font-size:10px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; color:var(--text-2); }
+.pc-step small{ display:block; margin-top:3px; font-size:9px; font-weight:600; color:var(--text-3); }
+.pc-step .pc-n{
+    position:absolute; top:8px; left:10px;
+    font-size:9px; font-weight:800; color:var(--text-3);
+}
+
+/* status banner */
+.pc-status{
+    display:none; align-items:flex-start; gap:10px;
+    border-radius:14px; padding:12px 14px; margin-bottom:14px;
+    font-size:12px; font-weight:600; line-height:1.5;
+    border:1px solid transparent;
+}
+.pc-status.show{ display:flex; }
+.pc-status svg{ width:16px; height:16px; flex-shrink:0; margin-top:1px; }
+.pc-status.err{ background:var(--red-soft); border-color:var(--red); color:var(--red); }
+.pc-status.ok{ background:var(--emerald-soft); border-color:var(--emerald-strong); color:var(--emerald-strong); }
+.pc-status.info{ background:var(--amber-soft); border-color:var(--amber-strong); color:var(--amber-strong); }
+
+/* card */
+.pc-card{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; padding:20px 18px; box-shadow:var(--shadow-card);
+}
+.pc-card-title{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; margin-bottom:14px; }
+.pc-card-title svg{ width:16px; height:16px; color:var(--primary); }
+body.dark-mode .pc-card-title svg{ color:#818cf8; }
+
+/* earn tiles */
+.pc-earn{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.pc-earn-tile{
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:14px; padding:12px;
+}
+.pc-earn-tile .t-ico{
+    width:30px; height:30px; border-radius:9px; margin-bottom:8px;
+    display:grid; place-items:center;
+}
+.pc-earn-tile .t-ico.gold{ background:var(--amber-soft); color:var(--amber-strong); }
+.pc-earn-tile .t-ico.green{ background:var(--emerald-soft); color:var(--emerald-strong); }
+.pc-earn-tile .t-ico svg{ width:15px; height:15px; }
+.pc-earn-tile h4{ font-size:12px; font-weight:800; margin-bottom:4px; }
+.pc-earn-tile p{ font-size:10.5px; font-weight:500; line-height:1.5; color:var(--text-2); }
+
+/* form */
+.pc-field{ margin-bottom:14px; }
+.pc-field label{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    font-size:9.5px; font-weight:800; letter-spacing:.7px; text-transform:uppercase;
+    color:var(--text-3); margin-bottom:6px;
+}
+.pc-field label .pc-count{ font-size:9px; font-weight:700; letter-spacing:0; color:var(--text-3); }
+.pc-input-row{ position:relative; }
+.pc-input-row .pc-lock{
+    position:absolute; right:12px; top:50%; transform:translateY(-50%);
+    width:14px; height:14px; color:var(--text-3); pointer-events:none;
+}
+.pc-field input, .pc-field textarea{
+    width:100%; border:1.5px solid var(--border); border-radius:12px;
+    background:var(--surface-2); color:var(--text);
+    font-family:inherit; font-size:13px; font-weight:600;
+    padding:12px 13px; outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+}
+.pc-field textarea{ resize:vertical; min-height:74px; line-height:1.5; }
+.pc-field input:focus, .pc-field textarea:focus{ border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+.pc-field input[readonly]{ color:var(--text-2); cursor:default; padding-right:34px; }
+.pc-field small{ display:block; margin-top:5px; font-size:10px; font-weight:500; color:var(--text-3); line-height:1.45; }
+.pc-uuid{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:10.5px; font-weight:600; color:var(--text-2);
+    background:var(--surface-2); border:1px dashed var(--border-strong);
+    border-radius:10px; padding:9px 11px; word-break:break-all;
+}
+.pc-2col{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+/* buttons */
+.pc-submit{
+    width:100%; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    background:var(--grad-primary); color:#fff;
+    font-size:13.5px; font-weight:800; letter-spacing:.4px;
+    padding:15px 16px; border-radius:14px;
+    box-shadow:0 10px 26px rgba(61,90,254,.35);
+    transition:transform .12s ease, opacity .15s ease;
+}
+.pc-submit:active{ transform:scale(.98); }
+.pc-submit svg{ width:16px; height:16px; }
+.pc-submit:disabled{ cursor:not-allowed; box-shadow:none; }
+.pc-submit.review{ background:var(--surface-2); color:var(--text-2); border:1.5px solid var(--border-strong); }
+.pc-submit.active-partner{ background:var(--emerald-soft); color:var(--emerald-strong); border:1.5px solid var(--emerald-strong); }
+.pc-statusbtn{
+    width:100%; margin-top:9px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:transparent; color:var(--primary);
+    border:1.5px solid var(--border-strong); border-radius:14px;
+    font-size:12px; font-weight:800; letter-spacing:.3px;
+    padding:12px 16px;
+    transition:background .15s ease;
+}
+body.dark-mode .pc-statusbtn{ color:#818cf8; }
+.pc-statusbtn:hover{ background:var(--surface-2); }
+.pc-statusbtn svg{ width:15px; height:15px; }
+
+/* footer contact */
+.pc-contact{ margin-top:18px; text-align:center; }
+.pc-contact a{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:11.5px; font-weight:800; text-decoration:none; color:#fff;
+    background:linear-gradient(135deg,#2aabee,#229ed9);
+    padding:10px 16px; border-radius:999px;
+    box-shadow:0 8px 20px rgba(34,158,217,.35);
+}
+.pc-contact a svg{ width:14px; height:14px; }
+
+/* toast */
+.pc-toast{
+    position:fixed; left:50%; bottom:24px; transform:translate(-50%,12px);
+    z-index:2100; max-width:min(88vw,380px);
+    background:rgba(15,23,42,.92); color:#fff;
+    font-size:11.5px; font-weight:600; line-height:1.45;
+    padding:10px 14px; border-radius:12px;
+    opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+}
+body.dark-mode .pc-toast{ background:rgba(226,232,240,.95); color:#0f172a; }
+.pc-toast.show{ opacity:1; transform:translate(-50%,0); }
+
+@media (max-width:560px){
+    .pc-steps{ grid-template-columns:1fr; gap:8px; }
+    .pc-step{ display:flex; align-items:center; gap:12px; text-align:left; padding:11px 14px; }
+    .pc-step-ico{ margin:0; flex-shrink:0; }
+    .pc-step .pc-n{ position:static; }
+    .pc-earn{ grid-template-columns:1fr; }
+    .pc-2col{ grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="screen-header sticky-header-section">
+    <div class="appbar">
+        <a class="icon-btn nav-back" href="/" aria-label="Back to home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </a>
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+                <img class="brand-logo-img" src="/logo.png" alt=""
+                     onerror="this.outerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;3.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;3.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;3.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot;/><rect x=&quot;13.2&quot; y=&quot;13.2&quot; width=&quot;7.6&quot; height=&quot;7.6&quot; rx=&quot;2.2&quot; fill=&quot;currentColor&quot; stroke=&quot;none&quot;/></svg>'">
+            </div>
+            <div class="brand-text">
+                <div class="brand-title">Mock Matrix Hub</div>
+                <div class="brand-sub">Partner Program</div>
+            </div>
+        </div>
+        <div class="appbar-actions">
+            <button type="button" class="icon-btn theme-btn" id="themeBtn" aria-label="Toggle theme"></button>
+        </div>
+    </div>
+</header>
+
+<main class="screen-scroll">
+<div class="pc-wrap">
+
+    <div class="pc-hero">
+        <span class="pc-eyebrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4 13.8 9l5.6 1.8-5.6 1.8L12 18.2l-1.8-5.6L4.6 10.8 10.2 9 12 3.4z"/></svg>
+            PARTNER PROGRAM
+        </span>
+        <h1>Share your code.<br><em>Earn on every sale.</em></h1>
+        <p>Students save with your coupon — you earn a commission on each one, paid straight to your UPI.</p>
+    </div>
+
+    <div class="pc-steps">
+        <div class="pc-step">
+            <span class="pc-n">1</span>
+            <span class="pc-step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.8h7.6L19 8.2v13H6a1 1 0 0 1-1-1V3.8a1 1 0 0 1 1-1z"/><path d="M13.4 2.8v5.6H19M9 13.4h6M9 16.8h4"/></svg></span>
+            <div><p>Apply</p><small>2-minute form</small></div>
+        </div>
+        <div class="pc-step">
+            <span class="pc-n">2</span>
+            <span class="pc-step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.2" cy="8" r="3.3"/><path d="M3.4 19.6c.7-3.4 2.9-5.2 5.8-5.2s5.1 1.8 5.8 5.2M15.6 9.4l2 2 3.6-3.9"/></svg></span>
+            <div><p>Get Approved</p><small>12–24 hours</small></div>
+        </div>
+        <div class="pc-step">
+            <span class="pc-n">3</span>
+            <span class="pc-step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 8.6V6.8a1.8 1.8 0 0 0-1.8-1.8H5.4a1.8 1.8 0 0 0-1.8 1.8v10.4a1.8 1.8 0 0 0 1.8 1.8h13.2a1.8 1.8 0 0 0 1.8-1.8v-1.8"/><path d="M21.6 8.6h-5a3 3 0 0 0 0 6h5a.8.8 0 0 0 .8-.8V9.4a.8.8 0 0 0-.8-.8z"/></svg></span>
+            <div><p>Earn &amp; Withdraw</p><small>UPI payouts</small></div>
+        </div>
+    </div>
+
+    <div class="pc-status" id="statusBox" role="status"></div>
+
+    <div class="pc-card">
+        <div class="pc-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.9 19.4 5.7v5.5c0 4.7-3.1 8.3-7.4 9.9-4.3-1.6-7.4-5.2-7.4-9.9V5.7L12 2.9z"/><path d="m8.9 11.9 2.2 2.2 4-4.3"/></svg>
+            How you earn
+        </div>
+        <div class="pc-earn">
+            <div class="pc-earn-tile">
+                <span class="t-ico gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5 5 19M7.5 6.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM16.5 15.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/><circle cx="6.8" cy="6.8" r="2.3"/><circle cx="17.2" cy="17.2" r="2.3"/></svg></span>
+                <h4>Real Commission</h4>
+                <p>You earn a share of every discount your code gives students — your exact rate is set when you're approved.</p>
+            </div>
+            <div class="pc-earn-tile">
+                <span class="t-ico green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6.6 16.6v-5M11 16.6V7.4M15.4 16.6v-7.2M19.8 16.6V4.6"/></svg></span>
+                <h4>Track Everything</h4>
+                <p>Once approved, your Partner Dashboard shows every sale and lets you request payouts any time.</p>
+            </div>
+        </div>
+
+        <form id="applyForm" novalidate>
+            <div class="pc-2col">
+                <div class="pc-field">
+                    <label for="partnerName">Username</label>
+                    <div class="pc-input-row">
+                        <input type="text" id="partnerName" readonly tabindex="-1">
+                        <svg class="pc-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.2" width="14.8" height="10.4" rx="2.6"/><path d="M8.2 10.2V7.6a3.8 3.8 0 0 1 7.6 0v2.6"/></svg>
+                    </div>
+                </div>
+                <div class="pc-field">
+                    <label for="partnerEmail">Email Address</label>
+                    <div class="pc-input-row">
+                        <input type="email" id="partnerEmail" readonly tabindex="-1">
+                        <svg class="pc-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.2" width="14.8" height="10.4" rx="2.6"/><path d="M8.2 10.2V7.6a3.8 3.8 0 0 1 7.6 0v2.6"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pc-field">
+                <label for="partnerUuid">Your Account ID</label>
+                <div class="pc-uuid" id="partnerUuid">--</div>
+            </div>
+
+            <div class="pc-2col">
+                <div class="pc-field">
+                    <label for="partnerPhone">Mobile Number *</label>
+                    <input type="tel" id="partnerPhone" required inputmode="numeric" maxlength="10" placeholder="10-digit number">
+                </div>
+                <div class="pc-field">
+                    <label for="partnerUpi">UPI ID (for payouts) *</label>
+                    <input type="text" id="partnerUpi" required placeholder="yourname@upi">
+                </div>
+            </div>
+
+            <div class="pc-field">
+                <label for="channelLinks">Channel / Social Link *</label>
+                <textarea id="channelLinks" required rows="3" placeholder="https://youtube.com/… or https://t.me/…"></textarea>
+                <small>Must be a valid https:// link to YouTube, Telegram, Instagram, X/Twitter or Facebook.</small>
+            </div>
+
+            <div class="pc-field">
+                <label for="requestedCode">Requested Coupon Code * <span class="pc-count" id="codeCount">0/10</span></label>
+                <input type="text" id="requestedCode" maxlength="10" required placeholder="Ex: HUB25" style="text-transform:uppercase; letter-spacing:1px;">
+                <small>Max 10 letters &amp; numbers — this is the code students will type at checkout.</small>
+            </div>
+
+            <button type="submit" class="pc-submit" id="subBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                <span id="subBtnLabel">Submit Partnership Request</span>
+            </button>
+            <button type="button" class="pc-statusbtn" id="statusBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6V12l3 1.8"/></svg>
+                Check Request Status
+            </button>
+        </form>
+
+        <div class="pc-contact">
+            <a href="https://t.me/MOCK_MATRIX__HUB_SUPPORT_BOT" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                Contact Admin for Fast Approval
+            </a>
+        </div>
+    </div>
+</div>
+</main>
+
+<script>
+// ── Become a Partner — single-file page logic ────────────────────────────────
+// Same backend contract as before: supabase 'coupons' + 'coupon_requests',
+// 24h cooldown per email, unique requested code, pending flag in localStorage.
+// Alerts replaced with the inline status banner (clearer) + toasts.
+
+const ALLOWED_DOMAINS = ["youtube.com", "youtu.be", "t.me", "telegram.me", "instagram.com", "twitter.com", "x.com", "facebook.com", "fb.com"];
+// Set once by the DOMContentLoaded handler's requireLogin() call below —
+// other handlers (submit, status check) reuse it instead of re-deriving
+// their own notion of "who's logged in".
+let mmhCurrentUser = null;
+
+const el = id => document.getElementById(id);
+function isValidSocialLink(raw) {
+    const link = String(raw || '').trim();
+    if (!link.toLowerCase().startsWith("https://")) return false;
+    try {
+        const host = new URL(link).hostname.replace(/^www\./, "");
+        return ALLOWED_DOMAINS.some(d => host === d || host.endsWith("." + d));
+    } catch (e) { return false; }
+}
+
+const STATUS_ICONS = {
+    ok:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg>',
+    err:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.6v5.2M12 16.4h.01"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.4M12 7.6h.01"/></svg>'
+};
+function showStatus(type, msg) {
+    const box = el('statusBox');
+    box.className = 'pc-status show ' + type;
+    box.innerHTML = (STATUS_ICONS[type] || '') + '<span>' + msg + '</span>';
+    if (box.scrollIntoView) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+function hideStatus() { el('statusBox').className = 'pc-status'; }
+
+function toast(msg) {
+    let t = document.querySelector('.pc-toast');
+    if (!t) { t = document.createElement('div'); t.className = 'pc-toast'; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function setBtnState(mode) {
+    const btn = el('subBtn'), label = el('subBtnLabel');
+    btn.classList.remove('review', 'active-partner');
+    if (mode === 'review') {
+        btn.disabled = true; btn.classList.add('review');
+        label.textContent = 'Application Under Review…';
+    } else if (mode === 'active') {
+        btn.disabled = true; btn.classList.add('active-partner');
+        label.textContent = 'Partner Account Active ✅';
+    } else if (mode === 'busy') {
+        btn.disabled = true; label.textContent = 'Processing…';
+    } else {
+        btn.disabled = false; label.textContent = 'Submit Partnership Request';
+    }
+}
+
+/* ── Theme — app-shell.js parity: mmh_theme key, sun/moon icon swap,
+      theme-color meta, aria-label refresh (same as every other page) ─────── */
+const THEME_KEY = 'mmh_theme';
+const ICO_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.5 12h2M19.5 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const ICO_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.2A8.5 8.5 0 1 1 10.8 3.5a7 7 0 0 0 9.7 9.7z"/></svg>';
+function currentTheme() {
+    try {
+        const s = localStorage.getItem(THEME_KEY);
+        if (s === 'dark' || s === 'light') return s;
+    } catch (e) { /* private mode */ }
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+}
+function applyTheme(t) {
+    document.body.classList.toggle('dark-mode', t === 'dark');
+    document.documentElement.setAttribute('data-theme', t);
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.content = t === 'dark' ? '#0a0f1e' : '#f3f5fb';
+    const b = el('themeBtn');
+    if (b) {
+        b.innerHTML = t === 'dark' ? ICO_SUN : ICO_MOON;
+        b.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+}
+function toggleTheme() {
+    const t = currentTheme() === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* ignore */ }
+    applyTheme(t);
+}
+applyTheme(currentTheme());
+el('themeBtn').addEventListener('click', toggleTheme);
+
+// live code sanitiser + counter
+el('requestedCode').addEventListener('input', e => {
+    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    el('codeCount').textContent = e.target.value.length + '/10';
+});
+el('partnerPhone').addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Login gating goes through auth.js's own requireLogin() helper — the
+    // same getSessionOnce()-deduped check initAuth() uses — instead of
+    // reaching into auth.js's internal _supabase client directly.
+    const user = await requireLogin('/apply-coupon.html');
+    if (!user) return; // requireLogin() already redirected to login (or alerted on a network failure)
+    mmhCurrentUser = user;
+
+    const client = await getClient();
+    const profile = (typeof getLocalProfile === 'function') ? getLocalProfile() : null;
+
+    el('partnerName').value = (profile && profile.username) || '';
+    el('partnerEmail').value = (profile && profile.email) || user.email || '';
+    el('partnerUuid').textContent = user.id;
+
+    const { data: existingCoupon } = await client.from('coupons')
+        .select('code').eq('owner_user_id', user.id).eq('is_active', true).maybeSingle();
+
+    if (existingCoupon) { setBtnState('active'); return; }
+    if (localStorage.getItem('pending_partner_request') === 'true') setBtnState('review');
+});
+
+el('applyForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    hideStatus();
+
+    if (!mmhCurrentUser) { showStatus('err', 'Please login first to submit a request.'); return; }
+    const client = await getClient();
+    const userEmail = el('partnerEmail').value;
+    const phone = el('partnerPhone').value.trim();
+    const upi = el('partnerUpi').value.trim();
+    const links = el('channelLinks').value;
+    const code = el('requestedCode').value.trim();
+
+    if (!/^[0-9]{10}$/.test(phone)) { showStatus('err', 'Please enter a valid 10-digit mobile number.'); return; }
+    if (!/^\S+@\S+$/.test(upi))     { showStatus('err', 'Please enter a valid UPI ID like yourname@upi.'); return; }
+    if (!isValidSocialLink(links))  { showStatus('err', 'Please enter a valid https:// link to YouTube, Telegram, Instagram, X/Twitter or Facebook.'); return; }
+    if (!code)                      { showStatus('err', 'Please choose the coupon code you want.'); return; }
+
+    setBtnState('busy');
+
+    const { data: recent } = await client.from('coupon_requests')
+        .select('created_at').eq('email', userEmail).order('created_at', { ascending: false }).limit(1);
+
+    if (recent && recent.length > 0) {
+        const lastTime = new Date(recent[0].created_at);
+        if ((new Date() - lastTime) / (1000 * 60 * 60) < 24) {
+            showStatus('err', 'You can only submit one request every 24 hours. Please try again later.');
+            setBtnState(localStorage.getItem('pending_partner_request') === 'true' ? 'review' : 'default');
+            return;
+        }
+    }
+
+    const { data: codeExists }  = await client.from('coupons').select('code').eq('code', code).maybeSingle();
+    const { data: reqExists }   = await client.from('coupon_requests').select('requested_code').eq('requested_code', code).maybeSingle();
+
+    if (codeExists || reqExists) {
+        showStatus('err', 'The code <b>' + code + '</b> is already taken — please try another one.');
+        setBtnState('default');
+        return;
+    }
+
+    const { error: insertError } = await client.from('coupon_requests').insert([{
+        user_id: mmhCurrentUser.id,
+        username: el('partnerName').value,
+        email: userEmail,
+        phone: phone,
+        upi_id: upi,
+        channel_links: links,
+        requested_code: code,
+        status: 'pending'
+    }]);
+
+    if (!insertError) {
+        localStorage.setItem('pending_partner_request', 'true');
+        setBtnState('review');
+        showStatus('ok', 'Request submitted! Verification takes 12–24 hours — we\'ll approve your code <b>' + code + '</b> soon.');
+        toast('Partnership request submitted ✅');
+    } else {
+        showStatus('err', 'Could not submit: ' + insertError.message);
+        setBtnState('default');
+    }
+});
+
+el('statusBtn').addEventListener('click', async () => {
+    hideStatus();
+    if (!mmhCurrentUser) { showStatus('err', 'Please login first to check your request status.'); return; }
+    const client = await getClient();
+    const { data } = await client.from('coupon_requests')
+        .select('status, requested_code').eq('user_id', mmhCurrentUser.id)
+        .order('created_at', { ascending: false }).limit(1).maybeSingle();
+
+    if (!data) { showStatus('info', 'No partnership requests found for your account yet.'); return; }
+
+    if (data.status === 'pending') {
+        showStatus('info', '⏳ Under review: your request for code <b>' + data.requested_code + '</b> is being verified (12–24 hours).');
+    } else if (data.status === 'approved') {
+        localStorage.removeItem('pending_partner_request');
+        setBtnState('active');
+        showStatus('ok', '🎉 Approved! Your code <b>' + data.requested_code + '</b> is live — opening your Partner Dashboard…');
+        setTimeout(() => {
+            if (window.STANDALONE_DEMO) { toast('Demo preview — on your site this opens /partner-dashboard.html'); return; }
+            window.location.href = '/partner-dashboard.html';
+        }, 1200);
+    } else if (data.status === 'rejected') {
+        localStorage.removeItem('pending_partner_request');
+        setBtnState('default');
+        showStatus('err', '❌ Your application was not accepted. Contact support on Telegram for details.');
+    }
+});
+</script>
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: sans-serif; max-width: 480px; margin: 20px auto; padding: 0 16px; }
+  input, button { width: 100%; padding: 10px; margin: 6px 0; font-size: 16px; box-sizing: border-box; }
+  button { background: #2563eb; color: white; border: none; border-radius: 6px; }
+  pre { background: #f3f4f6; padding: 12px; border-radius: 6px; white-space: pre-wrap; word-break: break-word; }
+</style>
+</head>
+<body>
+<h2>Worker Test Tool</h2>
+<label>plan_name</label>
+<input id="plan_name" value="Annual">
+<label>coupon_code</label>
+<input id="coupon_code" value="MMH20">
+<button onclick="runTest()">Send Test Request</button>
+<h3>Response</h3>
+<pre id="result">(nothing sent yet)</pre>
+<script>
+async function runTest() {
+  const plan_name = document.getElementById('plan_name').value;
+  const coupon_code = document.getElementById('coupon_code').value;
+  const resultBox = document.getElementById('result');
+  resultBox.textContent = "Sending...";
+  try {
+    const res = await fetch("https://mmh-vault-2.mockmatrixhub.workers.dev/validate-coupon", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan_name, coupon_code })
+    });
+    const data = await res.text();
+    resultBox.textContent = "Status: " + res.status + "\n\n" + data;
+  } catch (err) {
+    resultBox.textContent = "Request failed: " + err.message;
+  }
+}
+</script>
+<script src="/js/capacitor.js?v=260908f"></script>
+<script src="/js/app-plugins.js?v=260908f"></script>
+</body>
+</html>

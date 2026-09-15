@@ -1,0 +1,969 @@
+/* ── Home page — page-specific styles ─────────────────────────────────────────
+   Shared visual system (tokens, app frame, appbar, nav-cards, nc-ico colours,
+   skeletons, empty states, toasts) comes from /css/design.css — the same
+   stylesheet every mock page uses. This file adds the home-only pieces.   */
+
+/* Room for the floating dock */
+.exam-page-container{
+    padding-bottom:calc(96px + env(safe-area-inset-bottom));
+}
+
+/* ── Boot splash — body stays hidden until home-config paints ──────────────
+   A reload never flashes the empty frame: header shows instantly, the area
+   below shows this branded loader until home-engine.js homeReady() fires
+   (config painted from cache or fresh, or the error card). */
+.boot-splash{
+    display:none;
+    flex:1;
+    flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    background:var(--bg);
+    padding:40px 20px calc(40px + env(safe-area-inset-bottom));
+    text-align:center;
+}
+body.home-booting .boot-splash{ display:flex; }
+body.home-booting .screen-scroll{ display:none; }
+body.home-booting .ex-dock,
+body.home-booting .fab-container{ display:none; }
+.bs-mark{
+    width:64px; height:64px; border-radius:18px;
+    background:var(--grad-primary); color:#fff;
+    display:grid; place-items:center;
+    box-shadow:0 10px 26px rgba(61,90,254,.35);
+    animation:bs-pulse 1.1s ease-in-out infinite;
+}
+.bs-mark svg{ width:32px; height:32px; }
+.bs-title{ margin-top:6px; font-size:17px; font-weight:800; letter-spacing:-.2px; color:var(--text); }
+.bs-spin{
+    width:22px; height:22px; margin-top:8px; border-radius:50%;
+    border:2.5px solid var(--border-strong); border-top-color:var(--primary);
+    animation:bs-spin .8s linear infinite;
+}
+.bs-text{ font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--text-3); }
+@keyframes bs-spin{ to{ transform:rotate(360deg); } }
+@keyframes bs-pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); } }
+/* dark users: html.dark-mode is set by the anti-flash head script before
+   first paint (body.dark-mode only lands at DOMContentLoaded) */
+html.dark-mode .boot-splash{ background:#0a0f1e; }
+html.dark-mode .bs-title{ color:#eef1fb; }
+html.dark-mode .bs-text{ color:#6d7898; }
+html.dark-mode .bs-spin{ border-color:#31406a; border-top-color:#5b74ff; }
+@media (prefers-reduced-motion:reduce){
+    .bs-mark{ animation:none; }
+    .bs-spin{ animation-duration:1.6s; }
+}
+
+/* ── Header extras ──────────────────────────────────────────────────────── */
+.brand-logo-img{
+    width:100%; height:100%;
+    object-fit:cover;
+    border-radius:11px;
+    display:block;
+    background:var(--surface-2);
+}
+.avatar-chip{
+    width:36px; height:36px;
+    border-radius:12px;
+    border:1.5px solid var(--primary);
+    background:var(--primary-soft);
+    color:var(--primary);
+    font-size:14px; font-weight:800;
+    display:grid; place-items:center;
+    cursor:pointer; padding:0;
+}
+.avatar-chip:active{ transform:scale(.9); }
+.login-chip{
+    display:inline-flex; align-items:center;
+    height:32px; padding:0 14px;
+    border-radius:999px;
+    background:var(--grad-primary);
+    color:#fff; text-decoration:none;
+    font-size:11px; font-weight:800; letter-spacing:.6px;
+    box-shadow:0 5px 14px rgba(61,90,254,.32);
+}
+.login-chip:active{ transform:scale(.95); }
+.notif-wrap{ position:relative; }
+.notif-badge-dot{
+    position:absolute; top:-3px; right:-4px;
+    min-width:15px; height:15px;
+    padding:0 3px;
+    border-radius:999px;
+    background:var(--red, #e11d48);
+    color:#fff;
+    font-size:8.5px; font-weight:800;
+    display:none;
+    align-items:center; justify-content:center;
+    line-height:1;
+}
+
+/* ── Greeting ─────────────────────────────────────────────────────────────── */
+.home-greeting{ margin:2px 2px 14px; }
+.home-greeting .hg-title{
+    font-size:19px; font-weight:800; letter-spacing:-.3px; color:var(--text);
+}
+.home-greeting .hg-title span{ color:var(--primary); }
+.home-greeting .hg-sub{
+    margin-top:2px;
+    font-size:10px; font-weight:800; letter-spacing:1.1px;
+    text-transform:uppercase; color:var(--text-3);
+}
+
+/* ── Hero — live stats board + Premium/Partner CTAs ─────────────────────────
+   (Replaces the old banner carousel.)
+   · Stats numbers come from home-config.json "stats" (static file today —
+     point it at a live API later; markup/animation stays the same).
+   · "Upgrade to Premium" renders only for FREE users (engine-gated).
+   · Partner button is indigo→violet — deliberately NOT green.            */
+.home-hero{ margin:0 2px 16px; }
+
+.hero-board{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:12px; }
+@media (min-width:768px){
+    .hero-board{ grid-template-columns:repeat(4,1fr); }
+}
+.hero-tile{
+    position:relative; overflow:hidden;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; padding:12px;
+    box-shadow:var(--shadow-card);
+}
+.hero-tile-live{
+    position:absolute; top:11px; right:11px;
+    width:7px; height:7px; border-radius:50%;
+    background:#22c55e;
+    animation:heroPulse 1.8s infinite;
+}
+@keyframes heroPulse{
+    0%{ box-shadow:0 0 0 0 rgba(34,197,94,.45); }
+    70%{ box-shadow:0 0 0 7px rgba(34,197,94,0); }
+    100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); }
+}
+.hero-tile-ico{
+    width:30px; height:30px; border-radius:9px;
+    display:grid; place-items:center; margin-bottom:9px;
+}
+.hero-tile-ico svg{ width:15px; height:15px; }
+.hero-tile.blue   .hero-tile-ico{ background:var(--primary-soft); color:var(--primary); }
+.hero-tile.violet .hero-tile-ico{ background:var(--indigo-soft);  color:var(--indigo); }
+.hero-tile.amber  .hero-tile-ico{ background:var(--amber-soft);   color:var(--amber-strong); }
+.hero-tile.teal   .hero-tile-ico{ background:rgba(13,148,136,.12); color:#0d9488; }
+.hero-tile.slate  .hero-tile-ico{ background:rgba(100,116,139,.14); color:#64748b; }
+body.dark-mode .hero-tile.teal  .hero-tile-ico{ color:#2dd4bf; }
+body.dark-mode .hero-tile.slate .hero-tile-ico{ color:#94a3b8; }
+body.dark-mode .hero-tile.amber .hero-tile-ico{ color:#fbbf24; }
+.hero-tile-num{
+    display:block;
+    font-size:21px; font-weight:800; line-height:1.1;
+    font-variant-numeric:tabular-nums;
+    background:linear-gradient(90deg,var(--primary),#7c3aed);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero-tile.amber .hero-tile-num{ background:linear-gradient(90deg,#f59e0b,#ea580c); -webkit-background-clip:text; background-clip:text; }
+.hero-tile.teal  .hero-tile-num{ background:linear-gradient(90deg,#0d9488,#059669); -webkit-background-clip:text; background-clip:text; }
+.hero-tile.slate .hero-tile-num{ background:linear-gradient(90deg,#64748b,#475569); -webkit-background-clip:text; background-clip:text; }
+.hero-tile-lab{
+    display:block; margin-top:3px;
+    font-size:9px; font-weight:700; letter-spacing:.6px;
+    text-transform:uppercase; color:var(--text-3);
+}
+
+.hero-ctas{ display:flex; flex-direction:column; gap:10px; }
+.hero-cta{
+    position:relative; overflow:hidden;
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px; border-radius:16px;
+    text-decoration:none; color:#fff;
+    transition:transform .15s ease;
+}
+.hero-cta:active{ transform:scale(.98); }
+@media (hover:hover){
+    .hero-cta:hover{ transform:translateY(-2px); }
+}
+.hero-cta-premium{
+    background:linear-gradient(120deg,#fbbf24 0%,#f59e0b 40%,#ea580c 100%);
+    box-shadow:0 10px 26px rgba(234,88,12,.35);
+}
+/* Partner — indigo→violet (NOT green, per design decision) */
+.hero-cta-partner{
+    background:linear-gradient(120deg,#6366f1 0%,#4f46e5 55%,#7c3aed 100%);
+    box-shadow:0 10px 26px rgba(79,70,229,.35);
+}
+.hero-cta-ico{
+    width:40px; height:40px; border-radius:13px;
+    background:rgba(255,255,255,.2);
+    display:grid; place-items:center; flex-shrink:0;
+}
+.hero-cta-ico svg{ width:20px; height:20px; }
+.hero-cta-txt{ min-width:0; }
+.hero-cta-title{ display:block; font-size:14.5px; font-weight:800; }
+.hero-cta-sub{
+    display:block; margin-top:2px;
+    font-size:10.5px; font-weight:600; color:rgba(255,255,255,.88);
+}
+.hero-cta-go{ margin-left:auto; opacity:.9; flex-shrink:0; }
+.hero-cta-go svg{ width:18px; height:18px; }
+.hero-shine{
+    position:absolute; top:0; left:-60%;
+    width:45%; height:100%; pointer-events:none;
+    background:linear-gradient(105deg,transparent,rgba(255,255,255,.38),transparent);
+    transform:skewX(-20deg);
+    animation:heroShine 4s ease-in-out infinite;
+}
+@keyframes heroShine{
+    0%,55%{ left:-60%; }
+    100%{ left:135%; }
+}
+
+/* SEO h1 — real heading for crawlers/screen readers, visually hidden */
+.sr-only{
+    position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* ── What's New marquee ───────────────────────────────────────────────────── */
+.whats-new-section{ margin:0 2px 16px; display:none; }
+.whats-new-heading{
+    display:flex; align-items:center; gap:7px;
+    font-size:11px; font-weight:800; letter-spacing:1px;
+    color:var(--primary); text-transform:uppercase;
+    margin-bottom:8px;
+}
+.whats-new-heading svg{ width:14px; height:14px; }
+.whats-new-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:4px 0;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+}
+.whats-new-row{ overflow:hidden; padding:7px 14px; }
+.whats-new-row + .whats-new-row{ border-top:1px solid var(--border); }
+.whats-new-track{
+    display:inline-flex; align-items:center; gap:8px;
+    white-space:nowrap;
+    will-change:transform;
+}
+@keyframes whatsNewMarquee{
+    from{ transform:translateX(var(--wn-start, 100%)); }
+    to  { transform:translateX(var(--wn-end, -100%)); }
+}
+.whats-new-link{
+    color:var(--text); text-decoration:none;
+    font-size:12px; font-weight:600;
+}
+.whats-new-date{
+    font-size:10px; font-weight:700; color:var(--text-3);
+    font-variant-numeric:tabular-nums;
+}
+
+/* ── Quick-action tiles (config buttons) ──────────────────────────────────── */
+.action-container{ margin:0 0 18px; }
+/* quick-action tiles: 1 per row on phones → 2 → 3 → 4 as screens grow */
+.action-row{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+}
+@media (min-width:576px){  .action-row{ grid-template-columns:repeat(2, minmax(0,1fr)); } }
+@media (min-width:992px){  .action-row{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
+@media (min-width:1400px){ .action-row{ grid-template-columns:repeat(4, minmax(0,1fr)); } }
+.home-tile{
+    display:flex; align-items:center; gap:11px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:13px 12px;
+    text-decoration:none; color:inherit;
+    box-shadow:var(--shadow-card);
+    transition:transform .12s ease, border-color .15s ease, box-shadow .15s ease;
+    min-width:0;
+}
+.home-tile:active{ transform:scale(.97); border-color:var(--border-strong); }
+@media (hover:hover){ .home-tile:hover{ border-color:var(--border-strong); box-shadow:var(--shadow-pop); } }
+.home-tile .nc-ico{ width:40px; height:40px; }
+.ht-body{ flex:1; min-width:0; }
+.ht-title{
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    font-size:12px; font-weight:700; letter-spacing:.1px;
+    color:var(--text);
+}
+.home-tile .nc-chev svg{ width:16px; height:16px; }
+.home-tile.skeleton-nav-card{ cursor:default; }
+
+/* badge variants (design.css ships .new/.soon via exams pages; home adds .free) */
+.nc-badge{
+    display:inline-block;
+    font-size:8.5px; font-weight:800; letter-spacing:.7px;
+    text-transform:uppercase;
+    padding:3px 7px; border-radius:999px; line-height:1; white-space:nowrap;
+}
+.nc-badge.new { background:var(--emerald-soft); color:var(--emerald-strong); }
+.nc-badge.free{ background:var(--emerald-soft); color:var(--emerald-strong); }
+body.dark-mode .nc-badge.new, body.dark-mode .nc-badge.free{ color:#34d399; }
+@keyframes badgeBlink{ 0%,100%{ opacity:1; } 50%{ opacity:.45; } }
+.nc-badge.new{ animation:badgeBlink 1.6s ease-in-out infinite; }
+
+/* ── Recommended series ───────────────────────────────────────────────────── */
+.rec-section{ margin:0 2px 18px; }
+.section-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:10px;
+}
+.section-header h3{
+    margin:0;
+    font-size:12px; font-weight:800; letter-spacing:1.1px;
+    color:var(--text-2); text-transform:uppercase;
+}
+.view-all-btn{
+    font-size:11px; font-weight:800; letter-spacing:.5px;
+    color:var(--primary); text-decoration:none;
+}
+.rec-grid{ display:flex; flex-direction:column; }
+@media (min-width:760px){
+    .rec-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+    .rec-grid .nav-card{ margin-bottom:0; }
+}
+.rec-grid .nc-logo{
+    width:100%; height:100%; object-fit:cover; border-radius:12px; display:block;
+}
+
+/* ── Tagline + footer ─────────────────────────────────────────────────────── */
+.tagline{
+    text-align:center;
+    margin:22px 0 10px;
+    font-size:10px; font-weight:800; letter-spacing:2.4px;
+    color:var(--text-3); text-transform:uppercase;
+}
+.home-footer{
+    border-top:1px solid var(--border);
+    background:var(--surface);
+    padding:18px 16px calc(14px + env(safe-area-inset-bottom));
+    text-align:center;
+}
+.home-footer .hf-links{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px;
+    margin-bottom:8px;
+}
+.home-footer a{
+    color:var(--primary); text-decoration:none;
+    font-size:11.5px; font-weight:700;
+}
+.home-footer p{ margin:0; font-size:10.5px; font-weight:600; color:var(--text-3); }
+
+/* ── Social FABs ──────────────────────────────────────────────────────────── */
+.fab-container{
+    position:fixed; right:14px;
+    bottom:calc(96px + env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; gap:10px; z-index:1100;
+}
+.fab{
+    width:46px; height:46px; border-radius:50%;
+    display:grid; place-items:center;
+    color:#fff; text-decoration:none;
+    box-shadow:0 10px 24px rgba(2,6,23,.28);
+}
+.fab svg{ width:21px; height:21px; }
+.fab-wa{ background:linear-gradient(135deg,#2fe274,#128c7e); }   /* WhatsApp brand */
+.fab-tg{ background:linear-gradient(135deg,#2aabee,#229ed9); }   /* Telegram brand */
+.fab:active{ transform:scale(.92); }
+
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
+.sidebar-overlay{
+    position:fixed; inset:0; z-index:1400;
+    background:rgba(2,6,23,.5);
+    display:none;
+}
+.sidebar{
+    position:fixed; top:0; left:0; bottom:0; z-index:1500;
+    width:min(82vw, 300px);
+    background:var(--surface);
+    border-right:1px solid var(--border);
+    transform:translateX(-102%);
+    transition:transform .26s cubic-bezier(.22,1,.36,1);
+    display:flex; flex-direction:column;
+    padding-top:env(safe-area-inset-top, 0px);
+}
+.sidebar.show{ transform:none; box-shadow:0 0 60px rgba(2,6,23,.35); }
+.sidebar-header{
+    display:flex; align-items:center; gap:12px;
+    padding:18px 18px 14px;
+    border-bottom:1px solid var(--border);
+}
+.user-avatar-circle{
+    width:44px; height:44px; border-radius:50%;
+    background:var(--grad-primary); color:#fff;
+    display:grid; place-items:center; flex-shrink:0;
+}
+.user-avatar-circle svg{ width:20px; height:20px; }
+.sidebar-header h6{ margin:0; font-size:14px; font-weight:800; color:var(--text); }
+.plan-badge{
+    display:inline-block; margin-top:4px;
+    font-size:8.5px; font-weight:800; letter-spacing:.7px;
+    padding:3px 8px; border-radius:999px;
+}
+.plan-badge.pro { background:var(--amber-soft); color:var(--amber-strong); }
+.plan-badge.free{ background:var(--surface-2); color:var(--text-2); border:1px solid var(--border); }
+.sidebar-scroll{ flex:1; overflow-y:auto; padding:10px 12px; }
+.menu-item{
+    display:flex; align-items:center; gap:12px;
+    padding:11px 12px; margin-bottom:2px;
+    border-radius:12px;
+    color:var(--text-2); text-decoration:none;
+    font-size:13px; font-weight:600;
+}
+.menu-item svg{ width:18px; height:18px; flex-shrink:0; color:var(--text-3); }
+.menu-item:active{ background:var(--surface-2); }
+/* hover / focus: soft light rounded box around the item (app feel) */
+@media (hover:hover){
+    .menu-item:hover{
+        background:var(--surface-2);
+        box-shadow:inset 0 0 0 1px var(--border);
+    }
+}
+/* matching icon colours (same palette family as the tiles) */
+.menu-item svg.c-blue  { color:var(--primary); }
+.menu-item svg.c-violet{ color:var(--indigo, #4f46e5); }
+.menu-item svg.c-rose  { color:var(--red, #e11d48); }
+.menu-item svg.c-amber { color:var(--amber-strong); }
+.menu-item svg.c-teal  { color:#0d9488; }
+.menu-item svg.c-sky   { color:#0284c7; }
+.menu-item svg.c-indigo{ color:#4f46e5; }
+.menu-item svg.c-tg    { color:#0088cc; }
+.menu-item svg.c-slate { color:#64748b; }
+body.dark-mode .menu-item svg.c-blue  { color:var(--primary); }
+body.dark-mode .menu-item svg.c-violet,
+body.dark-mode .menu-item svg.c-indigo{ color:#818cf8; }
+body.dark-mode .menu-item svg.c-rose  { color:#fb7185; }
+body.dark-mode .menu-item svg.c-amber { color:#fbbf24; }
+body.dark-mode .menu-item svg.c-teal  { color:#2dd4bf; }
+body.dark-mode .menu-item svg.c-sky,
+body.dark-mode .menu-item svg.c-tg    { color:#38bdf8; }
+body.dark-mode .menu-item svg.c-slate { color:#94a3b8; }
+.menu-item.pro-btn{ color:var(--amber-strong); }
+.menu-item.pro-btn svg{ color:var(--amber-strong); }
+.menu-item.admin-btn{ color:var(--red, #e11d48); }
+.menu-item.admin-btn svg{ color:var(--red, #e11d48); }
+.sidebar-divider{ height:1px; background:var(--border); margin:8px 4px; }
+#sidebarInstallBtn{
+    display:none;
+    align-items:center; gap:10px;
+    width:100%;
+    margin:6px 0 2px;
+    padding:11px 12px;
+    border:1.5px dashed var(--primary);
+    border-radius:12px;
+    background:var(--primary-soft);
+    color:var(--primary);
+    font-size:12.5px; font-weight:800;
+    cursor:pointer;
+}
+#sidebarInstallBtn svg{ width:17px; height:17px; }
+.sidebar .logout-btn{
+    width:100%;
+    border:1px solid var(--red, #e11d48);
+    background:transparent; color:var(--red, #e11d48);
+    font-size:12.5px; font-weight:800;
+    padding:10px; border-radius:12px; cursor:pointer;
+    margin-top:14px;
+}
+
+/* ── Modals (install / popups) ────────────────────────────────────────────── */
+.install-modal, .sidebar-overlay.modal-center{
+    position:fixed; inset:0; z-index:2000;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(2,6,23,.55);
+    padding:0 18px;
+}
+.install-modal{ flex-direction:column; }
+.install-content{
+    width:min(100%, 340px);
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:24px 20px;
+    text-align:center;
+    box-shadow:var(--shadow-pop);
+}
+.install-app-icon{ width:64px; height:64px; border-radius:16px; margin-bottom:12px; }
+.install-content h3{ margin:0 0 6px; font-size:17px; font-weight:800; color:var(--text); }
+.install-content p{ margin:0 0 16px; font-size:12.5px; font-weight:500; color:var(--text-2); }
+.install-actions{ display:grid; gap:8px; }
+.btn-install-now{
+    border:none; cursor:pointer;
+    background:var(--grad-primary); color:#fff;
+    font-size:13px; font-weight:800;
+    padding:12px; border-radius:12px;
+}
+.btn-install-cancel{
+    border:1px solid var(--border); cursor:pointer;
+    background:transparent; color:var(--text-2);
+    font-size:12.5px; font-weight:700;
+    padding:10px; border-radius:12px;
+}
+.home-modal-box{
+    width:min(100%, 350px);
+    background:var(--surface);
+    border:2px solid var(--primary);
+    border-radius:20px;
+    padding:24px 20px;
+    text-align:center;
+    box-shadow:var(--shadow-pop);
+}
+.home-modal-ico{
+    width:56px; height:56px; margin:0 auto 12px;
+    border-radius:16px;
+    background:var(--primary-soft); color:var(--primary);
+    display:grid; place-items:center;
+}
+.home-modal-ico svg{ width:26px; height:26px; }
+.home-modal-box h5{ margin:0 0 6px; font-size:16px; font-weight:800; color:var(--text); }
+.home-modal-box p{ margin:0 0 16px; font-size:12.5px; font-weight:500; color:var(--text-2); }
+.home-modal-actions{ display:grid; gap:8px; }
+.home-modal-btn{
+    display:block; text-align:center; text-decoration:none;
+    font-size:13px; font-weight:800;
+    padding:11px; border-radius:12px; cursor:pointer;
+}
+.home-modal-btn.primary{ background:var(--grad-primary); color:#fff; }
+.home-modal-btn.ghost{ border:1px solid var(--border); background:transparent; color:var(--text-2); }
+
+/* ── Retry button (config error state) ────────────────────────────────────── */
+.retry-btn{
+    margin-top:14px;
+    border:none; cursor:pointer;
+    background:var(--grad-primary); color:#fff;
+    font-size:12.5px; font-weight:700; letter-spacing:.2px;
+    padding:10px 22px; border-radius:999px;
+    box-shadow:0 6px 16px rgba(61,90,254,.32);
+}
+.retry-btn:active{ transform:scale(.96); }
+.home-error{ grid-column:1 / -1; }
+
+/* ── Android wrapper app-switch ───────────────────────────────────────────── */
+.app-switch{
+    display:flex; gap:8px;
+    padding:8px 16px 10px;
+    background:var(--surface);
+}
+.app-switch__btn{
+    flex:1;
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    border:1px solid var(--border); border-radius:10px;
+    background:var(--surface-2); color:var(--text-2);
+    font-size:11px; font-weight:800;
+    padding:7px 6px; cursor:pointer;
+}
+.app-switch__btn img{ width:16px; height:16px; border-radius:4px; }
+.app-switch__btn--active{ border-color:var(--primary); color:var(--primary); background:var(--primary-soft); }
+
+/* ── Bottom dock (identical to the exams page dock) ─────────────────────────
+   Attached bar: full-bleed on ALL FOUR sides — no left/right/bottom gap and
+   no bottom rounding. Same opaque --surface background + same hairline, but
+   the shadow now falls UPWARDS (into the page) instead of around a floating
+   rectangle. Only this container rule changed; items / FAB are untouched.  */
+.ex-dock{
+    position:fixed;
+    left:0; right:0; transform:none;
+    bottom:0;
+    z-index:1200;
+    display:flex; align-items:stretch; justify-content:center;
+    width:auto; max-width:none;
+    background:var(--surface);
+    border:0;
+    border-top:1px solid var(--border);
+    border-radius:0;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 28px rgba(15,23,42,.08);
+}
+body.dark-mode .ex-dock{ box-shadow:0 -12px 30px rgba(0,0,0,.42); }
+.ex-dock-item{
+    position:relative;
+    flex:1; min-width:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    gap:3px;
+    padding:9px 2px 11px;
+    border-radius:16px;
+    color:var(--text-3); text-decoration:none;
+    font-size:10px; font-weight:700; letter-spacing:.2px;
+    transition:color .15s ease;
+}
+.ex-dock-item svg{ width:21px; height:21px; }
+.ex-dock-item:active{ transform:scale(.94); }
+.ex-dock-item.active{ color:var(--primary); }
+.ex-dock-item.active::after{
+    content:'';
+    position:absolute; bottom:3px; left:50%; transform:translateX(-50%);
+    width:4px; height:4px; border-radius:50%;
+    background:var(--primary);
+}
+.ex-dock-center{ flex:0 0 auto; justify-content:center; padding:0 8px; }
+.ex-dock-fab{
+    width:52px; height:52px; border-radius:50%;
+    background:var(--grad-primary); color:#fff;
+    display:grid; place-items:center;
+    margin-top:-34px;
+    box-shadow:0 0 0 5px var(--bg), 0 10px 26px rgba(61,90,254,.45);
+    transition:transform .12s ease;
+}
+.ex-dock-fab svg{ width:22px; height:22px; }
+.ex-dock-center:active .ex-dock-fab{ transform:scale(.93); }
+.ex-dock-center.active .ex-dock-fab{
+    box-shadow:0 0 0 5px var(--bg), 0 0 0 8px var(--primary-soft), 0 10px 26px rgba(61,90,254,.5);
+}
+.ex-dock-item .dock-badge{
+    position:absolute; top:4px; right:calc(50% - 16px);
+}
+@media (max-width:379.98px){
+    .ex-dock{ padding:7px 6px calc(7px + env(safe-area-inset-bottom)); }
+    .ex-dock-item{ font-size:9px; padding:8px 1px 10px; }
+    .ex-dock-item svg{ width:19px; height:19px; }
+    .ex-dock-fab{ width:46px; height:46px; margin-top:-30px; }
+    .ex-dock-fab svg{ width:20px; height:20px; }
+}
+/* Wide screens — bar stays full-bleed, items keep a sane width instead of
+   stretching across the whole desktop window */
+@media (min-width:768px){
+    .ex-dock-item{ flex:0 1 132px; }
+}
+
+/* ── Adaptive appbar — shrinks ONLY when the brand name / tagline would
+   otherwise truncate ("strip") on tight screens. home-engine.js fitAppbar()
+   measures real overflow and walks .appbar-fit-1…5. The header BOX never
+   changes — same height, same 16px padding, same 38px icon buttons — only
+   the INNER items shrink (text size/weight, icon glyphs, logo tile, chips,
+   inner gaps), so the fitted state persists instead of bouncing back.
+   Roomy screens: nothing applied, header exactly as designed. */
+.appbar .brand-mark, .appbar .brand-title, .appbar .brand-sub,
+.appbar .icon-btn, .appbar .avatar-chip, .appbar .login-chip{
+    transition:width .15s ease, height .15s ease, font-size .15s ease;
+}
+/* While fitAppbar() measures, transitions are killed: mid-animation widths
+   used to give false "it fits" reads and the fit bounced straight back. */
+.appbar.appbar-measuring, .appbar.appbar-measuring *{ transition:none !important; }
+
+/* Auto-fit ladder — the brand name / tagline are NEVER ellipsised on this
+   page. fitAppbar() walks these steps (smaller size AND lighter weight)
+   until the COMPLETE text fits; inner items shrink with it for extra room. */
+.appbar .brand-title{ text-overflow:clip; }        /* no "…" — full text only */
+
+/* Step 1 — text eases down + inner gaps tighten (all boxes untouched) */
+.appbar.appbar-fit-1{ gap:9px; }
+.appbar.appbar-fit-1 .brand{ gap:9px; }
+.appbar.appbar-fit-1 .brand-title{ font-size:14.5px; }
+.appbar.appbar-fit-1 .brand-sub{ font-size:9.5px; }
+
+/* Step 2 — text steps down harder; icon GLYPHS + actions gap shrink inside
+   their unchanged 38px buttons */
+.appbar.appbar-fit-2{ gap:9px; }
+.appbar.appbar-fit-2 .brand{ gap:9px; }
+.appbar.appbar-fit-2 .icon-btn svg{ width:17px; height:17px; }
+.appbar.appbar-fit-2 .appbar-actions{ gap:7px; }
+.appbar.appbar-fit-2 .brand-title{ font-size:13.5px; font-weight:600; }
+.appbar.appbar-fit-2 .brand-sub{ font-size:9px; font-weight:600; }
+
+/* Step 3 — logo tile + chips join in (all still shorter than the 38px
+   buttons, so the header height stays exactly the same) */
+.appbar.appbar-fit-3{ gap:8px; }
+.appbar.appbar-fit-3 .brand{ gap:8px; }
+.appbar.appbar-fit-3 .brand-mark{ width:33px; height:33px; border-radius:10px; }
+.appbar.appbar-fit-3 .brand-mark svg,
+.appbar.appbar-fit-3 .brand-mark img{ width:17px; height:17px; }
+.appbar.appbar-fit-3 .icon-btn svg{ width:16px; height:16px; }
+.appbar.appbar-fit-3 .avatar-chip{ width:34px; height:34px; font-size:13px; }
+.appbar.appbar-fit-3 .login-chip{ height:30px; padding:0 12px; font-size:10.5px; }
+.appbar.appbar-fit-3 .brand-title{ font-size:12.5px; font-weight:600; letter-spacing:0; }
+.appbar.appbar-fit-3 .brand-sub{ font-size:8.5px; font-weight:600; letter-spacing:.5px; }
+
+/* Step 4 — second-deepest inner squeeze */
+.appbar.appbar-fit-4{ gap:8px; }
+.appbar.appbar-fit-4 .brand{ gap:8px; }
+.appbar.appbar-fit-4 .brand-mark{ width:31px; height:31px; border-radius:10px; }
+.appbar.appbar-fit-4 .brand-mark svg,
+.appbar.appbar-fit-4 .brand-mark img{ width:16px; height:16px; }
+.appbar.appbar-fit-4 .icon-btn svg{ width:15px; height:15px; }
+.appbar.appbar-fit-4 .appbar-actions{ gap:6px; }
+.appbar.appbar-fit-4 .avatar-chip{ width:32px; height:32px; border-radius:11px; font-size:12px; }
+.appbar.appbar-fit-4 .login-chip{ height:29px; padding:0 11px; font-size:10px; }
+.appbar.appbar-fit-4 .brand-title{ font-size:11.5px; font-weight:500; letter-spacing:0; }
+.appbar.appbar-fit-4 .brand-sub{ font-size:8px; font-weight:500; letter-spacing:.4px; }
+
+/* Step 5 — deepest inner squeeze on the tiniest screens */
+.appbar.appbar-fit-5{ gap:7px; }
+.appbar.appbar-fit-5 .brand{ gap:7px; }
+.appbar.appbar-fit-5 .brand-mark{ width:29px; height:29px; border-radius:9px; }
+.appbar.appbar-fit-5 .brand-mark svg,
+.appbar.appbar-fit-5 .brand-mark img{ width:15px; height:15px; }
+.appbar.appbar-fit-5 .icon-btn svg{ width:14px; height:14px; }
+.appbar.appbar-fit-5 .appbar-actions{ gap:5px; }
+.appbar.appbar-fit-5 .avatar-chip{ width:30px; height:30px; border-radius:10px; font-size:11px; }
+.appbar.appbar-fit-5 .login-chip{ height:28px; padding:0 10px; font-size:9.5px; }
+.appbar.appbar-fit-5 .brand-title{ font-size:10.5px; font-weight:500; letter-spacing:0; }
+.appbar.appbar-fit-5 .brand-sub{ font-size:7.5px; font-weight:500; letter-spacing:.4px; }
+
+/* absolute last resort (tiny screens): wrap instead of cutting — still no … */
+.appbar.appbar-wrap .brand-title,
+.appbar.appbar-wrap .brand-sub{ white-space:normal; text-overflow:clip; line-height:1.15; }
+
+/* ══ NEW: Expiring Soon CTA (replaces premium card for paid users <48h) ══ */
+/* same gold as Buy Premium - per user request, not red */
+.hero-cta-expiry{
+    background:linear-gradient(120deg,#fbbf24 0%,#f59e0b 40%,#ea580c 100%);
+    box-shadow:0 10px 26px rgba(234,88,12,.35);
+    border:1px solid rgba(255,255,255,.18);
+}
+.hero-cta-expiry .hero-cta-ico{
+    background:rgba(255,255,255,.22);
+    animation:expiryIcoPulse 1.6s ease-in-out infinite;
+}
+@keyframes expiryIcoPulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.08); }
+}
+.expiry-countdown{
+    display:flex; align-items:center; gap:5px;
+    margin-top:6px;
+}
+.cd-box{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-width:36px; height:36px;
+    background:rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.24);
+    border-radius:8px;
+    padding:2px 5px;
+    backdrop-filter:blur(4px);
+}
+.cd-box b{
+    font-size:13px; font-weight:800; line-height:1;
+    font-variant-numeric:tabular-nums;
+    color:#fff;
+}
+.cd-box small{
+    font-size:7px; font-weight:800; letter-spacing:.7px;
+    color:rgba(255,255,255,.9); margin-top:1px;
+}
+.cd-sep{
+    font-size:12px; font-weight:800; color:rgba(255,255,255,.9);
+    animation:sepBlink 1s steps(2) infinite;
+}
+@keyframes sepBlink{ 0%,50%{ opacity:1; } 51%,100%{ opacity:.25; } }
+
+/* ══ NEW: Expired Banner Overlay (app-like, beautiful) ══ */
+.expiry-overlay{
+    position:fixed; inset:0; z-index:2200;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(2,6,23,.62);
+    backdrop-filter:blur(8px);
+    padding:18px;
+    animation:fadeIn .22s ease;
+}
+@keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+.expiry-banner-box{
+    position:relative;
+    width:min(100%, 380px);
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:22px 20px 18px;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(2,6,23,.35);
+    animation:popUp .32s cubic-bezier(.22,1,.36,1);
+}
+@keyframes popUp{
+    from{ transform:translateY(18px) scale(.96); opacity:0; }
+    to{ transform:none; opacity:1; }
+}
+.expiry-close{
+    position:absolute; top:10px; right:10px;
+    width:32px; height:32px; border-radius:10px;
+    border:1px solid var(--border); background:var(--surface-2);
+    color:var(--text-2); cursor:pointer; display:grid; place-items:center;
+    font-size:14px;
+}
+.expiry-close:active{ transform:scale(.9); }
+.expiry-icon-wrap{
+    position:relative; width:72px; height:72px; margin:4px auto 14px;
+    display:grid; place-items:center;
+}
+.expiry-icon{
+    width:72px; height:72px; border-radius:20px;
+    background:linear-gradient(135deg,#fbbf24,#f59e0b 55%,#ef4444);
+    color:#fff; display:grid; place-items:center;
+    box-shadow:0 10px 24px rgba(239,68,68,.35);
+    position:relative; z-index:2;
+}
+.expiry-icon svg{ width:32px; height:32px; }
+.expiry-pulse{
+    position:absolute; inset:0; border-radius:20px;
+    background:linear-gradient(135deg,#fbbf24,#ef4444);
+    animation:expiryPulse 1.8s ease-out infinite;
+    z-index:1;
+}
+@keyframes expiryPulse{
+    0%{ transform:scale(1); opacity:.55; }
+    100%{ transform:scale(1.45); opacity:0; }
+}
+.expiry-banner-box h3{
+    margin:0 0 8px; font-size:19px; font-weight:900; letter-spacing:-.3px;
+    color:var(--text);
+}
+.expiry-banner-box p{
+    margin:0 0 16px; font-size:13px; line-height:1.5;
+    color:var(--text-2);
+}
+.expiry-actions{ display:grid; gap:9px; }
+.expiry-btn{
+    display:flex; align-items:center; justify-content:center;
+    padding:13px 16px; border-radius:13px;
+    font-size:14px; font-weight:800; text-decoration:none; cursor:pointer;
+    border:none; transition:transform .12s ease, filter .15s ease;
+}
+.expiry-btn:active{ transform:scale(.97); }
+.expiry-btn.primary{
+    background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);
+    color:#fff; box-shadow:0 8px 20px rgba(220,38,38,.35);
+}
+.expiry-btn.primary:hover{ filter:brightness(1.06); }
+.expiry-btn.ghost{
+    background:var(--surface-2); color:var(--text-2);
+    border:1px solid var(--border);
+}
+.expiry-trust{
+    margin-top:12px; font-size:10.5px; font-weight:600;
+    color:var(--text-3);
+}
+body.dark-mode .expiry-banner-box{
+    background:#121a30; border-color:#232e4d;
+}
+body.dark-mode .expiry-close{
+    background:#19233c; border-color:#232e4d; color:#9aa4c3;
+}
+
+
+/* ══ NEW: App Update Overlay (Play Store style, strict popup) ══ */
+.mmh-update-overlay{
+    position:fixed; inset:0; z-index:3000;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(2,6,23,.68);
+    backdrop-filter:blur(10px);
+    padding:18px;
+    animation:fadeIn .25s ease;
+}
+.mmh-update-box{
+    position:relative;
+    width:min(100%, 400px);
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:24px;
+    padding:24px 20px 18px;
+    text-align:center;
+    box-shadow:0 24px 60px rgba(2,6,23,.4);
+    animation:popUp .35s cubic-bezier(.22,1,.36,1);
+}
+.mmh-update-box.force{
+    border-color:rgba(239,68,68,.35);
+    box-shadow:0 24px 60px rgba(239,68,68,.25);
+}
+.mmh-update-close{
+    position:absolute; top:12px; right:12px;
+    width:34px; height:34px; border-radius:11px;
+    border:1px solid var(--border); background:var(--surface-2);
+    color:var(--text-2); cursor:pointer; display:grid; place-items:center;
+    font-size:14px; transition:transform .12s ease;
+}
+.mmh-update-close:active{ transform:scale(.88); }
+.mmh-update-icon-wrap{
+    position:relative; width:80px; height:80px; margin:6px auto 14px;
+    display:grid; place-items:center;
+}
+.mmh-update-icon{
+    width:80px; height:80px; border-radius:22px;
+    background:linear-gradient(135deg,#3d5afe 0%,#7c4dff 55%,#4f46e5 100%);
+    color:#fff; display:grid; place-items:center;
+    box-shadow:0 12px 28px rgba(61,90,254,.4);
+    position:relative; z-index:2;
+}
+.mmh-update-icon svg{ width:36px; height:36px; }
+.mmh-update-pulse{
+    position:absolute; inset:0; border-radius:22px;
+    background:linear-gradient(135deg,#3d5afe,#7c4dff);
+    animation:expiryPulse 1.9s ease-out infinite;
+    z-index:1;
+}
+.mmh-update-badge{
+    position:absolute; top:-6px; right:-10px; z-index:3;
+    background:linear-gradient(135deg,#f59e0b,#ef4444);
+    color:#fff; font-size:9px; font-weight:900; letter-spacing:.8px;
+    padding:4px 8px; border-radius:999px;
+    box-shadow:0 4px 12px rgba(239,68,68,.35);
+    animation:badgeBlink 1.6s ease-in-out infinite;
+}
+.mmh-update-ver{
+    display:inline-block;
+    background:var(--surface-2); border:1px solid var(--border);
+    color:var(--text-3); font-size:10.5px; font-weight:800; letter-spacing:.6px;
+    padding:4px 10px; border-radius:999px; margin-bottom:10px;
+}
+.mmh-update-box h3{
+    margin:0 0 8px; font-size:20px; font-weight:900; letter-spacing:-.4px;
+    color:var(--text); line-height:1.2;
+}
+.mmh-update-box p{
+    margin:0 0 14px; font-size:13.5px; line-height:1.55;
+    color:var(--text-2);
+}
+.mmh-update-list{
+    text-align:left; list-style:none; margin:0 0 16px; padding:0;
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:14px; padding:12px 12px;
+}
+.mmh-update-list li{
+    position:relative; padding-left:22px; margin-bottom:8px;
+    font-size:12.5px; line-height:1.45; color:var(--text-2);
+}
+.mmh-update-list li:last-child{ margin-bottom:0; }
+.mmh-update-list li::before{
+    content:'✓'; position:absolute; left:0; top:0;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--emerald-soft); color:var(--emerald);
+    display:grid; place-items:center; font-size:10px; font-weight:800;
+}
+.mmh-update-actions{ display:grid; gap:10px; }
+.mmh-update-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 18px; border-radius:14px;
+    font-size:14px; font-weight:800; text-decoration:none; cursor:pointer;
+    border:none; transition:transform .12s ease, filter .15s ease, box-shadow .15s ease;
+}
+.mmh-update-btn:active{ transform:scale(.97); }
+.mmh-update-btn.primary{
+    background:linear-gradient(135deg,#3d5afe 0%,#4f46e5 100%);
+    color:#fff; box-shadow:0 10px 24px rgba(61,90,254,.4);
+}
+.mmh-update-btn.primary:hover{ filter:brightness(1.07); box-shadow:0 12px 28px rgba(61,90,254,.5); }
+.mmh-update-btn.primary svg{ width:18px; height:18px; }
+.mmh-update-btn.ghost{
+    background:var(--surface-2); color:var(--text-2);
+    border:1px solid var(--border);
+}
+.mmh-update-force-note{
+    font-size:11px; font-weight:600; color:var(--red, #ef4444);
+    background:var(--red-soft, rgba(239,68,68,.1));
+    border:1px dashed var(--red, #ef4444);
+    padding:8px 10px; border-radius:10px; margin-top:2px;
+}
+.mmh-update-trust{
+    margin-top:12px; font-size:10.5px; font-weight:600;
+    color:var(--text-3);
+}
+body.dark-mode .mmh-update-box{
+    background:#121a30; border-color:#232e4d;
+}
+body.dark-mode .mmh-update-close{
+    background:#19233c; border-color:#232e4d; color:#9aa4c3;
+}
+body.dark-mode .mmh-update-list{
+    background:#0f1a2e; border-color:#232e4d;
+}
+body.dark-mode .mmh-update-ver{
+    background:#19233c; border-color:#232e4d; color:#7d8db0;
+}
+

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Expiry Demo — Mock Matrix Hub</title>
+<style>
+:root{
+ --bg:#f3f5fb; --surface:#fff; --surface-2:#f6f8fd; --border:#e5e8f2; --border-strong:#d3d9e8;
+ --text:#0e1428; --text-2:#5c6580; --text-3:#8a93ab; --primary:#3d5afe; --grad-primary:linear-gradient(135deg,#4d6bff 0%,#3050e8 100%);
+ --shadow-card:0 1px 2px rgba(15,23,42,.04),0 6px 18px rgba(15,23,42,.05); --shadow-pop:0 14px 34px rgba(15,23,42,.14);
+}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh}
+h1{font-size:22px;font-weight:900;letter-spacing:-.3px;margin:0 0 6px}
+.sub{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:var(--shadow-card);margin-bottom:16px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.btn{border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--grad-primary);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(61,90,254,.32)}
+.btn.danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border-color:transparent}
+.btn:active{transform:scale(.96)}
+code{background:var(--surface-2);padding:2px 6px;border-radius:6px;font-size:11px;border:1px solid var(--border)}
+.demo-area{margin-top:14px}
+/* --- hero-cta styles from home.css --- */
+.hero-ctas{display:flex;flex-direction:column;gap:10px}
+.hero-cta{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;text-decoration:none;color:#fff;transition:transform .15s ease}
+.hero-cta:active{transform:scale(.98)}
+.hero-cta-premium{background:linear-gradient(120deg,#fbbf24 0%,#f59e0b 40%,#ea580c 100%);box-shadow:0 10px 26px rgba(234,88,12,.35)}
+.hero-cta-partner{background:linear-gradient(120deg,#6366f1 0%,#4f46e5 55%,#7c3aed 100%);box-shadow:0 10px 26px rgba(79,70,229,.35)}
+.hero-cta-ico{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex-shrink:0}
+.hero-cta-ico svg{width:20px;height:20px}
+.hero-cta-txt{min-width:0}
+.hero-cta-title{display:block;font-size:14.5px;font-weight:800}
+.hero-cta-sub{display:block;margin-top:2px;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.88)}
+.hero-cta-go{margin-left:auto;opacity:.9;flex-shrink:0}
+.hero-cta-go svg{width:18px;height:18px}
+.hero-shine{position:absolute;top:0;left:-60%;width:45%;height:100%;pointer-events:none;background:linear-gradient(105deg,transparent,rgba(255,255,255,.38),transparent);transform:skewX(-20deg);animation:heroShine 4s ease-in-out infinite}
+@keyframes heroShine{0%,55%{left:-60%}100%{left:135%}}
+/* --- expiry --- */
+.hero-cta-expiry{background:linear-gradient(135deg,#ef4444 0%,#dc2626 35%,#b91c1c 100%);box-shadow:0 12px 28px rgba(220,38,38,.38);border:1px solid rgba(255,255,255,.18)}
+.hero-cta-expiry .hero-cta-ico{background:rgba(255,255,255,.22);animation:expiryIcoPulse 1.6s ease-in-out infinite}
+@keyframes expiryIcoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.expiry-countdown{display:flex;align-items:center;gap:6px;margin-top:8px}
+.cd-box{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:44px;height:44px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:4px 6px;backdrop-filter:blur(6px)}
+.cd-box b{font-size:15px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;color:#fff}
+.cd-box small{font-size:8px;font-weight:800;letter-spacing:.8px;color:rgba(255,255,255,.85);margin-top:2px}
+.cd-sep{font-size:14px;font-weight:800;color:rgba(255,255,255,.9);animation:sepBlink 1s steps(2) infinite}
+@keyframes sepBlink{0%,50%{opacity:1}51%,100%{opacity:.25}}
+/* expired overlay */
+.expiry-overlay{position:fixed;inset:0;z-index:2200;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.62);backdrop-filter:blur(8px);padding:18px;animation:fadeIn .22s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.expiry-banner-box{position:relative;width:min(100%,380px);background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px 20px 18px;text-align:center;box-shadow:0 20px 50px rgba(2,6,23,.35);animation:popUp .32s cubic-bezier(.22,1,.36,1)}
+@keyframes popUp{from{transform:translateY(18px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.expiry-close{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);cursor:pointer;display:grid;place-items:center;font-size:14px}
+.expiry-icon-wrap{position:relative;width:72px;height:72px;margin:4px auto 14px;display:grid;place-items:center}
+.expiry-icon{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#fbbf24,#f59e0b 55%,#ef4444);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(239,68,68,.35);position:relative;z-index:2}
+.expiry-icon svg{width:32px;height:32px}
+.expiry-pulse{position:absolute;inset:0;border-radius:20px;background:linear-gradient(135deg,#fbbf24,#ef4444);animation:expiryPulse 1.8s ease-out infinite;z-index:1}
+@keyframes expiryPulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.45);opacity:0}}
+.expiry-banner-box h3{margin:0 0 8px;font-size:19px;font-weight:900;letter-spacing:-.3px;color:var(--text)}
+.expiry-banner-box p{margin:0 0 16px;font-size:13px;line-height:1.5;color:var(--text-2)}
+.expiry-actions{display:grid;gap:9px}
+.expiry-btn{display:flex;align-items:center;justify-content:center;padding:13px 16px;border-radius:13px;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer;border:none;transition:transform .12s ease,filter .15s ease}
+.expiry-btn:active{transform:scale(.97)}
+.expiry-btn.primary{background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:#fff;box-shadow:0 8px 20px rgba(220,38,38,.35)}
+.expiry-btn.ghost{background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+.expiry-trust{margin-top:12px;font-size:10.5px;font-weight:600;color:var(--text-3)}
+.log{background:#0e1428;color:#9aa4c3;border-radius:12px;padding:12px;font-size:11px;line-height:1.5;white-space:pre-wrap;max-height:200px;overflow:auto}
+</style>
+</head>
+<body>
+<h1>Premium Expiry — Standalone Demo</h1>
+<div class="sub">Two states • Zero Supabase • UTC-safe parse • Works offline</div>
+
+<div class="card">
+<b>What this proves:</b>
+<ul style="margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--text-2)">
+<li><code>parseExpiryDate()</code> handles Supabase format <code>"2027-08-24 09:23:05.553+00"</code> (space→T, +00→Z)</li>
+<li>Countdown shows only when <code>0 &lt; timeLeft &lt; 48h</code> — replaces premium CTA</li>
+<li>Expired banner shows once on <code>paid → expired</code> transition via <code>mmh_just_expired</code> flag</li>
+<li>No extra API — purely local <code>Date.now()</code> compare + <code>u_vault</code> overwrite</li>
+</ul>
+<div class="btn-row">
+<button class="btn primary" onclick="demoCountdown(47)">Countdown: 47h left</button>
+<button class="btn primary" onclick="demoCountdown(1.2)">Countdown: 1h 12m left</button>
+<button class="btn primary" onclick="demoCountdown(0.02)">Countdown: 1m 12s left (urgency)</button>
+<button class="btn" onclick="demoPremium()">Show Normal Premium CTA (free user)</button>
+<button class="btn danger" onclick="showExpired()">Show Expired Banner</button>
+<button class="btn" onclick="hideExpired()">Hide Banner</button>
+</div>
+<div class="log" id="log"></div>
+</div>
+
+<div class="card">
+<b>Live Preview Area (hero-ctas)</b>
+<div class="demo-area">
+<div class="hero-ctas" id="heroCtas"></div>
+</div>
+</div>
+
+<div class="card">
+<b>How to test with real app:</b>
+<ol style="margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--text-2)">
+<li>Set <code>localStorage u_vault</code> with future <code>expires_at</code> within 48h → reload home → you see countdown ticking live.</li>
+<li>Set <code>expires_at</code> in past → <code>getLocalProfile()</code> will auto-correct <code>is_paid=false</code> and set <code>mmh_just_expired</code> → reload home → expired banner pops.</li>
+<li>Check <code>window.isPaidStillValid()</code> and <code>window.getTimeLeftMs()</code> in console.</li>
+</ol>
+</div>
+
+<!-- overlay -->
+<div id="expiryExpiredOverlay" class="expiry-overlay">
+<div class="expiry-banner-box">
+<button class="expiry-close" onclick="hideExpired()">✕</button>
+<div class="expiry-icon-wrap"><div class="expiry-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5 8 12l4-6 4 6 4.5-3.5-1.6 10H5.1L3.5 8.5zM5 21h14"/></svg></div><div class="expiry-pulse"></div></div>
+<h3>Your plan has expired!</h3>
+<p>Your <b>Premium access</b> ended and all paid mocks are now locked. Renew now at <b>₹124</b> to continue your streak and keep your PRO badge.</p>
+<div class="expiry-actions">
+<a href="#" class="expiry-btn primary" onclick="hideExpired();return false;">Buy Premium Now</a>
+<button type="button" class="expiry-btn ghost" onclick="hideExpired()">Maybe Later</button>
+</div>
+<div class="expiry-trust">🔒 Secure payment via Razorpay • Instant activation</div>
+</div>
+</div>
+
+<script>
+// mock auth helpers (same as auth.js)
+function parseExpiryDate(s){
+ if(!s) return null;
+ try{
+  const str=String(s).trim();
+  let iso=str;
+  if(iso.includes(' ') && !iso.includes('T')) iso=iso.replace(' ','T');
+  iso=iso.replace(/\+00$/,'Z').replace(/\+00:00$/,'Z').replace(/\+0000$/,'Z');
+  const d=new Date(iso);
+  if(!isNaN(d)) return d;
+  return new Date(str);
+ }catch(e){ return null; }
+}
+let mockExpiresAt=null;
+let mockIsPaid=true;
+let interval=null;
+
+function log(msg){
+ const el=document.getElementById('log');
+ const time=new Date().toLocaleTimeString();
+ el.textContent=`[${time}] ${msg}\n`+el.textContent;
+}
+
+function getExpiryInfo(){
+ if(!mockExpiresAt) return null;
+ const exp=parseExpiryDate(mockExpiresAt);
+ if(!exp) return null;
+ const msLeft=exp.getTime()-Date.now();
+ return {expDate:exp, msLeft, isExpired:msLeft<=0, isExpiringSoon: msLeft>0 && msLeft<48*3600*1000 };
+}
+
+function render(){
+ const wrap=document.getElementById('heroCtas');
+ const info=getExpiryInfo();
+ if(!mockIsPaid){
+  wrap.innerHTML=`<a class="hero-cta hero-cta-premium" href="#"><span class="hero-cta-ico">👑</span><span class="hero-cta-txt"><span class="hero-cta-title">Upgrade to Premium</span><span class="hero-cta-sub">All mocks + PYQs unlocked · ₹124 only</span></span><span class="hero-cta-go">›</span></a>
+  <a class="hero-cta hero-cta-partner" href="#"><span class="hero-cta-ico">🤝</span><span class="hero-cta-txt"><span class="hero-cta-title">Become a Partner</span><span class="hero-cta-sub">Earn 20% commission</span></span><span class="hero-cta-go">›</span></a>`;
+  return;
+ }
+ if(info && info.isExpiringSoon){
+  wrap.innerHTML=`<a class="hero-cta hero-cta-expiry" href="#"><span class="hero-cta-ico">⏰</span><span class="hero-cta-txt"><span class="hero-cta-title">Premium expiring soon!</span><span class="hero-cta-sub">Renew before you lose PRO access</span><span class="expiry-countdown"><span class="cd-box"><b id="cdH">00</b><small>HRS</small></span><span class="cd-sep">:</span><span class="cd-box"><b id="cdM">00</b><small>MIN</small></span><span class="cd-sep">:</span><span class="cd-box"><b id="cdS">00</b><small>SEC</small></span></span></span><span class="hero-cta-go">›</span><span class="hero-shine"></span></a>
+  <a class="hero-cta hero-cta-partner" href="#"><span class="hero-cta-ico">🤝</span><span class="hero-cta-txt"><span class="hero-cta-title">Earning Dashboard</span><span class="hero-cta-sub">Track sales & 20% commission</span></span><span class="hero-cta-go">›</span></a>`;
+  startTick();
+ }else{
+  wrap.innerHTML=`<a class="hero-cta hero-cta-partner" href="#"><span class="hero-cta-ico">🤝</span><span class="hero-cta-txt"><span class="hero-cta-title">Earning Dashboard</span><span class="hero-cta-sub">You are PRO — expires ${mockExpiresAt}</span></span><span class="hero-cta-go">›</span></a>`;
+ }
+}
+
+function startTick(){
+ if(interval) clearInterval(interval);
+ function tick(){
+  const info=getExpiryInfo();
+  const h=document.getElementById('cdH'), m=document.getElementById('cdM'), s=document.getElementById('cdS');
+  if(!info || !h){ clearInterval(interval); return; }
+  if(info.isExpired){
+   clearInterval(interval);
+   mockIsPaid=false;
+   log('EXPIRED detected → auto set is_paid=false + show banner');
+   render();
+   showExpired();
+   return;
+  }
+  const totalH=Math.floor(info.msLeft/3600000);
+  const mins=Math.floor((info.msLeft%3600000)/60000);
+  const secs=Math.floor((info.msLeft%60000)/1000);
+  h.textContent=String(totalH).padStart(2,'0');
+  m.textContent=String(mins).padStart(2,'0');
+  s.textContent=String(secs).padStart(2,'0');
+ }
+ tick();
+ interval=setInterval(tick,1000);
+}
+
+function demoCountdown(hours){
+ const d=new Date(Date.now()+hours*3600*1000);
+ // create Supabase-style string: YYYY-MM-DD HH:MM:SS.mmm+00
+ const iso=d.toISOString(); // 2027-08-24T09:23:05.553Z
+ const supabaseFmt=iso.replace('T',' ').replace('Z','+00');
+ mockExpiresAt=supabaseFmt;
+ mockIsPaid=true;
+ log(`Set expires_at = "${supabaseFmt}" (${hours}h from now) — parseExpiryDate → ${parseExpiryDate(supabaseFmt).toISOString()}`);
+ render();
+}
+function demoPremium(){
+ mockIsPaid=false;
+ mockExpiresAt=null;
+ if(interval) clearInterval(interval);
+ log('Free user → premium CTA visible');
+ render();
+}
+function showExpired(){
+ document.getElementById('expiryExpiredOverlay').style.display='flex';
+ log('Expired banner shown');
+}
+function hideExpired(){
+ document.getElementById('expiryExpiredOverlay').style.display='none';
+ log('Expired banner hidden');
+}
+
+// init
+demoCountdown(47);
+log('Demo ready — using Supabase format YYYY-MM-DD HH:MM:SS.mmm+00');
+</script>
+</body>
+</html>
